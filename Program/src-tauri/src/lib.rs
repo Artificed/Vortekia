@@ -1,10 +1,10 @@
 use dotenv::dotenv;
-use futures::lock::Mutex;
 use modules::{app_config::AppConfig, app_state::AppState};
 use sea_orm::{Database, DatabaseConnection};
 use std::{env, fs};
 
 pub mod factories;
+pub mod models;
 pub mod modules;
 pub mod repositories;
 pub mod services;
@@ -56,7 +56,7 @@ pub async fn run() {
 
     let state = AppState {
         conn,
-        current_user: Mutex::new(None),
+        // current_user: Mutex::new(None),
         config,
     };
 

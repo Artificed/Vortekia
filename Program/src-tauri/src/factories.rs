@@ -1,1 +1,1 @@
-pub mod user_factory;
+pub mod customer_factory;
