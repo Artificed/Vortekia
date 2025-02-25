@@ -1,4 +1,4 @@
-import StaffLogin from "@/pages/staff/auth/staff-login";
+import StaffLogin from "@/pages/staff/staff-login";
 import { Route, Routes } from "react-router";
 
 export default function StaffUI() {

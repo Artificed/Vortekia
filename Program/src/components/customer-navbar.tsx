@@ -1,35 +1,31 @@
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import CustomerLogin from "./modals/customer-login";
+import useAuth from "@/hooks/auth/use-auth";
 
 export default function CustomerNavbar() {
-  const [user, setUser] = useState("");
+  const auth = useAuth();
 
   return (
     <nav className="flex justify-between fixed w-screen items-center p-4 shadow-md bg-white">
       <div className="text-xl font-bold">VorteKia</div>
       <div>
-        {user ? (
+        {auth?.user ? (
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <p>{user}</p>
+              <p>{auth.user.username}</p>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => alert("Profile")}>
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setUser("")}>
-                Logout
-              </DropdownMenuItem>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button onClick={() => setUser("John Doe")}>Login</Button>
+          <CustomerLogin />
         )}
       </div>
     </nav>

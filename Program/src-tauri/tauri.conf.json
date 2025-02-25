@@ -13,8 +13,7 @@
     "windows": [
       {
         "title": "tpa-desktop",
-        "width": 1200,
-        "height": 800
+        "maximized": true
       }
     ],
     "security": {

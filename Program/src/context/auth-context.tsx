@@ -53,7 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshCurrentUser = async () => {
     try {
       const currentUser = await invoke<any>("get_current_user");
-      console.log(currentUser);
+      if (Object.keys(currentUser)[0] === "Customer") {
+        setUser(currentUser.Customer as Customer);
+      } else if (Object.keys(currentUser)[0] === "Staff") {
+        setUser(currentUser.Staff as Staff);
+      }
       return null;
     } catch (error) {
       return error as string;
