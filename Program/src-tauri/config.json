@@ -1,26 +1,26 @@
 [
   {
-    "app_id": "staff-dashboard",
+    "app_id": "staff",
     "ui_type": "Staff",
     "assets_path": "./assets/staff"
   },
   {
-    "app_id": "ride-management",
+    "app_id": "ride",
     "ui_type": "Ride",
     "assets_path": "./assets/ride"
   },
   {
-    "app_id": "restaurant-portal",
+    "app_id": "restaurantk",
     "ui_type": "Restaurant",
     "assets_path": "./assets/restaurant"
   },
   {
-    "app_id": "store-system",
+    "app_id": "store",
     "ui_type": "Store",
     "assets_path": "./assets/store"
   },
   {
-    "app_id": "customer-app",
+    "app_id": "customer",
     "ui_type": "Customer",
     "assets_path": "./assets/customer"
   }
