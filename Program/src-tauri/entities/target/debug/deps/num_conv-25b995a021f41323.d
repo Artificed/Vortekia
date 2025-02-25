@@ -1,0 +1,7 @@
+/Users/paultsai/Desktop/SLC/TPA/Desktop/TPA-Desktop/src-tauri/entities/target/debug/deps/libnum_conv-25b995a021f41323.rmeta: /Users/paultsai/.cargo/registry/src/index.crates.io-6f17d22bba15001f/num-conv-0.1.0/src/lib.rs
+
+/Users/paultsai/Desktop/SLC/TPA/Desktop/TPA-Desktop/src-tauri/entities/target/debug/deps/libnum_conv-25b995a021f41323.rlib: /Users/paultsai/.cargo/registry/src/index.crates.io-6f17d22bba15001f/num-conv-0.1.0/src/lib.rs
+
+/Users/paultsai/Desktop/SLC/TPA/Desktop/TPA-Desktop/src-tauri/entities/target/debug/deps/num_conv-25b995a021f41323.d: /Users/paultsai/.cargo/registry/src/index.crates.io-6f17d22bba15001f/num-conv-0.1.0/src/lib.rs
+
+/Users/paultsai/.cargo/registry/src/index.crates.io-6f17d22bba15001f/num-conv-0.1.0/src/lib.rs:
