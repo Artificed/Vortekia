@@ -11,7 +11,7 @@ pub use crate::modules::app_state::AppState;
 
 pub use crate::models::customer::Entity as Customer;
 
-pub async fn insert_user(
+pub async fn insert_customer(
     state: State<'_, AppState>,
     customer: CustomerActiveModel,
 ) -> Result<(), String> {
@@ -20,11 +20,11 @@ pub async fn insert_user(
     if result.is_ok() {
         Ok(())
     } else {
-        Err("Failed to insert user".to_string())
+        Err("Failed to insert customer".to_string())
     }
 }
 
-pub async fn get_user_from_username(
+pub async fn get_customer_from_id(
     state: &State<'_, AppState>,
     id: &str,
 ) -> Result<Option<CustomerModel>, String> {
@@ -35,6 +35,6 @@ pub async fn get_user_from_username(
 
     match result {
         Ok(user) => Ok(user),
-        Err(_) => Err("Failed to get user".to_string()),
+        Err(_) => Err("Failed to get customer".to_string()),
     }
 }
