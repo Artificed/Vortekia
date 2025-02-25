@@ -1,24 +1,11 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import useAuth from "@/hooks/auth/use-auth";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useCustomerLoginForm } from "@/hooks/forms/use-customer-login-form";
 
 export default function CustomerLogin() {
-  const auth = useAuth();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [uid, setUid] = useState("");
-
-  const handleDialogSubmit = () => {
-    if (!uid.trim()) {
-      alert("Please enter your UID!");
-      return;
-    }
-    auth?.loginCustomer(uid);
-
-    setIsDialogOpen(false);
-    setUid("");
-  };
+  const { isDialogOpen, setIsDialogOpen, uid, setUid, handleDialogSubmit } =
+    useCustomerLoginForm();
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

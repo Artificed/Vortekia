@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import useAuth from "@/hooks/auth/use-auth";
+import { ToastUtils } from "@/components/utils/toast-helper";
 
 export default function useStaffLoginForm() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -19,17 +19,22 @@ export default function useStaffLoginForm() {
 
   const handleLogin = async () => {
     setLoading(true);
-    setError(null);
 
     if (!auth) {
-      setError("Authentication system is unavailable.");
+      ToastUtils.error({
+        title: "Login Error",
+        description: "Authentication system is unavailable",
+      });
       setLoading(false);
       return;
     }
 
     const result = await auth.loginStaff(formData.username, formData.password);
     if (result) {
-      setError(result);
+      ToastUtils.error({
+        title: "Login Error",
+        description: result,
+      });
     } else {
       navigate("/dashboard");
     }
@@ -39,7 +44,6 @@ export default function useStaffLoginForm() {
 
   return {
     formData,
-    error,
     loading,
     handleChange,
     handleLogin,

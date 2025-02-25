@@ -1,3 +1,4 @@
+import { ToastUtils } from "@/components/utils/toast-helper";
 import Customer from "@/lib/interfaces/entities/customer";
 import Staff from "@/lib/interfaces/entities/staff";
 import { invoke } from "@tauri-apps/api/core";
@@ -7,12 +8,10 @@ type User = Staff | Customer;
 
 type AuthContextType = {
   user: Staff | Customer | null;
-
-  logout: () => Promise<string | null>;
-  refreshCurrentUser: () => Promise<string | null>;
-
-  loginCustomer: (id: string) => Promise<string | null>;
-  loginStaff: (username: string, password: string) => Promise<string | null>;
+  logout: () => Promise<void>;
+  refreshCurrentUser: () => Promise<void>;
+  loginCustomer: (id: string) => Promise<void>;
+  loginStaff: (username: string, password: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -24,9 +23,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await invoke("login_customer", { id });
       await refreshCurrentUser();
-      return null;
+      ToastUtils.success({
+        title: "Login Success",
+        description: "Successfully logged in!",
+      });
     } catch (error) {
-      return error as string;
+      ToastUtils.error({
+        title: "Login Error",
+        description: error as string,
+      });
+      throw error;
     }
   };
 
@@ -34,9 +40,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await invoke("login_staff", { username, password });
       await refreshCurrentUser();
-      return null;
+      ToastUtils.success({
+        title: "Login Success",
+        description: "Successfully logged in!",
+      });
     } catch (error) {
-      return error as string;
+      ToastUtils.error({
+        title: "Login Error",
+        description: error as string,
+      });
+      throw error;
     }
   };
 
@@ -44,9 +57,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await invoke("logout_user");
       await refreshCurrentUser();
-      return null;
+      ToastUtils.info({
+        title: "Logged Out",
+        description: "You have been logged out successfully.",
+      });
     } catch (error) {
-      return error as string;
+      ToastUtils.error({
+        title: "Logout Error",
+        description: error as string,
+      });
+      throw error;
     }
   };
 
@@ -57,10 +77,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(currentUser.Customer as Customer);
       } else if (Object.keys(currentUser)[0] === "Staff") {
         setUser(currentUser.Staff as Staff);
+      } else {
+        setUser(null);
       }
-      return null;
     } catch (error) {
-      return error as string;
+      setUser(null);
+      ToastUtils.error({
+        title: "Authentication Error",
+        description: "Failed to retrieve user information.",
+      });
+      throw error;
     }
   };
 

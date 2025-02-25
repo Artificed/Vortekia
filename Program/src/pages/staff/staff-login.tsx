@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useStaffLoginForm from "@/hooks/forms/use-staff-login-form";
 
 export default function StaffLogin() {
-  const { formData, error, loading, handleChange, handleLogin } =
-    useStaffLoginForm();
+  const { formData, loading, handleChange, handleLogin } = useStaffLoginForm();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -14,7 +13,6 @@ export default function StaffLogin() {
           <CardTitle>Staff Login</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {error && <p className="text-red-500">{error}</p>}
           <Input
             type="text"
             name="username"
