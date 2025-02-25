@@ -5520,6 +5520,7 @@ version = "0.1.0"
 dependencies = [
  "dotenv",
  "futures",
+ "rand 0.8.5",
  "sea-orm",
  "serde",
  "serde_json",

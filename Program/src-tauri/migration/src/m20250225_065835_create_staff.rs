@@ -11,7 +11,7 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Staff::Table)
                     .if_not_exists()
-                    .col(pk_auto(Staff::Id))
+                    .col(ColumnDef::new(Staff::Id).string().not_null().primary_key())
                     .col(string(Staff::Username))
                     .col(string(Staff::Password))
                     .col(string(Staff::Role))

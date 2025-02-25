@@ -17,7 +17,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Customer::Name).string().not_null())
+                    .col(ColumnDef::new(Customer::Username).string().not_null())
                     .col(ColumnDef::new(Customer::Balance).integer().not_null())
                     .to_owned(),
             )
@@ -35,6 +35,6 @@ impl MigrationTrait for Migration {
 enum Customer {
     Table,
     Id,
-    Name,
+    Username,
     Balance,
 }
