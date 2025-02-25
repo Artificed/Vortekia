@@ -1,19 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { invoke } from "@tauri-apps/api/core";
 import StaffUI from "./ui-routes/staff-ui";
 import RideUI from "./ui-routes/ride-ui";
 import RestaurantUI from "./ui-routes/restaurant-ui";
 import StoreUI from "./ui-routes/store-ui";
 import CustomerUI from "./ui-routes/customer-ui";
+import useGetCurrentUI from "@/hooks/use-get-current-ui";
 
 export default function AppRoutes() {
-  const { isLoading, data } = useQuery({
-    queryKey: ["currentUI"],
-    queryFn: async () => {
-      const res = await invoke<string>("get_current_ui");
-      return res;
-    },
-  });
+  const { isLoading, data } = useGetCurrentUI();
 
   if (isLoading) {
     return "Loading...";

@@ -11,7 +11,7 @@ pub mod modules;
 pub mod repositories;
 pub mod services;
 
-pub use services::context_service;
+pub use services::*;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
@@ -65,7 +65,13 @@ pub async fn run() {
     tauri::Builder::default()
         .manage(state)
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![context_service::get_current_ui])
+        .invoke_handler(tauri::generate_handler![
+            context_service::get_current_ui,
+            customer_service::login_customer,
+            staff_service::login_staff,
+            auth_service::logout_user,
+            auth_service::get_current_user,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -11,8 +11,8 @@ export default function CustomerNavbar() {
   const [user, setUser] = useState("");
 
   return (
-    <nav className="flex justify-between items-center p-4 shadow-md bg-white">
-      <div className="text-xl font-bold">Brand</div>
+    <nav className="flex justify-between fixed w-screen items-center p-4 shadow-md bg-white">
+      <div className="text-xl font-bold">VorteKia</div>
       <div>
         {user ? (
           <DropdownMenu>

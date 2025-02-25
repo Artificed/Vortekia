@@ -9,7 +9,7 @@ pub async fn register_customer(state: State<'_, AppState>, username: String) -> 
 
 #[tauri::command]
 pub async fn login_customer(state: State<'_, AppState>, id: &str) -> Result<(), String> {
-    customer_handler::login_staff(state, id).await
+    customer_handler::login_customer(state, id).await
 }
 
 // #[tauri::command]

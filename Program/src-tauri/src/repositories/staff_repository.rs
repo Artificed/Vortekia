@@ -4,6 +4,7 @@ use sea_orm::QueryFilter;
 use tauri::State;
 
 use super::customer_repository::AppState;
+use crate::models::staff::ActiveModel as StaffActiveModel;
 use crate::models::staff::Column as StaffColumn;
 use crate::models::staff::Entity as Staffs;
 use crate::models::staff::Model as StaffModel;
@@ -20,5 +21,18 @@ pub async fn get_staff_from_username(
     match result {
         Ok(user) => Ok(user),
         Err(_) => Err("Failed to get staff!".to_string()),
+    }
+}
+
+pub async fn insert_staff(
+    state: &State<'_, AppState>,
+    staff: StaffActiveModel,
+) -> Result<(), String> {
+    let result = Staffs::insert(staff).exec(&state.conn).await;
+
+    if result.is_ok() {
+        Ok(())
+    } else {
+        Err("Failed to insert customer".to_string())
     }
 }

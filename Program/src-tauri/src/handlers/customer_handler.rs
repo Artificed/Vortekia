@@ -5,10 +5,10 @@ use crate::{
 };
 use tauri::State;
 
-pub async fn login_staff(state: State<'_, AppState>, id: &str) -> Result<(), String> {
+pub async fn login_customer(state: State<'_, AppState>, id: &str) -> Result<(), String> {
     let customer = customer_repository::get_customer_from_id(&state, id)
         .await
-        .map_err(|_| "Failed to fetch user".to_string())?;
+        .map_err(|_| "Failed to fetch customer".to_string())?;
 
     if let Some(customer) = customer {
         let mut current_user = state.current_user.lock().await;
