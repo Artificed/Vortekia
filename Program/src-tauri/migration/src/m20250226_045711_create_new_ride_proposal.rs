@@ -9,16 +9,19 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Customer::Table)
+                    .table(NewRideProposal::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Customer::Id)
+                        ColumnDef::new(NewRideProposal::Id)
                             .string()
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Customer::Username).string().not_null())
-                    .col(ColumnDef::new(Customer::Balance).integer().not_null())
+                    .col(string(NewRideProposal::RideName).not_null())
+                    .col(string(NewRideProposal::CostReview).not_null())
+                    .col(string(NewRideProposal::Image).not_null())
+                    .col(boolean(NewRideProposal::Approved).not_null().default(false))
+                    .col(boolean(NewRideProposal::Done).not_null().default(false))
                     .to_owned(),
             )
             .await
@@ -26,15 +29,18 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Customer::Table).to_owned())
+            .drop_table(Table::drop().table(NewRideProposal::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-pub enum Customer {
+enum NewRideProposal {
     Table,
     Id,
-    Username,
-    Balance,
+    RideName,
+    CostReview,
+    Image,
+    Approved,
+    Done,
 }

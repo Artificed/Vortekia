@@ -9,16 +9,20 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Customer::Table)
+                    .table(Restaurant::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Customer::Id)
+                        ColumnDef::new(Restaurant::Id)
                             .string()
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Customer::Username).string().not_null())
-                    .col(ColumnDef::new(Customer::Balance).integer().not_null())
+                    .col(string(Restaurant::Name).not_null())
+                    .col(string(Restaurant::Image).not_null())
+                    .col(string(Restaurant::OpeningTime).timestamp().not_null())
+                    .col(string(Restaurant::ClosingTime).timestamp().not_null())
+                    .col(string(Restaurant::CuisineType).not_null())
+                    .col(boolean(Restaurant::IsOpen).not_null())
                     .to_owned(),
             )
             .await
@@ -26,15 +30,19 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Customer::Table).to_owned())
+            .drop_table(Table::drop().table(Restaurant::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-pub enum Customer {
+pub enum Restaurant {
     Table,
     Id,
-    Username,
-    Balance,
+    Name,
+    Image,
+    OpeningTime,
+    ClosingTime,
+    CuisineType,
+    IsOpen,
 }

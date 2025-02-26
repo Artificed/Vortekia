@@ -9,12 +9,13 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Staff::Table)
+                    .table(Menu::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(Staff::Id).string().not_null().primary_key())
-                    .col(string(Staff::Username))
-                    .col(string(Staff::Password))
-                    .col(string(Staff::Role))
+                    .col(ColumnDef::new(Menu::Id).string().not_null().primary_key())
+                    .col(string(Menu::RestaurantId).not_null())
+                    .col(string(Menu::Name).not_null())
+                    .col(string(Menu::Image).not_null())
+                    .col(string(Menu::Price).integer().not_null())
                     .to_owned(),
             )
             .await
@@ -22,16 +23,17 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Staff::Table).to_owned())
+            .drop_table(Table::drop().table(Menu::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-pub enum Staff {
+enum Menu {
     Table,
     Id,
-    Username,
-    Password,
-    Role,
+    RestaurantId,
+    Name,
+    Image,
+    Price,
 }
