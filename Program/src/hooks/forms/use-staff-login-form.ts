@@ -7,7 +7,6 @@ export default function useStaffLoginForm() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -18,19 +17,16 @@ export default function useStaffLoginForm() {
   };
 
   const handleLogin = async () => {
-    setLoading(true);
-
     if (!auth) {
       ToastUtils.error({
         title: "Login Error",
         description: "Authentication system is unavailable",
       });
-      setLoading(false);
       return;
     }
 
     const result = await auth.loginStaff(formData.username, formData.password);
-    if (result) {
+    if (result != null) {
       ToastUtils.error({
         title: "Login Error",
         description: result,
@@ -38,13 +34,11 @@ export default function useStaffLoginForm() {
     } else {
       navigate("/dashboard");
     }
-
-    setLoading(false);
   };
 
   return {
     formData,
-    loading,
+    loading: auth?.isLoading || false,
     handleChange,
     handleLogin,
   };
