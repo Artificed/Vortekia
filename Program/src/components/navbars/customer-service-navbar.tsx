@@ -4,7 +4,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import CustomerLogin from "../modals/customer-login";
 import useAuth from "@/hooks/auth/use-auth";
 import {
   NavigationMenu,
@@ -63,7 +62,7 @@ export default function CustomerServiceNavbar() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <CustomerLogin />
+          <p>Not Logged In</p>
         )}
       </div>
     </nav>

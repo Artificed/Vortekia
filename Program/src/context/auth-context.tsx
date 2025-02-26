@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error) => {
       ToastUtils.error({
         title: "Login Error",
-        description: error.message as string,
+        description: String(error),
       });
       throw error;
     },
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error) => {
       ToastUtils.error({
         title: "Login Error",
-        description: error.message as string,
+        description: String(error),
       });
       throw error;
     },
@@ -109,7 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error) => {
       ToastUtils.error({
         title: "Logout Error",
-        description: error.message as string,
+        description: String(error),
       });
       throw error;
     },

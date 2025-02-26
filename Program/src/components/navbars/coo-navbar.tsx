@@ -4,13 +4,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import CustomerLogin from "../modals/customer-login";
 import useAuth from "@/hooks/auth/use-auth";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import StaffLogin from "@/pages/staff/staff-login";
 
 export default function CooNavbar() {
   const auth = useAuth();
@@ -55,7 +55,7 @@ export default function CooNavbar() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <CustomerLogin />
+          <p>Not Logged In</p>
         )}
       </div>
     </nav>
