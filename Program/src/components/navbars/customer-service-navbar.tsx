@@ -4,10 +4,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import CustomerLogin from "./modals/customer-login";
+import CustomerLogin from "../modals/customer-login";
 import useAuth from "@/hooks/auth/use-auth";
 
-export default function CustomerNavbar() {
+export default function CustomerServiceNavbar() {
   const auth = useAuth();
 
   return (

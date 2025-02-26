@@ -1,4 +1,4 @@
-import CustomerNavbar from "@/components/customer-navbar";
+import CustomerNavbar from "@/components/navbars/customer-navbar";
 
 export default function CustomerDashboard() {
   return (
