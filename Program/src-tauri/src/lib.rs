@@ -69,6 +69,7 @@ pub async fn run() {
             context_service::get_current_ui,
             customer_service::login_customer,
             customer_service::register_customer,
+            staff_service::register_staff,
             staff_service::login_staff,
             auth_service::logout_user,
             auth_service::get_current_user,

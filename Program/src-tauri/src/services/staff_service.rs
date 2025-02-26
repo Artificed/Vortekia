@@ -10,3 +10,13 @@ pub async fn login_staff(
 ) -> Result<(), String> {
     staff_handler::login_staff(state, &username, &password).await
 }
+
+#[tauri::command]
+pub async fn register_staff(
+    state: State<'_, AppState>,
+    username: String,
+    password: String,
+    role: String,
+) -> Result<(), String> {
+    staff_handler::register_staff(state, &username, &password, &role).await
+}

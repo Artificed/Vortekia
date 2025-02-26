@@ -1,4 +1,5 @@
 use crate::{
+    factories::staff_factory,
     modules::{app_state::AppState, user_type::UserType},
     repositories::staff_repository,
 };
@@ -35,4 +36,14 @@ pub async fn login_staff(
     } else {
         Err("Staff not found!".to_string())
     }
+}
+
+pub async fn register_staff(
+    state: State<'_, AppState>,
+    username: &str,
+    password: &str,
+    role: &str,
+) -> Result<(), String> {
+    let staff = staff_factory::create_staff(username, password, role);
+    staff_repository::insert_staff(&state, staff).await
 }

@@ -12,7 +12,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 
-export default function CustomerServiceNavbar() {
+export default function CooNavbar() {
   const auth = useAuth();
 
   return (
@@ -24,7 +24,7 @@ export default function CustomerServiceNavbar() {
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>
               <a
-                href="/customer-service/dashboard"
+                href="/coo/dashboard"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 Dashboard
@@ -32,18 +32,10 @@ export default function CustomerServiceNavbar() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <a
-                href="/customer-service/create-customer-account"
+                href="/coo/create-staff-account"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
-                Create Customer Account
-              </a>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <a
-                href="/customer-service/chat"
-                className="px-4 py-2 hover:bg-gray-200 rounded-md"
-              >
-                Chat
+                Create Staff Account
               </a>
             </NavigationMenuItem>
           </NavigationMenuList>

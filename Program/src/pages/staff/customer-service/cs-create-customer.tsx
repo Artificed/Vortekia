@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useCreateCustomerAccount } from "@/hooks/forms/use-create-customer-account";
 
 export default function CsCreateCustomer() {
-  const { formData, setFormData, handleChange, handleSubmit, loading } =
+  const { formData, handleChange, handleSubmit, loading } =
     useCreateCustomerAccount();
 
   return (
