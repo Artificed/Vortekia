@@ -68,6 +68,7 @@ pub async fn run() {
         .invoke_handler(tauri::generate_handler![
             context_service::get_current_ui,
             customer_service::login_customer,
+            customer_service::register_customer,
             staff_service::login_staff,
             auth_service::logout_user,
             auth_service::get_current_user,

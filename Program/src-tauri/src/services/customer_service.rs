@@ -3,8 +3,12 @@ use tauri::State;
 use crate::{handlers::customer_handler, modules::app_state::AppState};
 
 #[tauri::command]
-pub async fn register_customer(state: State<'_, AppState>, username: String) -> Result<(), String> {
-    customer_handler::register_customer(state, username).await
+pub async fn register_customer(
+    state: State<'_, AppState>,
+    username: String,
+    balance: i32,
+) -> Result<(), String> {
+    customer_handler::register_customer(state, username, balance).await
 }
 
 #[tauri::command]

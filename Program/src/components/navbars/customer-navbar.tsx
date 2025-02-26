@@ -12,7 +12,7 @@ export default function CustomerNavbar() {
 
   return (
     <nav className="flex justify-between fixed w-screen items-center p-4 shadow-md bg-white">
-      <div className="text-3xl font-bold">VorteKia</div>
+      <div className="text-2xl font-bold">VorteKia</div>
       <div>
         {auth?.user ? (
           <DropdownMenu>

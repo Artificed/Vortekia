@@ -19,7 +19,11 @@ pub async fn login_customer(state: State<'_, AppState>, id: &str) -> Result<(), 
     }
 }
 
-pub async fn register_customer(state: State<'_, AppState>, username: String) -> Result<(), String> {
-    let new_user = customer_factory::create_customer(&username);
+pub async fn register_customer(
+    state: State<'_, AppState>,
+    username: String,
+    balance: i32,
+) -> Result<(), String> {
+    let new_user = customer_factory::create_customer(&username, balance);
     customer_repository::insert_customer(state, new_user).await
 }

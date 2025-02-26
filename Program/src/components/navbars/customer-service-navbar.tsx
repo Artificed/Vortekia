@@ -6,13 +6,50 @@ import {
 } from "@/components/ui/dropdown-menu";
 import CustomerLogin from "../modals/customer-login";
 import useAuth from "@/hooks/auth/use-auth";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "@radix-ui/react-navigation-menu";
 
 export default function CustomerServiceNavbar() {
   const auth = useAuth();
 
   return (
-    <nav className="flex justify-between fixed w-screen items-center p-4 shadow-md bg-white">
-      <div className="text-3xl font-bold">VorteKia</div>
+    <nav className="flex justify-between fixed w-screen items-center px-16 py-4 shadow-md bg-white">
+      <div className="flex items-center gap-14">
+        <div className="text-3xl font-bold">VorteKia</div>
+
+        <NavigationMenu>
+          <NavigationMenuList className="flex space-x-4">
+            <NavigationMenuItem>
+              <a
+                href="/customer-service/dashboard"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Dashboard
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/customer-service/create-customer-account"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Create Customer Account
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/customer-service/chat"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Chat
+              </a>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+
       <div>
         {auth?.user ? (
           <DropdownMenu>
@@ -22,7 +59,6 @@ export default function CustomerServiceNavbar() {
               </p>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
