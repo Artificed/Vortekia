@@ -7,7 +7,7 @@ pub async fn register_customer(
     state: State<'_, AppState>,
     username: String,
     balance: i32,
-) -> Result<(), String> {
+) -> Result<String, String> {
     customer_handler::register_customer(state, username, balance).await
 }
 

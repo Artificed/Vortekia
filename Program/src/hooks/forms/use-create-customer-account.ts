@@ -18,13 +18,14 @@ export function useCreateCustomerAccount() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await invoke("register_customer", {
+      let message = await invoke("register_customer", {
         username: formData.username,
         balance: parseInt(formData.balance),
       });
 
       ToastUtils.success({
-        description: "Successfully created user account!",
+        description: ("Successfully created user account! UID: " +
+          message) as string,
       });
 
       navigate("/customer-service/dashboard");
