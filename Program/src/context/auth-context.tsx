@@ -1,11 +1,11 @@
 import { ToastUtils } from "@/components/utils/toast-helper";
+import { useInactivityTimer } from "@/hooks/auth/use-inactivity-logout";
 import Customer from "@/lib/interfaces/entities/customer";
 import Staff from "@/lib/interfaces/entities/staff";
+import { User } from "@/lib/interfaces/types/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
-import { createContext, ReactNode, useCallback } from "react";
-
-type User = Staff | Customer;
+import { createContext, ReactNode, useCallback, useRef } from "react";
 
 type AuthContextType = {
   user: User | null;
@@ -21,6 +21,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
+  const isCustomer = useRef(false);
 
   const {
     data: user,
@@ -33,8 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const currentUser = await invoke<any>("get_current_user");
         if (Object.keys(currentUser)[0] === "Customer") {
+          isCustomer.current = true;
           return currentUser.Customer as Customer;
         } else if (Object.keys(currentUser)[0] === "Staff") {
+          isCustomer.current = false;
           return currentUser.Staff as Staff;
         }
         return null;
@@ -93,12 +96,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mutationFn: async () => {
       return await invoke("logout_user");
     },
-    onSuccess: async () => {
+    onSuccess: async (_, showDefaultLogoutToast: boolean) => {
       await refreshCurrentUser();
-      ToastUtils.info({
-        title: "Logged Out",
-        description: "You have been logged out successfully.",
-      });
+
+      if (showDefaultLogoutToast) {
+        ToastUtils.info({
+          title: "Logged Out",
+          description: "You have been logged out successfully.",
+        });
+      }
     },
     onError: (error) => {
       ToastUtils.error({
@@ -117,9 +123,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await loginStaffMutation.mutateAsync({ username, password });
   };
 
-  const logout = async () => {
-    await logoutMutation.mutateAsync();
+  const logout = async (showDefaultLogoutToast = true) => {
+    await logoutMutation.mutateAsync(showDefaultLogoutToast);
   };
+
+  useInactivityTimer({
+    onInactive: () => {
+      logout(false);
+      ToastUtils.info({
+        title: "Automatic Logout",
+        description: "You have been logged out due to inactivity.",
+      });
+    },
+    inactivityTimeout: 6000,
+    isActive: isCustomer.current,
+  });
 
   return (
     <AuthContext.Provider
