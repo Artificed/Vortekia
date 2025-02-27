@@ -38,3 +38,5 @@ dotenv = "0.15.0"
 argon2 = "0.5.3"
 rand = "0.8.4"
 password-hash = "0.5"
+
+gcloud-sdk = "0.26.3"
