@@ -68,33 +68,33 @@ export default function LnfCreatelog() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="itemName">Item Name *</Label>
+                  <Label htmlFor="name">Item Name *</Label>
                   <Input
-                    id="itemName"
-                    name="itemName"
-                    value={formData.itemName}
+                    id="name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="itemType">Item Type *</Label>
+                  <Label htmlFor="type">Item Type *</Label>
                   <Input
-                    id="itemType"
-                    name="itemType"
-                    value={formData.itemType}
+                    id="type"
+                    name="type"
+                    value={formData.type}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="itemColor">Color *</Label>
+                  <Label htmlFor="color">Color *</Label>
                   <Input
-                    id="itemColor"
-                    name="itemColor"
-                    value={formData.itemColor}
+                    id="color"
+                    name="color"
+                    value={formData.color}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -126,7 +126,7 @@ export default function LnfCreatelog() {
                         </div>
                         <p className="text-sm text-gray-500 mt-2 text-center">
                           Image Preview:{" "}
-                          {formData.itemName || "Lost and Found Item"}
+                          {formData.name || "Lost and Found Item"}
                         </p>
                       </CardContent>
                     </Card>
@@ -148,7 +148,7 @@ export default function LnfCreatelog() {
                       <SelectContent>
                         {lnfStaffs?.map((staff) => (
                           <SelectItem key={staff.id} value={String(staff.id)}>
-                            {String(staff.id) + " - " + String(staff.username)}
+                            {String(staff.username)}
                           </SelectItem>
                         ))}
                       </SelectContent>

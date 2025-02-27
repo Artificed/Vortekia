@@ -1,5 +1,6 @@
 use tauri::State;
 
+use crate::models::lost_and_found_log::Model as LnfLogModel;
 use crate::{
     factories::lnf_log_factory, modules::app_state::AppState, repositories::lnf_log_repository,
 };
@@ -40,4 +41,8 @@ pub async fn insert_lnf_log(
             Err(format!("Failed to save image: {}", err))
         }
     }
+}
+
+pub async fn get_lnf_logs(state: State<'_, AppState>) -> Result<Vec<LnfLogModel>, String> {
+    lnf_log_repository::get_lnf_logs(state).await
 }

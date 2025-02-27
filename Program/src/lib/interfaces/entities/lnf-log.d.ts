@@ -1,9 +1,9 @@
 interface LnfLog {
   id: string;
   image: string;
-  itemName: string;
-  itemType: string;
-  itemColor: string;
+  name: string;
+  type: string;
+  color: string;
   lastSeenLocation: string;
   finder: string;
   owner: string;

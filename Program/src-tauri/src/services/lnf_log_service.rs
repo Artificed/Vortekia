@@ -1,5 +1,6 @@
 use tauri::State;
 
+use crate::models::lost_and_found_log::Model as LnfModel;
 use crate::{handlers::lnf_log_handler, modules::app_state::AppState};
 
 #[tauri::command]
@@ -28,4 +29,9 @@ pub async fn insert_lnf_log(
         image_bytes,
     )
     .await
+}
+
+#[tauri::command]
+pub async fn get_lnf_logs(state: State<'_, AppState>) -> Result<Vec<LnfModel>, String> {
+    lnf_log_handler::get_lnf_logs(state).await
 }

@@ -12,9 +12,9 @@ export function useCreateLnfLog() {
 
   const [formData, setFormData] = useState<Omit<LnfLog, "id">>({
     image: "",
-    itemName: "",
-    itemType: "",
-    itemColor: "",
+    name: "",
+    type: "",
+    color: "",
     lastSeenLocation: "",
     finder: "",
     owner: "",
@@ -81,9 +81,9 @@ export function useCreateLnfLog() {
 
         await invoke("insert_lnf_log", {
           image: formData.image,
-          name: formData.itemName,
-          type: formData.itemType,
-          color: formData.itemColor,
+          name: formData.name,
+          type: formData.type,
+          color: formData.color,
           lastSeenLocation: formData.lastSeenLocation,
           finder: formData.finder,
           owner: formData.owner,
@@ -108,9 +108,9 @@ export function useCreateLnfLog() {
   const resetForm = () => {
     setFormData({
       image: "",
-      itemName: "",
-      itemType: "",
-      itemColor: "",
+      name: "",
+      type: "",
+      color: "",
       lastSeenLocation: "",
       finder: "",
       owner: "",

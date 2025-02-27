@@ -3,7 +3,7 @@ import RideUI from "./ui-routes/ride-ui";
 import RestaurantUI from "./ui-routes/restaurant-ui";
 import StoreUI from "./ui-routes/store-ui";
 import CustomerUI from "./ui-routes/customer-ui";
-import useGetCurrentUI from "@/hooks/use-get-current-ui";
+import useGetCurrentUI from "@/hooks/utility/use-get-current-ui";
 
 export default function AppRoutes() {
   const { isLoading, data } = useGetCurrentUI();
