@@ -92,10 +92,13 @@ export function useCreateLnfLog() {
         });
       }
 
+      ToastUtils.success({
+        description: "Successfully added lost and found log!",
+      });
+
       resetForm();
       navigate("/lost-and-found-staff/dashboard");
     } catch (error) {
-      console.error("Error creating lost and found log:", error);
       ToastUtils.error({ description: String(error) });
     } finally {
       setLoading(false);

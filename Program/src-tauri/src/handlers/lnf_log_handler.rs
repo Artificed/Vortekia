@@ -18,12 +18,12 @@ pub async fn insert_lnf_log(
     status: &str,
     image_bytes: Vec<u8>,
 ) -> Result<(), String> {
-    let image_path = file_handler::save_image_to_disk(image_name, &image_bytes);
+    let image_url = file_handler::upload_image_to_firebase(image_name, &image_bytes).await;
 
-    match image_path {
-        Ok(path) => {
+    match image_url {
+        Ok(url) => {
             let log = lnf_log_factory::create_lnf_log(
-                &path,
+                &url,
                 name,
                 r#type,
                 color,
