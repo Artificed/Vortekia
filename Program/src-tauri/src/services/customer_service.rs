@@ -16,6 +16,14 @@ pub async fn login_customer(state: State<'_, AppState>, id: &str) -> Result<(), 
     customer_handler::login_customer(state, id).await
 }
 
+#[tauri::command]
+pub async fn add_current_user_balance(
+    state: State<'_, AppState>,
+    balance: i32,
+) -> Result<(), String> {
+    customer_handler::add_current_user_balance(state, balance).await
+}
+
 // #[tauri::command]
 // pub async fn logout_user(state: State<'_, AppState>) -> Result<(), String> {
 //     let mut current_user = state.current_user.lock().await;

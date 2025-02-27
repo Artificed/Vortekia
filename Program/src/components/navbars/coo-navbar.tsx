@@ -10,7 +10,6 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import StaffLogin from "@/pages/staff/staff-login";
 
 export default function CooNavbar() {
   const auth = useAuth();

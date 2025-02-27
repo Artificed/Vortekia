@@ -1,3 +1,5 @@
+use sea_orm::ActiveModelTrait;
+use sea_orm::ActiveValue;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
 use sea_orm::QueryFilter;
@@ -22,6 +24,28 @@ pub async fn insert_customer(
     } else {
         Err("Failed to insert customer".to_string())
     }
+}
+
+pub async fn update_customer_balance(
+    state: &State<'_, AppState>,
+    customer_id: String,
+    new_balance: i32,
+) -> Result<(), String> {
+    let customer = Customers::find_by_id(customer_id)
+        .one(&state.conn)
+        .await
+        .map_err(|e| format!("Failed to find customer: {}", e))?
+        .ok_or_else(|| String::from("Customer not found"))?;
+
+    let mut active_customer: CustomerActiveModel = customer.into();
+    active_customer.balance = ActiveValue::Set(new_balance);
+
+    active_customer
+        .update(&state.conn)
+        .await
+        .map_err(|e| format!("Database update failed: {}", e))?;
+
+    Ok(())
 }
 
 pub async fn get_customer_from_id(

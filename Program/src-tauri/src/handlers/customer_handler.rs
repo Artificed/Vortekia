@@ -3,6 +3,9 @@ use crate::{
     modules::{app_state::AppState, user_type::UserType},
     repositories::customer_repository,
 };
+
+use crate::models::customer::Model as CustomerModel;
+
 use sea_orm::ActiveValue;
 use tauri::State;
 
@@ -34,5 +37,40 @@ pub async fn register_customer(
             _ => Err("Failed to get customer ID".to_string()),
         },
         Err(e) => Err(format!("Database error: {:?}", e)),
+    }
+}
+
+pub async fn add_current_user_balance(
+    state: State<'_, AppState>,
+    balance: i32,
+) -> Result<(), String> {
+    let mut current_user = state.current_user.lock().await;
+
+    match &*current_user {
+        Some(UserType::Customer(customer)) => {
+            let customer_id = customer.id.clone();
+            let current_balance = customer.balance;
+            let new_balance = current_balance + balance;
+
+            match customer_repository::update_customer_balance(
+                &state,
+                customer_id.clone(),
+                new_balance,
+            )
+            .await
+            {
+                Ok(_) => {
+                    *current_user = Some(UserType::Customer(CustomerModel {
+                        id: customer_id,
+                        username: customer.username.clone(),
+                        balance: new_balance,
+                    }));
+                    Ok(())
+                }
+                Err(e) => Err(e),
+            }
+        }
+        Some(UserType::Staff(_)) => Err(String::from("Only customers can update balance!")),
+        None => Err(String::from("User is not logged in!")),
     }
 }

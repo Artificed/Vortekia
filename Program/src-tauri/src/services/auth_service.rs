@@ -7,10 +7,10 @@ use crate::{
 
 #[tauri::command]
 pub async fn logout_user(state: State<'_, AppState>) -> Result<(), String> {
-    auth_handler::logout_user(state).await
+    auth_handler::logout_user(&state).await
 }
 
 #[tauri::command]
 pub async fn get_current_user(state: State<'_, AppState>) -> Result<Option<UserType>, String> {
-    auth_handler::get_current_user(state).await
+    auth_handler::get_current_user(&state).await
 }

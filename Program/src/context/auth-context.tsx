@@ -135,7 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "You have been logged out due to inactivity.",
       });
     },
-    inactivityTimeout: 6000,
+    inactivityTimeout: 60000,
     isActive: isCustomer.current,
   });
 
