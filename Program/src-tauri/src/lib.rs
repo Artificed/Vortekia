@@ -16,12 +16,10 @@ pub use services::*;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
     dotenv().ok();
-
     let app_id = env::var("APP_ID").expect("App Id must be set!");
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
     let config_path = String::from("config.json");
-
     let config_content = fs::read_to_string(&config_path)
         .map_err(|e| format!("Failed to read config file {}: {}", config_path, e));
 

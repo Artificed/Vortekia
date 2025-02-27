@@ -3,6 +3,7 @@ import CooDashboard from "@/pages/staff/coo/coo-dashboard";
 import CsChat from "@/pages/staff/customer-service/cs-chat";
 import CsCreateCustomer from "@/pages/staff/customer-service/cs-create-customer";
 import CsDashboard from "@/pages/staff/customer-service/cs-dashboard";
+import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
 import StaffLogin from "@/pages/staff/staff-login";
 import { Route, Routes } from "react-router";
@@ -29,6 +30,7 @@ export default function StaffUI() {
         path="lost-and-found-staff/dashboard"
         element={<LnfStaffDashboard />}
       />
+      <Route path="lost-and-found-staff/add-log" element={<LnfCreatelog />} />
     </Routes>
   );
 }
