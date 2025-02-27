@@ -2,12 +2,8 @@ use std::env;
 
 use mime_guess::from_path;
 use reqwest::Client;
-use serde::Deserialize;
+use urlencoding::encode;
 
-#[derive(Deserialize)]
-struct FirebaseResponse {
-    name: String,
-}
 pub async fn upload_image_to_firebase(
     image_name: &str,
     image_bytes: &[u8],
@@ -26,6 +22,7 @@ pub async fn upload_image_to_firebase(
         .to_string();
 
     let client = Client::new();
+
     let response = client
         .post(&url)
         .header("Content-Type", &mime_type)
@@ -35,11 +32,12 @@ pub async fn upload_image_to_firebase(
         .map_err(|e| format!("Failed to send request: {}", e))?;
 
     if response.status().is_success() {
-        let firebase_response: FirebaseResponse = response
-            .json()
-            .await
-            .map_err(|e| format!("Failed to parse response: {}", e))?;
-        Ok(firebase_response.name)
+        let encoded_upload_path = encode(&upload_path);
+        let public_url = format!(
+            "https://firebasestorage.googleapis.com/v0/b/{}/o/{}?alt=media",
+            firebase_bucket, encoded_upload_path
+        );
+        Ok(public_url)
     } else {
         let err_text = response
             .text()
