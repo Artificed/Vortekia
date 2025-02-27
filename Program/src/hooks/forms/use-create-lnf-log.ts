@@ -1,10 +1,8 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import useAuth from "../auth/use-auth";
 import { useNavigate } from "react-router";
 import LnfLog from "@/lib/interfaces/entities/lnf-log";
 
 export function useCreateLnfLog() {
-  const auth = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -34,6 +32,14 @@ export function useCreateLnfLog() {
       ...formData,
       status: value,
     });
+  };
+
+  const handleFinderChange = (value: string) => {
+    setFormData({ ...formData, finder: value });
+  };
+
+  const handleOwnerChange = (value: string) => {
+    setFormData({ ...formData, owner: value });
   };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +102,8 @@ export function useCreateLnfLog() {
     imageFile,
     imagePreview,
     handleInputChange,
+    handleOwnerChange,
+    handleFinderChange,
     handleStatusChange,
     handleImageChange,
     handleSubmit,

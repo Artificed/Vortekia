@@ -11,8 +11,13 @@ import {
 } from "@/components/ui/select";
 import useCreateLnfLog from "@/hooks/forms/use-create-lnf-log";
 import LnfStaffNavbar from "@/components/navbars/lnf-staff-navbar";
+import { useGetCustomers } from "@/hooks/data/use-get-customers";
+import { useGetLnfStaffs } from "@/hooks/data/use-get-lnf-staffs";
 
 export default function LnfCreatelog() {
+  const { customers } = useGetCustomers();
+  const { lnfStaffs } = useGetLnfStaffs();
+
   const {
     formData,
     loading,
@@ -20,6 +25,8 @@ export default function LnfCreatelog() {
     handleInputChange,
     handleStatusChange,
     handleImageChange,
+    handleOwnerChange,
+    handleFinderChange,
     handleSubmit,
   } = useCreateLnfLog();
 
@@ -44,16 +51,18 @@ export default function LnfCreatelog() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Missing">Missing</SelectItem>
-                    {["Found", "Returned to Owner"].map((value) => (
-                      <SelectItem
-                        key={value}
-                        value={value}
-                        aria-disabled={true}
-                        className="opacity-50 cursor-not-allowed pointer-events-none"
-                      >
-                        {value}
-                      </SelectItem>
-                    ))}
+                    <SelectItem
+                      value="Found"
+                      className="opacity-50 cursor-not-allowed pointer-events-none"
+                    >
+                      Found
+                    </SelectItem>
+                    <SelectItem
+                      value="Returned To Owner"
+                      className="opacity-50 cursor-not-allowed pointer-events-none"
+                    >
+                      Returned To Owner
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -81,7 +90,7 @@ export default function LnfCreatelog() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="itemColor">Color</Label>
+                  <Label htmlFor="itemColor">Color *</Label>
                   <Input
                     id="itemColor"
                     name="itemColor"
@@ -94,6 +103,7 @@ export default function LnfCreatelog() {
                 <h3 className="font-medium text-lg">Found Item Details</h3>
 
                 <div className="space-y-2">
+                  <Label htmlFor="image">Item Image</Label>
                   <Input
                     id="image"
                     type="file"
@@ -124,15 +134,26 @@ export default function LnfCreatelog() {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="finder">Finder Information *</Label>
-                  <Input
-                    id="finder"
-                    name="finder"
-                    value={formData.finder}
-                    onChange={handleInputChange}
-                    placeholder="Name, contact info, or employee ID"
-                    required
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="finder">Finder *</Label>
+                    <Select
+                      value={formData.finder}
+                      onValueChange={handleFinderChange}
+                    >
+                      <SelectTrigger>
+                        {lnfStaffs?.find(
+                          (lnfStaff) => String(lnfStaff.id) === formData.finder,
+                        )?.username || "Select Finder"}
+                      </SelectTrigger>
+                      <SelectContent>
+                        {lnfStaffs?.map((staff) => (
+                          <SelectItem key={staff.id} value={String(staff.id)}>
+                            {String(staff.id) + " - " + String(staff.username)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
               <div className="space-y-4 border-t pt-4">
@@ -148,17 +169,30 @@ export default function LnfCreatelog() {
                     required
                   />
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="owner">Owner Information *</Label>
-                  <Input
-                    id="owner"
-                    name="owner"
+                  <Label htmlFor="owner">Owner *</Label>
+                  <Select
                     value={formData.owner}
-                    onChange={handleInputChange}
-                    placeholder="Name, contact info"
-                    required
-                  />
+                    onValueChange={handleOwnerChange}
+                  >
+                    <SelectTrigger>
+                      {customers?.find(
+                        (customer) => String(customer.id) === formData.owner,
+                      )?.username || "Select Owner"}
+                    </SelectTrigger>
+                    <SelectContent>
+                      {customers?.map((customer) => (
+                        <SelectItem
+                          key={customer.id}
+                          value={String(customer.id)}
+                        >
+                          {String(customer.id) +
+                            " - " +
+                            String(customer.username)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <Button

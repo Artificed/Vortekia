@@ -1,5 +1,6 @@
 use tauri::State;
 
+use crate::models::customer::Model as CustomerModel;
 use crate::{handlers::customer_handler, modules::app_state::AppState};
 
 #[tauri::command]
@@ -14,6 +15,11 @@ pub async fn register_customer(
 #[tauri::command]
 pub async fn login_customer(state: State<'_, AppState>, id: &str) -> Result<(), String> {
     customer_handler::login_customer(state, id).await
+}
+
+#[tauri::command]
+pub async fn get_all_customers(state: State<'_, AppState>) -> Result<Vec<CustomerModel>, String> {
+    customer_handler::get_all_customers(state).await
 }
 
 #[tauri::command]

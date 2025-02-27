@@ -3,6 +3,9 @@ use crate::{
     modules::{app_state::AppState, user_type::UserType},
     repositories::staff_repository,
 };
+
+use crate::models::staff::Model as StaffModel;
+
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use tauri::State;
 
@@ -46,4 +49,8 @@ pub async fn register_staff(
 ) -> Result<(), String> {
     let staff = staff_factory::create_staff(username, password, role);
     staff_repository::insert_staff(&state, staff).await
+}
+
+pub async fn get_lnf_staffs(state: State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
+    staff_repository::get_lnf_staff(&state).await
 }

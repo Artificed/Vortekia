@@ -74,3 +74,7 @@ pub async fn add_current_user_balance(
         None => Err(String::from("User is not logged in!")),
     }
 }
+
+pub async fn get_all_customers(state: State<'_, AppState>) -> Result<Vec<CustomerModel>, String> {
+    customer_repository::get_all_customers(&state).await
+}

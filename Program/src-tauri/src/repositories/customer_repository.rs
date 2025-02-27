@@ -48,6 +48,18 @@ pub async fn update_customer_balance(
     Ok(())
 }
 
+pub async fn get_all_customers(state: &State<'_, AppState>) -> Result<Vec<CustomerModel>, String> {
+    let result = Customers::find().all(&state.conn).await;
+
+    match result {
+        Ok(customers) => Ok(customers),
+        Err(err) => {
+            eprintln!("Error getting all customers: {:?}", err);
+            Err("Failed to get all customers".to_string())
+        }
+    }
+}
+
 pub async fn get_customer_from_id(
     state: &State<'_, AppState>,
     id: &str,
