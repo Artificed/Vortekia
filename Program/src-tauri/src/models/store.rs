@@ -4,33 +4,34 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
-#[sea_orm(table_name = "customer")]
+#[sea_orm(table_name = "store")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
-    pub username: String,
-    pub balance: i32,
+    pub name: String,
+    pub image: String,
+    pub description: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::lost_and_found_log::Entity")]
-    LostAndFoundLog,
-    #[sea_orm(has_many = "super::ride_queue::Entity")]
-    RideQueue,
+    #[sea_orm(has_many = "super::souvenir::Entity")]
+    Souvenir,
+    #[sea_orm(has_many = "super::store_deletion_proposal::Entity")]
+    StoreDeletionProposal,
     #[sea_orm(has_many = "super::store_transaction::Entity")]
     StoreTransaction,
 }
 
-impl Related<super::lost_and_found_log::Entity> for Entity {
+impl Related<super::souvenir::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::LostAndFoundLog.def()
+        Relation::Souvenir.def()
     }
 }
 
-impl Related<super::ride_queue::Entity> for Entity {
+impl Related<super::store_deletion_proposal::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::RideQueue.def()
+        Relation::StoreDeletionProposal.def()
     }
 }
 

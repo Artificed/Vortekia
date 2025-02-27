@@ -1,6 +1,8 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router";
 import LnfLog from "@/lib/interfaces/entities/lnf-log";
+import { ToastUtils } from "@/components/utils/toast-helper";
+import { invoke } from "@tauri-apps/api/core";
 
 export function useCreateLnfLog() {
   const navigate = useNavigate();
@@ -42,7 +44,7 @@ export function useCreateLnfLog() {
     setFormData({ ...formData, owner: value });
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImageFile(file);
@@ -50,28 +52,51 @@ export function useCreateLnfLog() {
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
 
+      try {
+        const uniqueFileName = `${Date.now()}-${file.name}`;
+
+        setFormData({
+          ...formData,
+          image: uniqueFileName,
+        });
+      } catch (error) {
+        ToastUtils.error({ description: String(error) });
+      }
+
       setFormData({
         ...formData,
-        image: "placeholder-image-url.jpg",
+        image: file.name,
       });
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (imageFile) {
+        const arrayBuffer = await imageFile.arrayBuffer();
+        const bytes = Array.from(new Uint8Array(arrayBuffer));
 
-      console.log("Form submitted:", formData);
+        await invoke("insert_lnf_log", {
+          image: formData.image,
+          name: formData.itemName,
+          type: formData.itemType,
+          color: formData.itemColor,
+          lastSeenLocation: formData.lastSeenLocation,
+          finder: formData.finder,
+          owner: formData.owner,
+          status: formData.status,
+          imageBytes: bytes,
+        });
+      }
 
       resetForm();
-
-      navigate("/lost-and-found/dashboard");
+      navigate("/lost-and-found-staff/dashboard");
     } catch (error) {
       console.error("Error creating lost and found log:", error);
+      ToastUtils.error({ description: String(error) });
     } finally {
       setLoading(false);
     }
