@@ -10,9 +10,17 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { useNavigate } from "react-router";
 
 export default function CustomerServiceNavbar() {
   const auth = useAuth();
+
+  const navigate = useNavigate();
+
+  const logout = () => {
+    auth?.logout();
+    navigate("/");
+  };
 
   return (
     <nav className="flex justify-between fixed w-screen items-center px-16 py-4 shadow-md bg-white">
@@ -58,7 +66,7 @@ export default function CustomerServiceNavbar() {
               </p>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={auth.logout}>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (

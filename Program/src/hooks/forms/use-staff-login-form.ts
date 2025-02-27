@@ -21,7 +21,7 @@ export default function useStaffLoginForm() {
 
           if (staffUser.role) {
             const path =
-              staffUser.role.toLowerCase().replace(" ", "-") + "/dashboard";
+              staffUser.role.toLowerCase().replace(/ /g, "-") + "/dashboard";
             navigate(path);
           } else {
             ToastUtils.error({
