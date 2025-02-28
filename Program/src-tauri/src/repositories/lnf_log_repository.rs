@@ -1,9 +1,12 @@
 use sea_orm::ActiveModelTrait;
 use sea_orm::ActiveValue;
+use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
+use sea_orm::QueryFilter;
 use tauri::State;
 
 use crate::models::lost_and_found_log::ActiveModel as LnfLogActiveModel;
+use crate::models::lost_and_found_log::Column as LnfColumn;
 use crate::models::lost_and_found_log::Entity as LnfLogs;
 use crate::models::lost_and_found_log::Model as LnfLogModel;
 
@@ -34,6 +37,16 @@ pub async fn get_lnf_logs(state: State<'_, AppState>) -> Result<Vec<LnfLogModel>
     }
 }
 
+pub async fn find_lnf_log_by_id(
+    state: &State<'_, AppState>,
+    id: &str,
+) -> Result<Option<LnfLogModel>, sea_orm::DbErr> {
+    LnfLogs::find()
+        .filter(LnfColumn::Id.contains(id))
+        .one(&state.conn)
+        .await
+}
+
 pub async fn update_lnf_log(
     state: State<'_, AppState>,
     id: &str,
@@ -42,7 +55,8 @@ pub async fn update_lnf_log(
     r#type: &str,
     color: &str,
     last_seen_location: &str,
-    finder: &str,
+    found_location: Option<String>,
+    finder: Option<String>,
     owner: &str,
     status: &str,
 ) -> Result<(), String> {
@@ -58,12 +72,19 @@ pub async fn update_lnf_log(
             updated_log.image = ActiveValue::Set(Some(updated_image.to_string()));
         }
 
+        if let Some(new_location) = found_location {
+            updated_log.found_location = ActiveValue::Set(Some(new_location.to_string()));
+        }
+
+        if let Some(new_finder) = finder {
+            updated_log.finder = ActiveValue::Set(Some(new_finder.to_string()));
+        }
+
         updated_log.name = ActiveValue::Set(name.to_string());
         updated_log.name = ActiveValue::Set(name.to_string());
         updated_log.r#type = ActiveValue::Set(r#type.to_string());
         updated_log.color = ActiveValue::Set(color.to_string());
         updated_log.last_seen_location = ActiveValue::Set(last_seen_location.to_string());
-        updated_log.finder = ActiveValue::Set(Some(finder.to_string()));
         updated_log.owner = ActiveValue::Set(owner.to_string());
         updated_log.status = ActiveValue::Set(status.to_string());
 

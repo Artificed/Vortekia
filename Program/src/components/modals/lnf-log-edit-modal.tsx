@@ -127,6 +127,16 @@ const LnfLogEditModal: React.FC<LnfLogEditModalProps> = ({
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="lastSeenLocation">Found Location</Label>
+          <Input
+            id="foundLocation"
+            name="foundLocation"
+            value={formData.foundLocation}
+            onChange={(e) => handleChange("foundLocation", e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
           <Select
             value={formData.status}

@@ -87,7 +87,9 @@ export default function LnfStaffDashboard() {
                     <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="Missing">Missing</SelectItem>
                     <SelectItem value="Found">Found</SelectItem>
-                    <SelectItem value="Claimed">Claimed</SelectItem>
+                    <SelectItem value="Returned To Owner">
+                      Returned To Owner
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>

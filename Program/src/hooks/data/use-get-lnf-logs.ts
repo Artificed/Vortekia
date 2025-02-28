@@ -14,7 +14,6 @@ export function useGetLnfLogs() {
     queryFn: async () => {
       try {
         const result = await invoke<LnfLog[]>("get_lnf_logs");
-        console.log(result);
         return result;
       } catch (error) {
         ToastUtils.error({

@@ -19,6 +19,7 @@ export function useEditLnfLog(onSuccess?: () => void) {
     type: "",
     color: "",
     lastSeenLocation: "",
+    foundLocation: "",
     finder: "",
     owner: "",
     status: "",
@@ -76,6 +77,7 @@ export function useEditLnfLog(onSuccess?: () => void) {
     setLoading(true);
 
     try {
+      console.log(formData);
       if (imageFile) {
         const arrayBuffer = await imageFile.arrayBuffer();
         const bytes = Array.from(new Uint8Array(arrayBuffer));
@@ -87,6 +89,7 @@ export function useEditLnfLog(onSuccess?: () => void) {
           type: formData.type,
           color: formData.color,
           lastSeenLocation: formData.lastSeenLocation,
+          foundLocation: formData.foundLocation,
           finder: formData.finder,
           owner: formData.owner,
           status: formData.status,
@@ -96,9 +99,11 @@ export function useEditLnfLog(onSuccess?: () => void) {
         await invoke("update_lnf_log", {
           id: formData.id,
           name: formData.name,
+          image: null,
           type: formData.type,
           color: formData.color,
           lastSeenLocation: formData.lastSeenLocation,
+          foundLocation: formData.foundLocation,
           finder: formData.finder,
           owner: formData.owner,
           status: formData.status,
@@ -139,6 +144,7 @@ export function useEditLnfLog(onSuccess?: () => void) {
       type: "",
       color: "",
       lastSeenLocation: "",
+      foundLocation: "",
       finder: "",
       owner: "",
       status: "",

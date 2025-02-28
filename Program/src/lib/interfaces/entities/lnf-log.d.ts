@@ -5,6 +5,7 @@ interface LnfLog {
   type: string;
   color: string;
   lastSeenLocation: string;
+  foundLocation: string;
   finder: string;
   owner: string;
   status: string;
