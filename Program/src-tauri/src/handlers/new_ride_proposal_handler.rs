@@ -5,6 +5,8 @@ use crate::{
     repositories::new_ride_proposal_repository,
 };
 
+use crate::models::new_ride_proposal::Model as NewRideProposalModel;
+
 use super::file_handler;
 
 pub async fn insert_new_ride_proposal(
@@ -24,4 +26,10 @@ pub async fn insert_new_ride_proposal(
         }
         Err(err) => Err(format!("Failed to upload image: {}", err)),
     }
+}
+
+pub async fn get_all_new_ride_proposals(
+    state: State<'_, AppState>,
+) -> Result<Vec<NewRideProposalModel>, String> {
+    new_ride_proposal_repository::get_all_new_ride_proposals(state).await
 }

@@ -1,10 +1,10 @@
-interface RideProposal {
+interface NewRideProposal {
   id: string;
   rideName: string;
   costReview: string;
-  rideImage: string;
+  image: string;
   approved: boolean;
   done: boolean;
 }
 
-export default RideProposal;
+export default NewRideProposal;

@@ -1,5 +1,6 @@
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
 import CooDashboard from "@/pages/staff/coo/coo-dashboard";
+import CooViewProposal from "@/pages/staff/coo/coo-view-proposals";
 import CsChat from "@/pages/staff/customer-service/cs-chat";
 import CsCreateCustomer from "@/pages/staff/customer-service/cs-create-customer";
 import CsDashboard from "@/pages/staff/customer-service/cs-dashboard";
@@ -25,6 +26,7 @@ export default function StaffUI() {
       {/* COO Routes */}
       <Route path="coo/dashboard" element={<CooDashboard />} />
       <Route path="coo/create-staff-account" element={<CooCreateStaff />} />
+      <Route path="coo/view-ride-proposals" element={<CooViewProposal />} />
 
       {/* Lost And Found Staff Routes */}
       <Route

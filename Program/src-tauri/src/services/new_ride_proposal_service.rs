@@ -1,5 +1,6 @@
 use tauri::State;
 
+use crate::models::new_ride_proposal::Model as NewRideProposalModel;
 use crate::{handlers::new_ride_proposal_handler, modules::app_state::AppState};
 
 #[tauri::command]
@@ -18,4 +19,11 @@ pub async fn insert_new_ride_proposal(
         image_bytes,
     )
     .await
+}
+
+#[tauri::command]
+pub async fn get_new_ride_proposals(
+    state: State<'_, AppState>,
+) -> Result<Vec<NewRideProposalModel>, String> {
+    new_ride_proposal_handler::get_all_new_ride_proposals(state).await
 }
