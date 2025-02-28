@@ -3,8 +3,8 @@ interface NewRideProposal {
   rideName: string;
   costReview: string;
   image: string;
-  approved: boolean;
-  done: boolean;
+  approved: number;
+  done: number;
 }
 
 export default NewRideProposal;

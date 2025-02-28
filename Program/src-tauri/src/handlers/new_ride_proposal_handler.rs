@@ -33,3 +33,11 @@ pub async fn get_all_new_ride_proposals(
 ) -> Result<Vec<NewRideProposalModel>, String> {
     new_ride_proposal_repository::get_all_new_ride_proposals(state).await
 }
+
+pub async fn update_new_ride_proposal_approval(
+    state: State<'_, AppState>,
+    id: String,
+    approve: i8,
+) -> Result<(), String> {
+    new_ride_proposal_repository::update_new_ride_proposal_approval(state, id, approve).await
+}

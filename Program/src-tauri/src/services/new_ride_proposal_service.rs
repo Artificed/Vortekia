@@ -27,3 +27,12 @@ pub async fn get_new_ride_proposals(
 ) -> Result<Vec<NewRideProposalModel>, String> {
     new_ride_proposal_handler::get_all_new_ride_proposals(state).await
 }
+
+#[tauri::command]
+pub async fn update_new_ride_proposal_approval(
+    state: State<'_, AppState>,
+    id: String,
+    approve: i8,
+) -> Result<(), String> {
+    new_ride_proposal_handler::update_new_ride_proposal_approval(state, id, approve).await
+}

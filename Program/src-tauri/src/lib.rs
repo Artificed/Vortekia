@@ -79,6 +79,7 @@ pub async fn run() {
             lnf_log_service::update_lnf_log,
             new_ride_proposal_service::insert_new_ride_proposal,
             new_ride_proposal_service::get_new_ride_proposals,
+            new_ride_proposal_service::update_new_ride_proposal_approval
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
