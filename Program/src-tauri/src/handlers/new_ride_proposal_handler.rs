@@ -7,7 +7,7 @@ use crate::{
 
 use crate::models::new_ride_proposal::Model as NewRideProposalModel;
 
-use super::file_handler;
+use super::{file_handler, ride_handler};
 
 pub async fn insert_new_ride_proposal(
     state: State<'_, AppState>,
@@ -39,5 +39,19 @@ pub async fn update_new_ride_proposal_approval(
     id: String,
     approve: i8,
 ) -> Result<(), String> {
-    new_ride_proposal_repository::update_new_ride_proposal_approval(state, id, approve).await
+    new_ride_proposal_repository::update_new_ride_proposal_approval(&state, &id, approve)
+        .await
+        .unwrap();
+
+    if approve == 1 {
+        let proposal = new_ride_proposal_repository::get_ride_proposal(&state, &id).await?;
+
+        let image = proposal.image.clone();
+        let name = proposal.ride_name.clone();
+        let price = 1000;
+
+        ride_handler::insert_ride(&state, &image, &name, price).await?;
+    }
+
+    Ok(())
 }

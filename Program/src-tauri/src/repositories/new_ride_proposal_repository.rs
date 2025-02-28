@@ -1,11 +1,13 @@
 use sea_orm::ActiveModelTrait;
-use sea_orm::EntityTrait;
 use tauri::State;
 
 use super::customer_repository::AppState;
 use crate::models::new_ride_proposal::ActiveModel as NewRideProposalActiveModel;
+use crate::models::new_ride_proposal::Column as NewRideProposalColumn;
 use crate::models::new_ride_proposal::Entity as NewRideProposals;
 use crate::models::new_ride_proposal::Model as NewRideProposalModel;
+use sea_orm::ActiveValue::Set;
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 
 pub async fn insert_new_ride_proposal(
     state: State<'_, AppState>,
@@ -38,17 +40,29 @@ pub async fn get_all_new_ride_proposals(
     }
 }
 
+pub async fn get_ride_proposal(state: &AppState, id: &str) -> Result<NewRideProposalModel, String> {
+    let result = NewRideProposals::find()
+        .filter(NewRideProposalColumn::Id.eq(id.to_owned()))
+        .one(&state.conn)
+        .await;
+
+    match result {
+        Ok(Some(proposal)) => Ok(proposal),
+        Ok(None) => Err(format!("Ride proposal with ID {} not found", id)),
+        Err(err) => {
+            eprintln!("Failed to get ride proposal: {:?}", err);
+            Err(format!("Failed to get ride proposal: {:?}", err))
+        }
+    }
+}
+
 pub async fn update_new_ride_proposal_approval(
-    state: State<'_, AppState>,
-    id: String,
+    state: &State<'_, AppState>,
+    id: &str,
     approve: i8,
 ) -> Result<(), String> {
-    use crate::models::new_ride_proposal::Column;
-    use sea_orm::ActiveValue::Set;
-    use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
-
     let proposal = NewRideProposals::find()
-        .filter(Column::Id.eq(id.clone()))
+        .filter(NewRideProposalColumn::Id.eq(id))
         .one(&state.conn)
         .await;
 
