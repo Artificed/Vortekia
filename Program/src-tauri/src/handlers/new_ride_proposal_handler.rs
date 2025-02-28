@@ -1,3 +1,4 @@
+use rand::Rng;
 use tauri::State;
 
 use crate::{
@@ -48,7 +49,7 @@ pub async fn update_new_ride_proposal_approval(
 
         let image = proposal.image.clone();
         let name = proposal.ride_name.clone();
-        let price = 1000;
+        let price = rand::thread_rng().gen_range(1000..=1500);
 
         ride_handler::insert_ride(&state, &image, &name, price).await?;
     }

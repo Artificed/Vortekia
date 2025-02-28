@@ -13,7 +13,6 @@ mod m20250226_040740_create_restaurant_staff;
 mod m20250226_042701_create_store;
 mod m20250226_043305_create_souvenir;
 mod m20250226_044541_create_store_staff;
-mod m20250226_045419_create_new_ride_proposal;
 mod m20250226_045711_create_new_ride_proposal;
 mod m20250226_050440_create_ride_deletion_proposal;
 mod m20250226_060904_create_new_restaurant_proposal;
@@ -37,7 +36,6 @@ impl MigratorTrait for Migrator {
             Box::new(m20250226_042701_create_store::Migration),
             Box::new(m20250226_043305_create_souvenir::Migration),
             Box::new(m20250226_044541_create_store_staff::Migration),
-            Box::new(m20250226_045419_create_new_ride_proposal::Migration),
             Box::new(m20250226_045711_create_new_ride_proposal::Migration),
             Box::new(m20250226_050440_create_ride_deletion_proposal::Migration),
             Box::new(m20250226_060904_create_new_restaurant_proposal::Migration),

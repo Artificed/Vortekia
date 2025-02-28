@@ -24,17 +24,20 @@ pub async fn get_staff_from_username(
     }
 }
 
-pub async fn get_lnf_staff(state: &State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
+pub async fn get_staff_by_role(
+    state: &State<'_, AppState>,
+    role: &str,
+) -> Result<Vec<StaffModel>, String> {
     let result = Staffs::find()
-        .filter(StaffColumn::Role.contains("Lost and Found Staff"))
+        .filter(StaffColumn::Role.contains(role))
         .all(&state.conn)
         .await;
 
     match result {
         Ok(staffs) => Ok(staffs),
         Err(err) => {
-            eprintln!("Error getting lost and found staffs: {:?}", err);
-            Err("Failed to get all lost and found staffs".to_string())
+            eprintln!("Error getting {} staffs: {:?}", role, err);
+            Err(format!("Failed to get {} staffs", role))
         }
     }
 }

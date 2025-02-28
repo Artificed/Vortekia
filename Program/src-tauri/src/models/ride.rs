@@ -5,12 +5,15 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "ride")]
+#[serde(rename_all = "camelCase")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
     pub name: String,
     pub image: String,
     pub price: i32,
+    pub status: String,
+    pub assigned_staff: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -21,6 +24,14 @@ pub enum Relation {
     RideQueue,
     #[sea_orm(has_many = "super::ride_staff::Entity")]
     RideStaff,
+    #[sea_orm(
+        belongs_to = "super::staff::Entity",
+        from = "Column::AssignedStaff",
+        to = "super::staff::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Staff,
 }
 
 impl Related<super::ride_deletion_proposal::Entity> for Entity {
@@ -38,6 +49,12 @@ impl Related<super::ride_queue::Entity> for Entity {
 impl Related<super::ride_staff::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::RideStaff.def()
+    }
+}
+
+impl Related<super::staff::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Staff.def()
     }
 }
 
