@@ -19,12 +19,13 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .primary_key(),
                     )
-                    .col(string(LostAndFoundLog::Image).not_null())
+                    .col(string(LostAndFoundLog::Image).null())
                     .col(string(LostAndFoundLog::Name).not_null())
                     .col(string(LostAndFoundLog::Type).not_null())
                     .col(string(LostAndFoundLog::Color).not_null())
                     .col(string(LostAndFoundLog::LastSeenLocation).not_null())
-                    .col(string(LostAndFoundLog::Finder).not_null())
+                    .col(string(LostAndFoundLog::FoundLocation).null())
+                    .col(string(LostAndFoundLog::Finder).null())
                     .col(string(LostAndFoundLog::Owner).not_null())
                     .col(string(LostAndFoundLog::Status).not_null())
                     .foreign_key(
@@ -62,6 +63,7 @@ enum LostAndFoundLog {
     Type,
     Color,
     LastSeenLocation,
+    FoundLocation,
     Finder,
     Owner,
     Status,

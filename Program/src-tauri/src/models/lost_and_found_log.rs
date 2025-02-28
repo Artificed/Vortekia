@@ -5,16 +5,16 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "lost_and_found_log")]
-#[serde(rename_all = "camelCase")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
-    pub image: String,
+    pub image: Option<String>,
     pub name: String,
     pub r#type: String,
     pub color: String,
     pub last_seen_location: String,
-    pub finder: String,
+    pub found_location: Option<String>,
+    pub finder: Option<String>,
     pub owner: String,
     pub status: String,
 }

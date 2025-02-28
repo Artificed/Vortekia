@@ -12,23 +12,20 @@ import {
 import useCreateLnfLog from "@/hooks/forms/use-create-lnf-log";
 import LnfStaffNavbar from "@/components/navbars/lnf-staff-navbar";
 import { useGetCustomers } from "@/hooks/data/use-get-customers";
-import { useGetLnfStaffs } from "@/hooks/data/use-get-lnf-staffs";
 
 export default function LnfCreatelog() {
   const { customers } = useGetCustomers();
-  const { lnfStaffs } = useGetLnfStaffs();
 
   const {
     formData,
     loading,
-    imagePreview,
     handleInputChange,
     handleStatusChange,
-    handleImageChange,
     handleOwnerChange,
-    handleFinderChange,
     handleSubmit,
   } = useCreateLnfLog();
+
+  const isMissing = formData.status === "Missing";
 
   return (
     <>
@@ -77,7 +74,6 @@ export default function LnfCreatelog() {
                     required
                   />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="type">Item Type *</Label>
                   <Input
@@ -88,7 +84,6 @@ export default function LnfCreatelog() {
                     required
                   />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="color">Color *</Label>
                   <Input
@@ -99,102 +94,48 @@ export default function LnfCreatelog() {
                   />
                 </div>
               </div>
-              <div className="space-y-4 border-t pt-4">
-                <h3 className="font-medium text-lg">Found Item Details</h3>
 
-                <div className="space-y-2">
-                  <Label htmlFor="image">Item Image</Label>
-                  <Input
-                    id="image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    required
-                  />
-                </div>
-
-                {imagePreview && (
-                  <div className="w-full max-w-3xl mx-auto mb-6">
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="aspect-video w-full relative bg-gray-200 rounded-md overflow-hidden">
-                          <img
-                            src={imagePreview}
-                            alt="Item preview"
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <p className="text-sm text-gray-500 mt-2 text-center">
-                          Image Preview:{" "}
-                          {formData.name || "Lost and Found Item"}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                <div className="space-y-2">
+              {isMissing && (
+                <div className="space-y-4 border-t pt-4">
+                  <h3 className="font-medium text-lg">Missing Item Details</h3>
                   <div className="space-y-2">
-                    <Label htmlFor="finder">Finder *</Label>
+                    <Label htmlFor="lastSeenLocation">
+                      Last Seen Location *
+                    </Label>
+                    <Input
+                      id="lastSeenLocation"
+                      name="lastSeenLocation"
+                      value={formData.lastSeenLocation}
+                      onChange={handleInputChange}
+                      required={isMissing}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="owner">Owner *</Label>
                     <Select
-                      value={formData.finder}
-                      onValueChange={handleFinderChange}
+                      value={formData.owner}
+                      onValueChange={handleOwnerChange}
                     >
                       <SelectTrigger>
-                        {lnfStaffs?.find(
-                          (lnfStaff) => String(lnfStaff.id) === formData.finder,
-                        )?.username || "Select Finder"}
+                        {customers?.find(
+                          (customer) => String(customer.id) === formData.owner,
+                        )?.username || "Select Owner"}
                       </SelectTrigger>
                       <SelectContent>
-                        {lnfStaffs?.map((staff) => (
-                          <SelectItem key={staff.id} value={String(staff.id)}>
-                            {String(staff.username)}
+                        {customers?.map((customer) => (
+                          <SelectItem
+                            key={customer.id}
+                            value={String(customer.id)}
+                          >
+                            {String(customer.id)} - {String(customer.username)}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-              </div>
-              <div className="space-y-4 border-t pt-4">
-                <h3 className="font-medium text-lg">Missing Item Details</h3>
+              )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="lastSeenLocation">Last Seen Location *</Label>
-                  <Input
-                    id="lastSeenLocation"
-                    name="lastSeenLocation"
-                    value={formData.lastSeenLocation}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="owner">Owner *</Label>
-                  <Select
-                    value={formData.owner}
-                    onValueChange={handleOwnerChange}
-                  >
-                    <SelectTrigger>
-                      {customers?.find(
-                        (customer) => String(customer.id) === formData.owner,
-                      )?.username || "Select Owner"}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {customers?.map((customer) => (
-                        <SelectItem
-                          key={customer.id}
-                          value={String(customer.id)}
-                        >
-                          {String(customer.id) +
-                            " - " +
-                            String(customer.username)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
               <Button
                 type="submit"
                 className="w-full"
