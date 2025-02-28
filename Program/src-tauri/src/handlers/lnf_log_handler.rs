@@ -9,15 +9,67 @@ use super::file_handler;
 
 pub async fn insert_lnf_log(
     state: State<'_, AppState>,
+    image: Option<String>,
     name: &str,
     r#type: &str,
     color: &str,
     last_seen_location: &str,
+    found_location: Option<String>,
+    finder: Option<String>,
     owner: &str,
     status: &str,
+    image_bytes: Option<Vec<u8>>,
 ) -> Result<(), String> {
-    let log =
-        lnf_log_factory::create_lnf_log(name, r#type, color, last_seen_location, owner, status);
+    if status == "Found" || status == "Returned To Owner" {
+        if finder.is_none() {
+            return Err(
+                "Finder must be specified for Found or Returned To Owner status.".to_string(),
+            );
+        }
+        if found_location.as_ref().map_or(true, |loc| loc.is_empty()) {
+            return Err(
+                "Found location must be specified for Found or Returned To Owner status."
+                    .to_string(),
+            );
+        }
+    }
+
+    let image_url: Option<String>;
+    match (image.as_ref(), image_bytes.as_ref()) {
+        (Some(img_name), Some(bytes)) => {
+            match file_handler::upload_image_to_firebase(img_name, bytes).await {
+                Ok(url) => image_url = Some(url),
+                Err(err) => {
+                    eprintln!("Error saving image: {}", err);
+                    return Err(format!("Failed to save image: {}", err));
+                }
+            }
+        }
+        (None, None) => {
+            if status == "Found" || status == "Returned To Owner" {
+                return Err("An image is required for a Found log.".to_string());
+            }
+            image_url = None;
+        }
+        _ => {
+            return Err(
+                "Both image name and image bytes must be provided when uploading an image."
+                    .to_string(),
+            );
+        }
+    }
+
+    let log = lnf_log_factory::create_lnf_log(
+        image_url,
+        name,
+        r#type,
+        color,
+        last_seen_location,
+        found_location,
+        finder,
+        owner,
+        status,
+    );
 
     lnf_log_repository::insert_lnf_log(state, log).await
 }
@@ -63,7 +115,7 @@ pub async fn update_lnf_log(
         }
     }
 
-    let mut image_url: Option<String> = None;
+    let image_url: Option<String>;
     match (image.as_ref(), image_bytes.as_ref()) {
         (Some(img_name), Some(bytes)) => {
             match file_handler::upload_image_to_firebase(img_name, bytes).await {

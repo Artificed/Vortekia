@@ -6,21 +6,29 @@ use crate::{handlers::lnf_log_handler, modules::app_state::AppState};
 #[tauri::command]
 pub async fn insert_lnf_log(
     state: State<'_, AppState>,
+    image: Option<String>,
     name: &str,
     r#type: &str,
     color: &str,
     last_seen_location: &str,
+    found_location: Option<String>,
+    finder: Option<String>,
     owner: &str,
     status: &str,
+    image_bytes: Option<Vec<u8>>,
 ) -> Result<(), String> {
     lnf_log_handler::insert_lnf_log(
         state,
+        image,
         name,
         r#type,
         color,
         last_seen_location,
+        found_location,
+        finder,
         owner,
         status,
+        image_bytes,
     )
     .await
 }

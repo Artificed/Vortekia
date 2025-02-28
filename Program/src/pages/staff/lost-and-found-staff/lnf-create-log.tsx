@@ -12,20 +12,23 @@ import {
 import useCreateLnfLog from "@/hooks/forms/use-create-lnf-log";
 import LnfStaffNavbar from "@/components/navbars/lnf-staff-navbar";
 import { useGetCustomers } from "@/hooks/data/use-get-customers";
+import { useGetLnfStaffs } from "@/hooks/data/use-get-lnf-staffs";
 
 export default function LnfCreatelog() {
   const { customers } = useGetCustomers();
+  const { lnfStaffs } = useGetLnfStaffs();
 
   const {
     formData,
     loading,
+    imagePreview,
     handleInputChange,
     handleStatusChange,
+    handleImageChange,
     handleOwnerChange,
+    handleFinderChange,
     handleSubmit,
   } = useCreateLnfLog();
-
-  const isMissing = formData.status === "Missing";
 
   return (
     <>
@@ -48,12 +51,7 @@ export default function LnfCreatelog() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Missing">Missing</SelectItem>
-                    <SelectItem
-                      value="Found"
-                      className="opacity-50 cursor-not-allowed pointer-events-none"
-                    >
-                      Found
-                    </SelectItem>
+                    <SelectItem value="Found">Found</SelectItem>
                     <SelectItem
                       value="Returned To Owner"
                       className="opacity-50 cursor-not-allowed pointer-events-none"
@@ -63,6 +61,7 @@ export default function LnfCreatelog() {
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Item Name *</Label>
@@ -95,43 +94,104 @@ export default function LnfCreatelog() {
                 </div>
               </div>
 
-              {isMissing && (
+              <div className="space-y-4 border-t pt-4">
+                <h3 className="font-medium text-lg">Missing Item Details</h3>
+                <div className="space-y-2">
+                  <Label htmlFor="lastSeenLocation">Last Seen Location *</Label>
+                  <Input
+                    id="lastSeenLocation"
+                    name="lastSeenLocation"
+                    value={formData.lastSeenLocation}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="owner">Owner *</Label>
+                  <Select
+                    value={formData.owner}
+                    onValueChange={handleOwnerChange}
+                  >
+                    <SelectTrigger id="owner">
+                      <SelectValue placeholder="Select Owner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {customers?.map((customer) => (
+                        <SelectItem
+                          key={customer.id}
+                          value={String(customer.id)}
+                        >
+                          {customer.id} - {customer.username}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {(formData.status === "Found" ||
+                formData.status === "Returned To Owner") && (
                 <div className="space-y-4 border-t pt-4">
-                  <h3 className="font-medium text-lg">Missing Item Details</h3>
+                  <h3 className="font-medium text-lg">Found Item Details</h3>
                   <div className="space-y-2">
-                    <Label htmlFor="lastSeenLocation">
-                      Last Seen Location *
-                    </Label>
+                    <Label htmlFor="image">Item Image *</Label>
                     <Input
-                      id="lastSeenLocation"
-                      name="lastSeenLocation"
-                      value={formData.lastSeenLocation}
-                      onChange={handleInputChange}
-                      required={isMissing}
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="owner">Owner *</Label>
-                    <Select
-                      value={formData.owner}
-                      onValueChange={handleOwnerChange}
-                    >
-                      <SelectTrigger>
-                        {customers?.find(
-                          (customer) => String(customer.id) === formData.owner,
-                        )?.username || "Select Owner"}
-                      </SelectTrigger>
-                      <SelectContent>
-                        {customers?.map((customer) => (
-                          <SelectItem
-                            key={customer.id}
-                            value={String(customer.id)}
-                          >
-                            {String(customer.id)} - {String(customer.username)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  {imagePreview && (
+                    <div className="w-full max-w-3xl mx-auto mb-6">
+                      <Card>
+                        <CardContent className="p-4">
+                          <div className="aspect-video w-full relative bg-gray-200 rounded-md overflow-hidden">
+                            <img
+                              src={imagePreview}
+                              alt="Item preview"
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <p className="text-sm text-gray-500 mt-2 text-center">
+                            Image Preview:{" "}
+                            {formData.name || "Lost and Found Item"}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
+                  <div className="gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="finder">Finder *</Label>
+                      <Select
+                        value={formData.finder}
+                        onValueChange={handleFinderChange}
+                      >
+                        <SelectTrigger id="finder">
+                          <SelectValue placeholder="Select Finder" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {lnfStaffs?.map((staff) => (
+                            <SelectItem key={staff.id} value={String(staff.id)}>
+                              {staff.username}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="foundLocation">Found Location *</Label>
+                      <Input
+                        id="foundLocation"
+                        name="foundLocation"
+                        value={formData.foundLocation}
+                        onChange={handleInputChange}
+                      />
+                    </div>
                   </div>
                 </div>
               )}
