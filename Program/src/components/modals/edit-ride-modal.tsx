@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,65 +15,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Ride from "@/lib/interfaces/entities/ride";
-import { ToastUtils } from "../utils/toast-helper";
-import { invoke } from "@tauri-apps/api/core";
 import { useGetRideStaffs } from "@/hooks/data/use-get-ride-staffs";
-import { useQueryClient } from "@tanstack/react-query";
+import Ride from "@/lib/interfaces/entities/ride";
+import { useEditRideForm } from "@/hooks/forms/use-edit-ride-form";
 
 interface EditRideFormProps {
   ride: Ride;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function EditRideForm({ ride, onClose }: EditRideFormProps) {
+export default function EditRideForm({
+  ride,
+  onClose,
+  onSuccess,
+}: EditRideFormProps) {
   const { rideStaffs } = useGetRideStaffs();
-  const queryClient = useQueryClient();
-
-  const [formData, setFormData] = useState<Ride>({
-    ...ride,
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "price" ? parseInt(value) : value,
-    }));
-  };
-
-  const handleStatusChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      status: value,
-    }));
-  };
-
-  const handleStaffChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      assignedStaff: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      await invoke("update_ride", {
-        id: formData.id,
-        price: formData.price,
-        status: formData.status,
-        assignedStaff: formData.assignedStaff,
-      });
-      ToastUtils.success({ description: "Ride updated successfully" });
-      queryClient.invalidateQueries({ queryKey: ["rideStaffs"] });
-    } catch (error) {
-      ToastUtils.error({ description: String(error) });
-    }
-
-    onClose();
-  };
+  const {
+    formData,
+    handleChange,
+    handleStatusChange,
+    handleStaffChange,
+    handleSubmit,
+  } = useEditRideForm({ ride, onClose, onSuccess });
 
   return (
     <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -153,9 +116,9 @@ export default function EditRideForm({ ride, onClose }: EditRideFormProps) {
                       </SelectItem>
                     ))}
                     {(!rideStaffs || rideStaffs.length === 0) && (
-                      <SelectItem value="" disabled>
+                      <div className="px-2 py-1 text-sm text-muted-foreground">
                         No staff members available
-                      </SelectItem>
+                      </div>
                     )}
                   </SelectContent>
                 </Select>
@@ -164,7 +127,6 @@ export default function EditRideForm({ ride, onClose }: EditRideFormProps) {
 
             <div className="space-y-2">
               <Label>Ride Image</Label>
-
               {formData.image && (
                 <div className="mt-4 aspect-video w-full overflow-hidden rounded-md">
                   <img

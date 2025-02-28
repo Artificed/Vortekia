@@ -14,10 +14,12 @@ pub async fn get_all_rides(state: State<'_, AppState>) -> Result<Vec<RideModel>,
 #[tauri::command]
 pub async fn update_ride(
     state: State<'_, AppState>,
+    image: &str,
+    name: &str,
     id: &str,
     price: i32,
     status: &str,
     assigned_staff: &str,
 ) -> Result<(), String> {
-    ride_handler::update_ride(&state, id, price, status, assigned_staff).await
+    ride_handler::update_ride(&state, id, image, name, price, status, assigned_staff).await
 }

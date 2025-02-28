@@ -21,11 +21,13 @@ pub async fn get_all_rides(state: &State<'_, AppState>) -> Result<Vec<RideModel>
 pub async fn update_ride(
     state: &State<'_, AppState>,
     id: &str,
+    image: &str,
+    name: &str,
     price: i32,
     status: &str,
     assigned_staff: &str,
 ) -> Result<(), String> {
-    let mut updated_ride = ride_factory::create_ride("", "", price, status);
+    let mut updated_ride = ride_factory::create_ride(image, name, price, status);
     updated_ride.assigned_staff = ActiveValue::Set(Some(assigned_staff.to_string()));
 
     ride_repository::update_ride(state, id, updated_ride).await

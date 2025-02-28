@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,18 +27,18 @@ export default function RideManagerDashboard() {
     ) || [];
 
   const handleEditRide = (ride: Ride) => {
-    console.log(rides);
     setSelectedRide(ride);
     setIsEditFormOpen(true);
   };
 
-  const handleCloseEditForm = () => {
-    setIsEditFormOpen(false);
-  };
-
-  const handleCloseDetailsModal = () => {
+  const handleCloseAll = useCallback(() => {
     setSelectedRide(null);
-  };
+    setIsEditFormOpen(false);
+  }, []);
+
+  const handleSuccessfulSubmit = useCallback(() => {
+    handleCloseAll();
+  }, [handleCloseAll]);
 
   return (
     <>
@@ -120,12 +120,17 @@ export default function RideManagerDashboard() {
         {selectedRide && !isEditFormOpen && (
           <RideDetailsModal
             ride={selectedRide}
-            onClose={handleCloseDetailsModal}
+            onClose={handleCloseAll}
             onEdit={() => setIsEditFormOpen(true)}
           />
         )}
+
         {selectedRide && isEditFormOpen && (
-          <EditRideForm ride={selectedRide} onClose={handleCloseEditForm} />
+          <EditRideForm
+            ride={selectedRide}
+            onClose={handleCloseAll}
+            onSuccess={handleSuccessfulSubmit}
+          />
         )}
       </div>
     </>
