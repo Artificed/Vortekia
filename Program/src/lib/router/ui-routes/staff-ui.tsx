@@ -5,6 +5,7 @@ import CsCreateCustomer from "@/pages/staff/customer-service/cs-create-customer"
 import CsDashboard from "@/pages/staff/customer-service/cs-dashboard";
 import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
+import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashboard";
 import StaffLogin from "@/pages/staff/staff-login";
 import { Route, Routes } from "react-router";
 
@@ -31,6 +32,13 @@ export default function StaffUI() {
         element={<LnfStaffDashboard />}
       />
       <Route path="lost-and-found-staff/add-log" element={<LnfCreatelog />} />
+
+      {/* Ride Manager Routes */}
+      <Route path="ride-manager/dashboard" element={<RideManagerDashboard />} />
+      <Route
+        path="ride-manager/propose-ride"
+        // element={<RideManagerDashboard />}
+      />
     </Routes>
   );
 }

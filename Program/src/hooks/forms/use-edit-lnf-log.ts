@@ -77,7 +77,6 @@ export function useEditLnfLog(onSuccess?: () => void) {
     setLoading(true);
 
     try {
-      console.log(formData);
       if (imageFile) {
         const arrayBuffer = await imageFile.arrayBuffer();
         const bytes = Array.from(new Uint8Array(arrayBuffer));
