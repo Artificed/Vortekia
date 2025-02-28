@@ -76,6 +76,7 @@ pub async fn run() {
             auth_service::get_current_user,
             lnf_log_service::get_lnf_logs,
             lnf_log_service::insert_lnf_log,
+            lnf_log_service::update_lnf_log,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

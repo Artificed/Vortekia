@@ -23,20 +23,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import LnfLog from "@/lib/interfaces/entities/lnf-log";
 import { useFilterLnfLogs } from "@/hooks/data/use-filter-lnf-logs";
 import { useGetLnfLogs } from "@/hooks/data/use-get-lnf-logs";
 import { useGetLnfBadge } from "@/hooks/utility/use-get-lnf-badge";
-import { useState } from "react";
+import { useSelectedLnfItem } from "@/hooks/utility/use-selected-lnf-item";
+import ItemDetailsContent from "@/components/partials/lost-and-found-staff/item-details-content";
+import ItemActions from "@/components/partials/lost-and-found-staff/item-actions";
+import LnfLoadingState from "@/components/partials/lost-and-found-staff/lnf-loading-state";
+import LnfErrorState from "@/components/partials/lost-and-found-staff/lnf-error-state";
+import LnfLogEditModal from "@/components/modals/lnf-log-edit-modal";
 
 export default function LnfStaffDashboard() {
   const { lnfLogs, isLoading, isError } = useGetLnfLogs();
@@ -48,37 +50,11 @@ export default function LnfStaffDashboard() {
     setStatusFilter,
   } = useFilterLnfLogs(lnfLogs);
   const { getBadgeColor } = useGetLnfBadge();
-  const [selectedItem, setSelectedItem] = useState<LnfLog | null>(null);
+  const { selectedItem, isEditMode, handleView, handleEdit, resetSelection } =
+    useSelectedLnfItem();
 
-  if (isLoading) {
-    return (
-      <>
-        <LnfStaffNavbar />
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-          <Card className="w-full max-w-6xl">
-            <CardContent className="p-8 text-center">
-              Loading lost and found logs...
-            </CardContent>
-          </Card>
-        </div>
-      </>
-    );
-  }
-
-  if (isError) {
-    return (
-      <>
-        <LnfStaffNavbar />
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-          <Card className="w-full max-w-6xl">
-            <CardContent className="p-8 text-center text-red-600">
-              Error loading lost and found logs. Please try again later.
-            </CardContent>
-          </Card>
-        </div>
-      </>
-    );
-  }
+  if (isLoading) return <LnfLoadingState />;
+  if (isError) return <LnfErrorState />;
 
   return (
     <>
@@ -125,12 +101,12 @@ export default function LnfStaffDashboard() {
                   <TableHead>Color</TableHead>
                   <TableHead>Last Seen</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                  <TableHead className="text-center w-44">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredLogs.length > 0 ? (
-                  filteredLogs.map((log: LnfLog) => (
+                  filteredLogs.map((log) => (
                     <TableRow key={log.id}>
                       <TableCell className="font-medium">{log.name}</TableCell>
                       <TableCell>{log.type}</TableCell>
@@ -141,94 +117,12 @@ export default function LnfStaffDashboard() {
                           {log.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setSelectedItem(log)}
-                            >
-                              View Details
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-md">
-                            <DialogHeader>
-                              <DialogTitle>Item Details</DialogTitle>
-                              <DialogDescription>
-                                Complete information about this lost and found
-                                item
-                              </DialogDescription>
-                            </DialogHeader>
-                            {selectedItem && (
-                              <div className="space-y-4 py-4">
-                                <div className="flex justify-center mb-4">
-                                  <img
-                                    src={selectedItem.image}
-                                    alt={selectedItem.name}
-                                    className="rounded-md max-h-64 object-contain"
-                                  />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Name
-                                    </p>
-                                    <p>{selectedItem.name}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Type
-                                    </p>
-                                    <p>{selectedItem.type}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Color
-                                    </p>
-                                    <p>{selectedItem.color}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Status
-                                    </p>
-                                    <Badge
-                                      className={getBadgeColor(
-                                        selectedItem.status,
-                                      )}
-                                    >
-                                      {selectedItem.status}
-                                    </Badge>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Last Seen
-                                    </p>
-                                    <p>{selectedItem.lastSeenLocation}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Owner ID
-                                    </p>
-                                    <p>{selectedItem.owner}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Finder ID
-                                    </p>
-                                    <p>{selectedItem.finder || "N/A"}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                      Item ID
-                                    </p>
-                                    <p>{selectedItem.id}</p>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </DialogContent>
-                        </Dialog>
+                      <TableCell>
+                        <ItemActions
+                          item={log}
+                          onView={handleView}
+                          onEdit={handleEdit}
+                        />
                       </TableCell>
                     </TableRow>
                   ))
@@ -247,6 +141,43 @@ export default function LnfStaffDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog
+        open={selectedItem !== null && !isEditMode}
+        onOpenChange={() => selectedItem && !isEditMode && resetSelection()}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Item Details</DialogTitle>
+            <DialogDescription>
+              Complete information about this lost and found item
+            </DialogDescription>
+          </DialogHeader>
+          {selectedItem && <ItemDetailsContent item={selectedItem} />}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={selectedItem !== null && isEditMode}
+        onOpenChange={(open) => {
+          if (!open) resetSelection();
+        }}
+      >
+        <DialogContent className="min-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Item</DialogTitle>
+            <DialogDescription>
+              Update information about this lost and found item
+            </DialogDescription>
+          </DialogHeader>
+          {selectedItem && (
+            <LnfLogEditModal
+              formData={selectedItem}
+              onCancel={resetSelection}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
