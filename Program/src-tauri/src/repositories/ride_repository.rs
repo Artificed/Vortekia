@@ -9,6 +9,9 @@ use crate::models::ride::ActiveModel as RideActiveModel;
 use crate::models::ride::Column as RideColumn;
 use crate::models::ride::Entity as Rides;
 use crate::models::ride::Model as RideModel;
+use crate::viewmodels::ride_with_staff::RideWithStaff;
+
+use crate::models::staff::Entity as StaffEntity;
 
 pub async fn insert_ride(state: &State<'_, AppState>, ride: RideActiveModel) -> Result<(), String> {
     let result = Rides::insert(ride).exec(&state.conn).await;
@@ -116,4 +119,21 @@ pub async fn update_ride(
             Err("Failed to find ride!".to_string())
         }
     }
+}
+
+pub async fn get_rides_with_staff(
+    state: &State<'_, AppState>,
+) -> Result<Vec<RideWithStaff>, String> {
+    let results = Rides::find()
+        .find_also_related(StaffEntity)
+        .all(&state.conn)
+        .await
+        .map_err(|err| err.to_string())?;
+
+    let rides_with_staff = results
+        .into_iter()
+        .filter_map(|(ride, staff)| staff.map(|s| RideWithStaff { ride, staff: s }))
+        .collect();
+
+    Ok(rides_with_staff)
 }

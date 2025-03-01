@@ -8,6 +8,7 @@ import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
 import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashboard";
 import RideManagerViewSchedules from "@/pages/staff/ride-manager/ride-manager-view-schedules";
+import RideStaffDashboard from "@/pages/staff/ride-staff/ride-staff-dashboard";
 import StaffLogin from "@/pages/staff/staff-login";
 import { Route, Routes } from "react-router";
 
@@ -42,6 +43,9 @@ export default function StaffUI() {
         path="ride-manager/view-schedules"
         element={<RideManagerViewSchedules />}
       />
+
+      {/* Ride Staff Routes */}
+      <Route path="ride-staff/dashboard" element={<RideStaffDashboard />} />
     </Routes>
   );
 }

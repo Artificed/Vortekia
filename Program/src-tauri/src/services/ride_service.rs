@@ -5,6 +5,7 @@ use crate::modules::app_state::AppState;
 
 use crate::models::ride::Model as RideModel;
 use crate::repositories::ride_repository;
+use crate::viewmodels::ride_with_staff::RideWithStaff;
 
 #[tauri::command]
 pub async fn get_all_rides(state: State<'_, AppState>) -> Result<Vec<RideModel>, String> {
@@ -35,4 +36,11 @@ pub async fn update_ride(
         assigned_staff,
     )
     .await
+}
+
+#[tauri::command]
+pub async fn get_rides_with_staff(
+    state: State<'_, AppState>,
+) -> Result<Vec<RideWithStaff>, String> {
+    ride_handler::get_rides_with_staff(&state).await
 }

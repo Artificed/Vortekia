@@ -3,6 +3,7 @@ use tauri::State;
 
 use crate::models::ride::Model as RideModel;
 use crate::repositories::staff_schedule_repository;
+use crate::viewmodels::ride_with_staff::RideWithStaff;
 use crate::{factories::ride_factory, modules::app_state::AppState, repositories::ride_repository};
 
 use super::staff_schedule_handler;
@@ -114,4 +115,10 @@ pub async fn update_ride(
     .await?;
 
     ride_repository::update_ride(state, id, updated_ride).await
+}
+
+pub async fn get_rides_with_staff(
+    state: &State<'_, AppState>,
+) -> Result<Vec<RideWithStaff>, String> {
+    ride_repository::get_rides_with_staff(state).await
 }

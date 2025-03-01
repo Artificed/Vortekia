@@ -8,7 +8,6 @@ use crate::{
     repositories::staff_schedule_repository,
 };
 
-use crate::models::ride_staff::Model as RideStaffModel;
 use crate::models::staff_schedule::Model as StaffScheduleModel;
 
 use super::staff_handler;
