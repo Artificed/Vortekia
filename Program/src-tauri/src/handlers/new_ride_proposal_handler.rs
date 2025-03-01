@@ -39,6 +39,8 @@ pub async fn update_new_ride_proposal_approval(
     state: State<'_, AppState>,
     id: String,
     approve: i8,
+    opening_time: String,
+    closing_time: String,
 ) -> Result<(), String> {
     new_ride_proposal_repository::update_new_ride_proposal_approval(&state, &id, approve)
         .await
@@ -51,7 +53,8 @@ pub async fn update_new_ride_proposal_approval(
         let name = proposal.ride_name.clone();
         let price = rand::thread_rng().gen_range(1000..=1500);
 
-        ride_handler::insert_ride(&state, &image, &name, price).await?;
+        ride_handler::insert_ride(&state, &image, &name, price, &opening_time, &closing_time)
+            .await?;
     }
 
     Ok(())

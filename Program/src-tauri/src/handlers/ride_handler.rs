@@ -9,8 +9,10 @@ pub async fn insert_ride(
     image: &str,
     name: &str,
     price: i32,
+    opening_time: &str,
+    closing_time: &str,
 ) -> Result<(), String> {
-    let ride = ride_factory::create_ride(image, name, price, "Closed");
+    let ride = ride_factory::create_ride(image, name, price, opening_time, closing_time, "Closed");
     ride_repository::insert_ride(state, ride).await
 }
 
@@ -25,9 +27,12 @@ pub async fn update_ride(
     name: &str,
     price: i32,
     status: &str,
+    opening_time: &str,
+    closing_time: &str,
     assigned_staff: &str,
 ) -> Result<(), String> {
-    let mut updated_ride = ride_factory::create_ride(image, name, price, status);
+    let mut updated_ride =
+        ride_factory::create_ride(image, name, price, opening_time, closing_time, status);
     updated_ride.assigned_staff = ActiveValue::Set(Some(assigned_staff.to_string()));
 
     ride_repository::update_ride(state, id, updated_ride).await

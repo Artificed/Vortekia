@@ -19,7 +19,20 @@ pub async fn update_ride(
     id: &str,
     price: i32,
     status: &str,
+    opening_time: &str,
+    closing_time: &str,
     assigned_staff: &str,
 ) -> Result<(), String> {
-    ride_handler::update_ride(&state, id, image, name, price, status, assigned_staff).await
+    ride_handler::update_ride(
+        &state,
+        id,
+        image,
+        name,
+        price,
+        status,
+        opening_time,
+        closing_time,
+        assigned_staff,
+    )
+    .await
 }

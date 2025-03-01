@@ -33,6 +33,15 @@ pub async fn update_new_ride_proposal_approval(
     state: State<'_, AppState>,
     id: String,
     approve: i8,
+    opening_time: String,
+    closing_time: String,
 ) -> Result<(), String> {
-    new_ride_proposal_handler::update_new_ride_proposal_approval(state, id, approve).await
+    new_ride_proposal_handler::update_new_ride_proposal_approval(
+        state,
+        id,
+        approve,
+        opening_time,
+        closing_time,
+    )
+    .await
 }

@@ -17,6 +17,8 @@ impl MigrationTrait for Migration {
                     .col(string(Ride::Name).not_null())
                     .col(string(Ride::Image).not_null())
                     .col(string(Ride::Price).integer().not_null())
+                    .col(string(Ride::OpeningTime).time().not_null())
+                    .col(string(Ride::ClosingTime).time().not_null())
                     .col(string(Ride::Status).not_null())
                     .col(boolean(Ride::IsActive).not_null())
                     .col(string(Ride::AssignedStaff).null())
@@ -46,6 +48,8 @@ pub enum Ride {
     Name,
     Image,
     Price,
+    OpeningTime,
+    ClosingTime,
     Status,
     IsActive,
     AssignedStaff,

@@ -11,9 +11,26 @@ export function useHandleNewRideProposal(queryClient: QueryClient) {
   const completedNewRideProposals =
     newRideProposals?.filter((p) => p.done === 1) || [];
 
-  const handleNewRideProposal = async (id: string, approve: number) => {
+  const handleNewRideProposal = async (
+    id: string,
+    approve: number,
+    openingTime?: string,
+    closingTime?: string,
+  ) => {
     try {
-      await invoke("update_new_ride_proposal_approval", { id, approve });
+      if (approve === 1 && openingTime && closingTime) {
+        await invoke("update_new_ride_proposal_approval", {
+          id,
+          approve,
+          openingTime: openingTime + ":00",
+          closingTime: closingTime + ":00",
+        });
+      } else {
+        ToastUtils.error({
+          description: "Please set the opening and closing times!",
+        });
+      }
+
       queryClient.invalidateQueries({ queryKey: ["newRideProposals"] });
       ToastUtils.success({
         description: "Successfully managed new ride proposal!",

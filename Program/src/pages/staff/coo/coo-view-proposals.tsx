@@ -2,6 +2,7 @@ import CooNavbar from "@/components/navbars/coo-navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+
 import NewRideProposal from "@/lib/interfaces/entities/new-ride-proposal";
 import RideDeletionProposal from "@/lib/interfaces/entities/ride-deletion-proposal";
 import { useHandleNewRideProposal } from "@/hooks/forms/use-handle-new-ride-proposal";
@@ -131,8 +132,13 @@ export default function CooViewProposal() {
           <NewRideProposalModal
             proposal={selectedProposal}
             onClose={() => setSelectedProposal(null)}
-            onApprove={() => {
-              handleNewRideProposal(selectedProposal.id, 1);
+            onApprove={(openingTime, closingTime) => {
+              handleNewRideProposal(
+                selectedProposal.id,
+                1,
+                openingTime,
+                closingTime,
+              );
               setSelectedProposal(null);
             }}
             onReject={() => {

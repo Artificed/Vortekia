@@ -12,6 +12,8 @@ pub struct Model {
     pub name: String,
     pub image: String,
     pub price: i32,
+    pub opening_time: Time,
+    pub closing_time: Time,
     pub status: String,
     pub is_active: i8,
     pub assigned_staff: Option<String>,
