@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import NewRideProposal from "@/lib/interfaces/entities/new-ride-proposal";
-import { TimeSelectionModal } from "./propose-new-ride-schedule-modal";
+import { TimeSelectionModal } from "./time-selection-modal";
 
 interface NewRideProposalModalProps {
   proposal: NewRideProposal;

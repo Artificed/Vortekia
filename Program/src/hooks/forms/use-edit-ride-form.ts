@@ -53,6 +53,8 @@ export function useEditRideForm({
         name: formData.name,
         price: formData.price,
         status: formData.status,
+        openingTime: formData.openingTime,
+        closingTime: formData.closingTime,
         assignedStaff: formData.assignedStaff,
       });
       ToastUtils.success({ description: "Ride updated successfully" });

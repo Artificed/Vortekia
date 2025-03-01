@@ -4,6 +4,8 @@ interface Ride {
   image: string;
   price: string;
   status: string;
+  openingTime: string;
+  closingTime: string;
   assignedStaff: string;
 }
 

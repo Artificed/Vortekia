@@ -9,6 +9,21 @@ use crate::models::staff::Column as StaffColumn;
 use crate::models::staff::Entity as Staffs;
 use crate::models::staff::Model as StaffModel;
 
+pub async fn get_staff_from_id(
+    state: &State<'_, AppState>,
+    id: &str,
+) -> Result<Option<StaffModel>, String> {
+    let result = Staffs::find()
+        .filter(StaffColumn::Id.contains(id))
+        .one(&state.conn)
+        .await;
+
+    match result {
+        Ok(user) => Ok(user),
+        Err(_) => Err("Failed to get staff!".to_string()),
+    }
+}
+
 pub async fn get_staff_from_username(
     state: &State<'_, AppState>,
     username: &str,

@@ -36,7 +36,7 @@ export default function RideDetailsModal({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <h3 className="text-sm font-medium text-gray-500">Ride ID</h3>
               <p className="mt-1">{ride.id}</p>
@@ -60,6 +60,20 @@ export default function RideDetailsModal({
                   {ride.status || "Open"}
                 </Badge>
               </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">
+                Opening Time
+              </h3>
+              <p className="mt-1">{ride.openingTime.substring(0, 5) ?? "-"}</p>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">
+                Closing Time
+              </h3>
+              <p className="mt-1">{ride.closingTime.substring(0, 5) ?? "-"}</p>
             </div>
 
             <div>

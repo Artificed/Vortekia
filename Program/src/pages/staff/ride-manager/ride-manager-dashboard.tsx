@@ -82,7 +82,11 @@ export default function RideManagerDashboard() {
                 <CardContent className="p-4 pt-0 flex-grow">
                   <div className="text-gray-600">
                     <p>Ticket Price: ${ride.price.toLocaleString()}</p>
-                    <p className="my-2">ID: {ride.id}</p>
+                    <p className="mt-2">ID: {ride.id}</p>
+                    <p className="my-2">
+                      Ride Schedule: {ride.openingTime.substring(0, 5)} -{" "}
+                      {ride.closingTime.substring(0, 5)}
+                    </p>
                     <p>Assigned Staff: {ride.assignedStaff ?? "-"}</p>
                   </div>
                 </CardContent>
