@@ -30,8 +30,13 @@ export default function DeleteRideModal({
     e.preventDefault();
 
     try {
-      await invoke("delete_ride", { id: rideId, reason });
-      ToastUtils.success({ description: "Ride deleted successfully" });
+      await invoke("insert_ride_deletion_proposal", {
+        rideId: rideId,
+        reason: reason,
+      });
+      ToastUtils.success({
+        description: "Successfully created ride deletion proposal!",
+      });
 
       if (onSuccess) onSuccess();
       onClose();

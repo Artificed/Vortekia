@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DialogFooter } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -39,7 +39,7 @@ const LnfLogEditModal: React.FC<LnfLogEditModalProps> = ({
     loadItemForEdit,
   } = useEditLnfLog(onCancel);
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadItemForEdit(initialFormData);
   }, [initialFormData]);
 

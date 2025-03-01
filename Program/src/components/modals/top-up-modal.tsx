@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useAuth from "@/hooks/auth/use-auth";
 import Customer from "@/lib/interfaces/entities/customer";
-import { ToastUtils } from "../utils/toast-helper";
-import { invoke } from "@tauri-apps/api/core";
+import { useHandleTopUp } from "@/hooks/utility/use-handle-top-up";
 
 interface TopUpModalProps {
   isOpen: boolean;
@@ -20,32 +18,7 @@ interface TopUpModalProps {
 
 export default function TopUpModal({ isOpen, onClose }: TopUpModalProps) {
   const auth = useAuth();
-  const [amount, setAmount] = useState("");
-
-  const handleTopUp = async () => {
-    if (!amount) {
-      ToastUtils.error({ description: "Please fill in the field!" });
-    } else if (isNaN(Number(amount))) {
-      ToastUtils.error({ description: "Balance must be a number!" });
-    } else if (Number(amount) < 0) {
-      ToastUtils.error({
-        description: "You can't top up with a negative value!",
-      });
-    } else {
-      try {
-        await invoke("add_current_user_balance", { balance: Number(amount) });
-        ToastUtils.success({
-          description: "Successfully topped up balance!",
-        });
-        setAmount("");
-        auth?.refreshCurrentUser();
-      } catch (e) {
-        ToastUtils.error({
-          description: String(e),
-        });
-      }
-    }
-  };
+  const { amount, setAmount, handleTopUp } = useHandleTopUp();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -66,7 +39,6 @@ export default function TopUpModal({ isOpen, onClose }: TopUpModalProps) {
             placeholder="Amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            min="1"
           />
         </div>
         <DialogFooter>
