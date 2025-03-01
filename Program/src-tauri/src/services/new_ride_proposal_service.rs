@@ -9,7 +9,7 @@ pub async fn insert_new_ride_proposal(
     ride_name: String,
     cost_review: String,
     image: String,
-    image_bytes: &[u8],
+    image_bytes: Vec<u8>,
 ) -> Result<(), String> {
     new_ride_proposal_handler::insert_new_ride_proposal(
         state,

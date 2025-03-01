@@ -25,7 +25,7 @@ interface EditRideFormProps {
   onSuccess?: () => void;
 }
 
-export default function EditRideForm({
+export default function EditRideModal({
   ride,
   onClose,
   onSuccess,
@@ -40,18 +40,13 @@ export default function EditRideForm({
   } = useEditRideForm({ ride, onClose, onSuccess });
 
   return (
-    <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-2xl">
         <form onSubmit={handleSubmit}>
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mb-4">
               <CardTitle>Edit Ride: {ride.name}</CardTitle>
-              <Button
-                variant="ghost"
-                className="mt-5"
-                type="button"
-                onClick={onClose}
-              >
+              <Button variant="ghost" type="button" onClick={onClose}>
                 Cancel
               </Button>
             </div>
@@ -123,19 +118,6 @@ export default function EditRideForm({
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Ride Image</Label>
-              {formData.image && (
-                <div className="mt-4 aspect-video w-full overflow-hidden rounded-md">
-                  <img
-                    src={formData.image}
-                    alt={formData.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
             </div>
           </CardContent>
 

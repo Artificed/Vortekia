@@ -1,5 +1,4 @@
 use sea_orm::ActiveModelTrait;
-use sea_orm::ActiveValue;
 use sea_orm::EntityTrait;
 use tauri::State;
 

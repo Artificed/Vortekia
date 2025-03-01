@@ -10,6 +10,7 @@ export function useProposeRide() {
     rideImage: "",
     costReview: "",
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,6 +30,7 @@ export function useProposeRide() {
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
+      setImageFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -51,18 +53,29 @@ export function useProposeRide() {
       costReview: "",
     });
     setImagePreview(null);
+    setImageFile(null);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
 
+    if (!imageFile) {
+      ToastUtils.error({ description: "Image file must be filled!" });
+      setLoading(false);
+      return;
+    }
+
     try {
+      // Convert the image file to a byte array
+      const arrayBuffer = await imageFile.arrayBuffer();
+      const bytes = Array.from(new Uint8Array(arrayBuffer));
+
       await invoke("insert_new_ride_proposal", {
         rideName: formData.rideName,
         costReview: formData.costReview,
         image: formData.rideImage,
-        imageBytes: imagePreview,
+        imageBytes: bytes, // Send as byte array which matches &[u8] in Rust
       });
 
       resetForm();

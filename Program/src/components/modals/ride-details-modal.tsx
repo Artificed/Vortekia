@@ -7,16 +7,17 @@ interface RideDetailsModalProps {
   ride: Ride;
   onClose: () => void;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
 export default function RideDetailsModal({
   ride,
   onClose,
   onEdit,
+  onDelete,
 }: RideDetailsModalProps) {
-  console.log("Ride in modal:", ride);
   return (
-    <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -65,17 +66,22 @@ export default function RideDetailsModal({
               <h3 className="text-sm font-medium text-gray-500">
                 Assigned Staff
               </h3>
-              <p className="mt-1">{ride.assignedStaff}</p>
+              <p className="mt-1">{ride.assignedStaff ?? "-"}</p>
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 pt-4">
-            <Button variant="outline" onClick={onClose}>
-              Close
+          <div className="flex justify-between pt-5">
+            <Button variant="destructive" onClick={onDelete}>
+              Delete Ride
             </Button>
-            <Button variant="default" onClick={onEdit}>
-              Edit Ride Details
-            </Button>
+            <div className="flex gap-4">
+              <Button variant="outline" onClick={onClose}>
+                Close
+              </Button>
+              <Button variant="default" onClick={onEdit}>
+                Edit Ride
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -15,9 +15,9 @@ pub async fn insert_new_ride_proposal(
     ride_name: String,
     cost_review: String,
     image: String,
-    image_bytes: &[u8],
+    image_bytes: Vec<u8>,
 ) -> Result<(), String> {
-    let img_url_result = file_handler::upload_image_to_firebase(&image, image_bytes).await;
+    let img_url_result = file_handler::upload_image_to_firebase(&image, &image_bytes).await;
 
     match img_url_result {
         Ok(img_url) => {

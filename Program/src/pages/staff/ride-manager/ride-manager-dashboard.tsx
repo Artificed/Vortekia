@@ -13,27 +13,25 @@ import Ride from "@/lib/interfaces/entities/ride";
 import { useGetRides } from "@/hooks/data/use-get-rides";
 import RideManagerNavbar from "@/components/navbars/ride-manager-navbar";
 import RideDetailsModal from "@/components/modals/ride-details-modal";
-import EditRideForm from "@/components/modals/edit-ride-modal";
+import EditRideModal from "@/components/modals/edit-ride-modal";
+import DeleteRideModal from "@/components/modals/delete-ride-modal";
 
 export default function RideManagerDashboard() {
   const { rides } = useGetRides();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState<boolean>(false);
+  const [isDeleteFormOpen, setIsDeleteFormOpen] = useState<boolean>(false);
 
   const filteredRides =
     rides?.filter((ride: Ride) =>
       ride.name.toLowerCase().includes(searchTerm.toLowerCase()),
     ) || [];
 
-  const handleEditRide = (ride: Ride) => {
-    setSelectedRide(ride);
-    setIsEditFormOpen(true);
-  };
-
   const handleCloseAll = useCallback(() => {
     setSelectedRide(null);
     setIsEditFormOpen(false);
+    setIsDeleteFormOpen(false);
   }, []);
 
   const handleSuccessfulSubmit = useCallback(() => {
@@ -49,7 +47,7 @@ export default function RideManagerDashboard() {
           <Button>Add New Ride</Button>
         </div>
 
-        <div className="mb-6">
+        <div className="mt-10 mb-6">
           <Input
             placeholder="Search rides..."
             value={searchTerm}
@@ -58,11 +56,11 @@ export default function RideManagerDashboard() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredRides.length > 0 ? (
             filteredRides.map((ride: Ride) => (
               <Card key={ride.id} className="overflow-hidden flex flex-col">
-                <div className="h-48 w-full overflow-hidden relative">
+                <div className="h-48 w-full overflow-hidden relative px-4">
                   <img
                     src={ride.image}
                     alt={ride.name}
@@ -78,30 +76,23 @@ export default function RideManagerDashboard() {
                     </Badge>
                   </div>
                 </div>
-                <CardHeader className="p-4 pb-0">
+                <CardHeader className="px-4 py-0">
                   <CardTitle className="text-xl">{ride.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 pt-2 flex-grow">
+                <CardContent className="p-4 pt-0 flex-grow">
                   <div className="text-gray-600">
                     <p>Ticket Price: ${ride.price.toLocaleString()}</p>
                     <p className="my-2">ID: {ride.id}</p>
-                    <p>Assigned Staff: {ride.assignedStaff}</p>
+                    <p>Assigned Staff: {ride.assignedStaff ?? "-"}</p>
                   </div>
                 </CardContent>
-                <CardFooter className="p-4 pt-0 flex justify-between gap-2">
+                <CardFooter className="p-4 py-0 flex justify-between">
                   <Button
-                    variant="outline"
+                    variant="default"
                     className="w-full"
                     onClick={() => setSelectedRide(ride)}
                   >
                     Details
-                  </Button>
-                  <Button
-                    variant="default"
-                    className="w-full"
-                    onClick={() => handleEditRide(ride)}
-                  >
-                    Manage
                   </Button>
                 </CardFooter>
               </Card>
@@ -117,17 +108,26 @@ export default function RideManagerDashboard() {
           )}
         </div>
 
-        {selectedRide && !isEditFormOpen && (
+        {selectedRide && !isEditFormOpen && !isDeleteFormOpen && (
           <RideDetailsModal
             ride={selectedRide}
             onClose={handleCloseAll}
             onEdit={() => setIsEditFormOpen(true)}
+            onDelete={() => setIsDeleteFormOpen(true)}
           />
         )}
 
-        {selectedRide && isEditFormOpen && (
-          <EditRideForm
+        {selectedRide && isEditFormOpen && !isDeleteFormOpen && (
+          <EditRideModal
             ride={selectedRide}
+            onClose={handleCloseAll}
+            onSuccess={handleSuccessfulSubmit}
+          />
+        )}
+
+        {selectedRide && !isEditFormOpen && isDeleteFormOpen && (
+          <DeleteRideModal
+            rideId={selectedRide.id}
             onClose={handleCloseAll}
             onSuccess={handleSuccessfulSubmit}
           />
