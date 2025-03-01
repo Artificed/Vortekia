@@ -41,6 +41,7 @@ export default function CooCreateStaff() {
               value={formData.password}
               onChange={handleChange}
             />
+
             <Select
               onValueChange={(value) =>
                 setFormData((prev: StaffFormData) => ({ ...prev, role: value }))
@@ -83,6 +84,36 @@ export default function CooCreateStaff() {
               </SelectContent>
             </Select>
 
+            <Select
+              onValueChange={(value) => {
+                const [shiftStart, shiftEnd] = value.split(" - ");
+                setFormData((prev: StaffFormData) => ({
+                  ...prev,
+                  shiftStart,
+                  shiftEnd,
+                }));
+              }}
+              value={
+                formData.shiftStart && formData.shiftEnd
+                  ? `${formData.shiftStart} - ${formData.shiftEnd}`
+                  : ""
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Shift" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="07:00 - 15:00">
+                  Morning Shift (07:00 - 15:00)
+                </SelectItem>
+                <SelectItem value="09:00 - 17:00">
+                  Normal Shift (09:00 - 17:00)
+                </SelectItem>
+                <SelectItem value="11:00 - 19:00">
+                  Night Shift (11:00 - 19:00)
+                </SelectItem>
+              </SelectContent>
+            </Select>
             <Button
               onClick={handleSubmit}
               disabled={loading}

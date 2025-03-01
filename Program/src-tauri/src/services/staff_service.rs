@@ -18,8 +18,11 @@ pub async fn register_staff(
     username: String,
     password: String,
     role: String,
+    shift_start: String,
+    shift_end: String,
 ) -> Result<(), String> {
-    staff_handler::register_staff(state, &username, &password, &role).await
+    staff_handler::register_staff(state, &username, &password, &role, &shift_start, &shift_end)
+        .await
 }
 
 #[tauri::command]

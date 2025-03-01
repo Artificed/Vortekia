@@ -12,6 +12,8 @@ pub struct Model {
     pub username: String,
     pub password: String,
     pub role: String,
+    pub shift_start: Time,
+    pub shift_end: Time,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

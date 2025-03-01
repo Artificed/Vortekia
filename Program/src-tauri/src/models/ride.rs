@@ -13,8 +13,8 @@ pub struct Model {
     pub image: String,
     pub price: i32,
     pub status: String,
-    pub assigned_staff: Option<String>,
     pub is_active: i8,
+    pub assigned_staff: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

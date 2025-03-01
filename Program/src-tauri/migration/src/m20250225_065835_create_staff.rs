@@ -12,9 +12,11 @@ impl MigrationTrait for Migration {
                     .table(Staff::Table)
                     .if_not_exists()
                     .col(ColumnDef::new(Staff::Id).string().not_null().primary_key())
-                    .col(string(Staff::Username))
-                    .col(string(Staff::Password))
-                    .col(string(Staff::Role))
+                    .col(string(Staff::Username).not_null())
+                    .col(string(Staff::Password).not_null())
+                    .col(string(Staff::Role).not_null())
+                    .col(string(Staff::ShiftStart).time().not_null())
+                    .col(string(Staff::ShiftEnd).time().not_null())
                     .to_owned(),
             )
             .await
@@ -34,4 +36,6 @@ pub enum Staff {
     Username,
     Password,
     Role,
+    ShiftStart,
+    ShiftEnd,
 }

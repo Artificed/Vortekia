@@ -18,7 +18,6 @@ impl MigrationTrait for Migration {
                     .col(string(Ride::Image).not_null())
                     .col(string(Ride::Price).integer().not_null())
                     .col(string(Ride::Status).not_null())
-                    .col(string(Ride::Status).not_null())
                     .col(boolean(Ride::IsActive).not_null())
                     .col(string(Ride::AssignedStaff).null())
                     .foreign_key(

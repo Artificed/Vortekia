@@ -46,8 +46,10 @@ pub async fn register_staff(
     username: &str,
     password: &str,
     role: &str,
+    shift_start: &str,
+    shift_end: &str,
 ) -> Result<(), String> {
-    let staff = staff_factory::create_staff(username, password, role);
+    let staff = staff_factory::create_staff(username, password, role, shift_start, shift_end);
     staff_repository::insert_staff(&state, staff).await
 }
 

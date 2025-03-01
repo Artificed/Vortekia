@@ -7,6 +7,8 @@ export type StaffFormData = {
   username: string;
   password: string;
   role: string;
+  shiftStart: string;
+  shiftEnd: string;
 };
 
 export function useCreateStaffAccount() {
@@ -16,6 +18,8 @@ export function useCreateStaffAccount() {
     username: "",
     password: "",
     role: "",
+    shiftStart: "",
+    shiftEnd: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +36,8 @@ export function useCreateStaffAccount() {
         username: formData.username,
         password: formData.password,
         role: formData.role,
+        shiftStart: formData.shiftStart + ":00",
+        shiftEnd: formData.shiftEnd + ":00",
       });
 
       ToastUtils.success({
