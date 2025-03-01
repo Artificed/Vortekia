@@ -79,6 +79,8 @@ pub async fn update_ride(
             ride_to_update.status = updated_ride.status;
             ride_to_update.assigned_staff = updated_ride.assigned_staff;
             ride_to_update.image = updated_ride.image;
+            ride_to_update.opening_time = updated_ride.opening_time;
+            ride_to_update.closing_time = updated_ride.closing_time;
 
             let result = ride_to_update.update(&state.conn).await;
             match result {

@@ -27,12 +27,36 @@ impl MigrationTrait for Migration {
                         "19:00:00".into(),
                     ])
                     .values_panic([
-                        "STFDSAKS".into(),
+                        "STFDSAKASD".into(),
                         "cs".into(),
                         "$argon2id$v=19$m=19456,t=2,p=1$OhjS0JADEvZARktO4jOd8Q$Da8KmsI5M7rWm7TDv2+b/+g/C9hVkKekius26e5+cPQ".into(),
                         "Customer Service".into(),
                         "09:00:00".into(),
                         "17:00:00".into(),
+                    ])
+                    .values_panic([
+                        "STFDSAASD".into(),
+                        "ridemane".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$9Wo2/VkpYEak6KxLoajozw$i7VIYg9FLweWNjSC9ooN/Ge2CnUucyJzG4mDml//nuE".into(),
+                        "Ride Manager".into(),
+                        "11:00:00".into(),
+                        "19:00:00".into(),
+                    ])
+                    .values_panic([
+                        "STFDSADS".into(),
+                        "ridestaff1".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$9Wo2/VkpYEak6KxLoajozw$i7VIYg9FLweWNjSC9ooN/Ge2CnUucyJzG4mDml//nuE".into(),
+                        "Ride Staff".into(),
+                        "07:00:00".into(),
+                        "15:00:00".into(),
+                    ])
+                    .values_panic([
+                        "STFDSAVD".into(),
+                        "ridestaff2".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$9Wo2/VkpYEak6KxLoajozw$i7VIYg9FLweWNjSC9ooN/Ge2CnUucyJzG4mDml//nuE".into(),
+                        "Ride Staff".into(),
+                        "11:00:00".into(),
+                        "19:00:00".into(),
                     ])
                     .to_owned(),
             )

@@ -43,8 +43,41 @@ export function useEditRideForm({
     }));
   };
 
+  const [openingTime, setOpeningTime] = useState<string>(
+    formData.openingTime.substring(0, 5),
+  );
+
+  const [closingTime, setClosingTime] = useState<string>(
+    formData.closingTime.substring(0, 5),
+  );
+
+  const handleOpeningTimeChange = (openingTime: string) => {
+    setOpeningTime(openingTime);
+    setFormData((prev) => ({
+      ...prev,
+      openingTime: openingTime,
+    }));
+  };
+
+  const handleClosingTimeChange = (closingTime: string) => {
+    setClosingTime(closingTime);
+    setFormData((prev) => ({
+      ...prev,
+      closingTime: closingTime,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const formatTime = (time: string | undefined): string | undefined => {
+      if (!time) return undefined;
+
+      if (time.length === 5) {
+        return `${time}:00`;
+      }
+      return time;
+    };
 
     try {
       await invoke("update_ride", {
@@ -53,8 +86,8 @@ export function useEditRideForm({
         name: formData.name,
         price: formData.price,
         status: formData.status,
-        openingTime: formData.openingTime,
-        closingTime: formData.closingTime,
+        openingTime: formatTime(formData.openingTime),
+        closingTime: formatTime(formData.closingTime),
         assignedStaff: formData.assignedStaff,
       });
       ToastUtils.success({ description: "Ride updated successfully" });
@@ -71,9 +104,13 @@ export function useEditRideForm({
 
   return {
     formData,
+    openingTime,
+    closingTime,
     handleChange,
     handleStatusChange,
     handleStaffChange,
+    handleOpeningTimeChange,
+    handleClosingTimeChange,
     handleSubmit,
   };
 }

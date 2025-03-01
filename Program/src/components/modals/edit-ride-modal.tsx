@@ -18,7 +18,6 @@ import {
 import { useGetRideStaffs } from "@/hooks/data/use-get-ride-staffs";
 import Ride from "@/lib/interfaces/entities/ride";
 import { useEditRideForm } from "@/hooks/forms/use-edit-ride-form";
-import { useState } from "react";
 
 interface EditRideFormProps {
   ride: Ride;
@@ -34,18 +33,15 @@ export default function EditRideModal({
   const { rideStaffs } = useGetRideStaffs();
   const {
     formData,
+    openingTime,
+    closingTime,
     handleChange,
     handleStatusChange,
     handleStaffChange,
+    handleOpeningTimeChange,
+    handleClosingTimeChange,
     handleSubmit,
   } = useEditRideForm({ ride, onClose, onSuccess });
-
-  const [openingTime, setOpeningTime] = useState<string>(
-    formData.openingTime.substring(0, 5),
-  );
-  const [closingTime, setClosingTime] = useState<string>(
-    formData.closingTime.substring(0, 5),
-  );
 
   const timeOptions = Array.from({ length: 13 }, (_, i) => {
     const hour = i + 7;
@@ -142,7 +138,10 @@ export default function EditRideModal({
 
               <div className="space-y-2">
                 <Label htmlFor="openingTime">Opening Time</Label>
-                <Select value={openingTime} onValueChange={setOpeningTime}>
+                <Select
+                  value={openingTime}
+                  onValueChange={handleOpeningTimeChange}
+                >
                   <SelectTrigger id="openingTime">
                     <SelectValue placeholder="Select opening time" />
                   </SelectTrigger>
@@ -162,7 +161,10 @@ export default function EditRideModal({
 
               <div className="space-y-2">
                 <Label htmlFor="closingTime">Closing Time</Label>
-                <Select value={closingTime} onValueChange={setClosingTime}>
+                <Select
+                  value={closingTime}
+                  onValueChange={handleClosingTimeChange}
+                >
                   <SelectTrigger id="closingTime">
                     <SelectValue placeholder="Select closing time" />
                   </SelectTrigger>
