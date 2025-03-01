@@ -1,5 +1,6 @@
 use tauri::State;
 
+use crate::repositories::ride_repository;
 use crate::{
     factories::ride_deletion_proposal_factory, modules::app_state::AppState,
     repositories::ride_deletion_proposal_repository,
@@ -27,19 +28,15 @@ pub async fn update_ride_deletion_proposal_approval(
     id: String,
     approve: i8,
 ) -> Result<(), String> {
-    ride_deletion_proposal_repository::update_ride_deletion_proposal_approval(state, &id, approve)
-        .await
-        .unwrap();
+    let ride_id = ride_deletion_proposal_repository::update_ride_deletion_proposal_approval(
+        state, &id, approve,
+    )
+    .await
+    .unwrap();
 
-    // if approve == 1 {
-    //     let proposal = new_ride_proposal_repository::get_ride_proposal(&state, &id).await?;
-    //
-    //     let image = proposal.image.clone();
-    //     let name = proposal.ride_name.clone();
-    //     let price = rand::thread_rng().gen_range(1000..=1500);
-    //
-    //     ride_handler::insert_ride(&state, &image, &name, price).await?;
-    // }
+    if approve == 1 {
+        ride_repository::delete_ride(state, &ride_id).await?;
+    }
 
     Ok(())
 }

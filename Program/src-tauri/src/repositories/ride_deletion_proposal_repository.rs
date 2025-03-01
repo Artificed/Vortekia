@@ -69,7 +69,7 @@ pub async fn update_ride_deletion_proposal_approval(
     state: &State<'_, AppState>,
     id: &str,
     approve: i8,
-) -> Result<(), String> {
+) -> Result<String, String> {
     let proposal = RideDeletionProposals::find()
         .filter(RideDeletionProposalColumn::Id.eq(id))
         .one(&state.conn)
@@ -77,7 +77,9 @@ pub async fn update_ride_deletion_proposal_approval(
 
     match proposal {
         Ok(Some(proposal)) => {
-            let mut proposal_active: RideDeletionProposalActiveModel = proposal.into();
+            let mut proposal_active: RideDeletionProposalActiveModel = proposal.clone().into();
+
+            let ride_id = proposal.ride_id;
 
             proposal_active.approved = Set(approve);
             proposal_active.done = Set(1);
@@ -85,7 +87,7 @@ pub async fn update_ride_deletion_proposal_approval(
             let result = proposal_active.update(&state.conn).await;
 
             match result {
-                Ok(_) => Ok(()),
+                Ok(_) => Ok(ride_id),
                 Err(err) => {
                     eprintln!(
                         "Failed to update ride deletion proposal approval status: {:?}",

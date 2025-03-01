@@ -29,6 +29,24 @@ pub async fn get_all_rides(state: &State<'_, AppState>) -> Result<Vec<RideModel>
     }
 }
 
+pub async fn delete_ride(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
+    let res = Rides::delete_by_id(id).exec(&state.conn).await;
+
+    match res {
+        Ok(delete_result) => {
+            if delete_result.rows_affected > 0 {
+                Ok(())
+            } else {
+                Err("Ride not found or already deleted.".to_string())
+            }
+        }
+        Err(err) => {
+            eprintln!("Error deleting ride: {:?}", err);
+            Err("Failed to delete ride!".to_string())
+        }
+    }
+}
+
 pub async fn update_ride(
     state: &State<'_, AppState>,
     id: &str,

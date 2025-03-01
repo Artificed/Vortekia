@@ -1,4 +1,4 @@
-import CustomerServiceNavbar from "@/components/navbars/customer-service-navbar";
+import CooNavbar from "@/components/navbars/coo-navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ export default function CooCreateStaff() {
 
   return (
     <>
-      <CustomerServiceNavbar />
+      <CooNavbar />
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <Card className="w-96">
           <CardHeader>

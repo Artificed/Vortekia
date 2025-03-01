@@ -1,268 +1,160 @@
 import CooNavbar from "@/components/navbars/coo-navbar";
-import { useGetNewRideProposals } from "@/hooks/data/use-get-new-ride-proposals";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import NewRideProposal from "@/lib/interfaces/entities/new-ride-proposal";
-import { invoke } from "@tauri-apps/api/core";
-import { ToastUtils } from "@/components/utils/toast-helper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import NewRideProposal from "@/lib/interfaces/entities/new-ride-proposal";
+import RideDeletionProposal from "@/lib/interfaces/entities/ride-deletion-proposal";
+import { useHandleNewRideProposal } from "@/hooks/forms/use-handle-new-ride-proposal";
+import { useHandleRideDeletionProposal } from "@/hooks/forms/use-handle-ride-deletion-proposal";
+import { NewRideProposalsList } from "@/components/partials/coo/new-ride-proposals-list";
+import { RideDeletionProposalsList } from "@/components/partials/coo/ride-deletion-proposals-list";
+import { NewRideProposalModal } from "@/components/modals/new-ride-proposal-modal";
+import { RideDeletionProposalModal } from "@/components/modals/ride-deletion-proposal-modal";
 
 export default function CooViewProposal() {
-  const { newRideProposals } = useGetNewRideProposals();
-  const [selectedProposal, setSelectedProposal] =
-    useState<NewRideProposal | null>(null);
   const queryClient = useQueryClient();
 
-  const handleProposal = async (id: string, approve: number) => {
-    try {
-      await invoke("update_new_ride_proposal_approval", { id, approve });
-      queryClient.invalidateQueries({ queryKey: ["newRideProposals"] });
-      ToastUtils.success({ description: "Successfully managed proposal!" });
-    } catch (error) {
-      ToastUtils.error({ description: String(error) });
-    }
-  };
-  const pendingProposals = newRideProposals?.filter((p) => p.done === 0) || [];
-  const completedProposals =
-    newRideProposals?.filter((p) => p.done === 1) || [];
+  const {
+    pendingNewRideProposals,
+    completedNewRideProposals,
+    handleNewRideProposal,
+  } = useHandleNewRideProposal(queryClient);
+
+  const {
+    pendingDeletionProposals,
+    completedDeletionProposals,
+    handleDeletionProposal,
+  } = useHandleRideDeletionProposal(queryClient);
+
+  const [selectedProposal, setSelectedProposal] =
+    useState<NewRideProposal | null>(null);
+  const [selectedDeletionProposal, setSelectedDeletionProposal] =
+    useState<RideDeletionProposal | null>(null);
+
+  const totalPending =
+    pendingNewRideProposals.length + pendingDeletionProposals.length;
+  const totalCompleted =
+    completedNewRideProposals.length + completedDeletionProposals.length;
 
   return (
     <>
       <CooNavbar />
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold mb-6">Ride Proposals</h1>
+        <h1 className="text-2xl font-bold mb-6">Ride Proposals Management</h1>
 
         <Tabs defaultValue="pending" className="mb-8">
           <TabsList className="mb-4">
             <TabsTrigger value="pending">
-              Pending ({pendingProposals.length})
+              Pending Proposals ({totalPending})
             </TabsTrigger>
             <TabsTrigger value="completed">
-              Completed ({completedProposals.length})
+              Completed Proposals ({totalCompleted})
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pending">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pendingProposals.length > 0 ? (
-                pendingProposals.map((proposal: NewRideProposal) => (
-                  <Card key={proposal.id} className="overflow-hidden">
-                    <div className="h-48 w-full overflow-hidden">
-                      <img
-                        src={proposal.image}
-                        alt={proposal.rideName}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <CardHeader className="p-4 pb-0">
-                      <div className="flex justify-between items-center">
-                        <CardTitle className="text-xl">
-                          {proposal.rideName}
-                        </CardTitle>
-                        <Badge
-                          variant={proposal.approved ? "default" : "secondary"}
-                        >
-                          {proposal.approved ? "Approved" : "Pending"}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-4 space-y-4">
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">
-                          Cost Review
-                        </h3>
-                        <p className="mt-1">{proposal.costReview}</p>
-                      </div>
+            {pendingNewRideProposals.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">
+                  New Ride Proposals
+                </h2>
+                <NewRideProposalsList
+                  proposals={pendingNewRideProposals}
+                  setSelectedProposal={setSelectedProposal}
+                  handleProposal={handleNewRideProposal}
+                  isPending={true}
+                />
+              </div>
+            )}
 
-                      <div className="flex justify-between gap-2">
-                        <Button
-                          variant="outline"
-                          className="w-full"
-                          onClick={() => setSelectedProposal(proposal)}
-                        >
-                          View Details
-                        </Button>
-                        <Button
-                          variant="default"
-                          className="w-full"
-                          onClick={() => handleProposal(proposal.id, 1)}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          className="w-full"
-                          onClick={() => handleProposal(proposal.id, 0)}
-                        >
-                          Reject
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-gray-500">
-                    No pending ride proposals available
-                  </p>
-                </div>
-              )}
-            </div>
+            {pendingDeletionProposals.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">
+                  Ride Deletion Proposals
+                </h2>
+                <RideDeletionProposalsList
+                  proposals={pendingDeletionProposals}
+                  setSelectedProposal={setSelectedDeletionProposal}
+                  handleProposal={handleDeletionProposal}
+                  isPending={true}
+                />
+              </div>
+            )}
+
+            {totalPending === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500">No pending proposals available</p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="completed">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {completedProposals.length > 0 ? (
-                completedProposals.map((proposal: NewRideProposal) => (
-                  <Card
-                    key={proposal.id}
-                    className="overflow-hidden border-green-200"
-                  >
-                    <div className="h-48 w-full overflow-hidden relative">
-                      <img
-                        src={proposal.image}
-                        alt={proposal.rideName}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge variant="default" className="text-sm">
-                          Completed
-                        </Badge>
-                      </div>
-                    </div>
-                    <CardHeader className="p-4 pb-0">
-                      <div className="flex justify-between items-center">
-                        <CardTitle className="text-xl">
-                          {proposal.rideName}
-                        </CardTitle>
-                        <Badge
-                          variant={
-                            proposal.approved ? "default" : "destructive"
-                          }
-                        >
-                          {proposal.approved ? "Approved" : "Rejected"}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-4 space-y-4">
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">
-                          Cost Review
-                        </h3>
-                        <p className="mt-1">{proposal.costReview}</p>
-                      </div>
+            {completedNewRideProposals.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">
+                  Completed New Ride Proposals
+                </h2>
+                <NewRideProposalsList
+                  proposals={completedNewRideProposals}
+                  setSelectedProposal={setSelectedProposal}
+                  handleProposal={handleNewRideProposal}
+                  isPending={false}
+                />
+              </div>
+            )}
 
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => setSelectedProposal(proposal)}
-                      >
-                        View Details
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-gray-500">
-                    No completed ride proposals available
-                  </p>
-                </div>
-              )}
-            </div>
+            {completedDeletionProposals.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">
+                  Completed Deletion Proposals
+                </h2>
+                <RideDeletionProposalsList
+                  proposals={completedDeletionProposals}
+                  setSelectedProposal={setSelectedDeletionProposal}
+                  handleProposal={handleDeletionProposal}
+                  isPending={false}
+                />
+              </div>
+            )}
+
+            {totalCompleted === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500">
+                  No completed proposals available
+                </p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
         {selectedProposal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <Card className="w-full max-w-2xl">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle>{selectedProposal.rideName}</CardTitle>
-                    <div className="flex space-x-2 mt-1">
-                      <Badge
-                        variant={
-                          selectedProposal.approved ? "default" : "secondary"
-                        }
-                      >
-                        {selectedProposal.approved ? "Approved" : "Pending"}
-                      </Badge>
-                      {selectedProposal.done === 1 && (
-                        <Badge variant="outline" className="bg-green-50">
-                          Completed
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setSelectedProposal(null)}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="aspect-video overflow-hidden rounded-md">
-                  <img
-                    src={selectedProposal.image}
-                    alt={selectedProposal.rideName}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+          <NewRideProposalModal
+            proposal={selectedProposal}
+            onClose={() => setSelectedProposal(null)}
+            onApprove={() => {
+              handleNewRideProposal(selectedProposal.id, 1);
+              setSelectedProposal(null);
+            }}
+            onReject={() => {
+              handleNewRideProposal(selectedProposal.id, 0);
+              setSelectedProposal(null);
+            }}
+          />
+        )}
 
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Proposal ID
-                  </h3>
-                  <p className="mt-1">{selectedProposal.id}</p>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Cost Review
-                  </h3>
-                  <p className="mt-1">{selectedProposal.costReview}</p>
-                </div>
-
-                <div className="flex justify-end gap-4 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedProposal(null)}
-                  >
-                    Close
-                  </Button>
-
-                  {selectedProposal.done === 0 && (
-                    <>
-                      <Button
-                        variant="default"
-                        onClick={() => {
-                          handleProposal(selectedProposal.id, 1);
-                          setSelectedProposal(null);
-                        }}
-                      >
-                        Approve Proposal
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => {
-                          handleProposal(selectedProposal.id, 0);
-                          setSelectedProposal(null);
-                        }}
-                      >
-                        Reject Proposal
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        {selectedDeletionProposal && (
+          <RideDeletionProposalModal
+            proposal={selectedDeletionProposal}
+            onClose={() => setSelectedDeletionProposal(null)}
+            onApprove={() => {
+              handleDeletionProposal(selectedDeletionProposal.id, 1);
+              setSelectedDeletionProposal(null);
+            }}
+            onReject={() => {
+              handleDeletionProposal(selectedDeletionProposal.id, 0);
+              setSelectedDeletionProposal(null);
+            }}
+          />
         )}
       </div>
     </>
