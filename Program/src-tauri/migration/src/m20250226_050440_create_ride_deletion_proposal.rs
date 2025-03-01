@@ -21,8 +21,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(RideDeletionProposal::RideId).not_null())
                     .col(string(RideDeletionProposal::Reason).not_null())
-                    .col(string(RideDeletionProposal::Approved).not_null())
-                    .col(string(RideDeletionProposal::Done).not_null())
+                    .col(boolean(RideDeletionProposal::Approved).not_null())
+                    .col(boolean(RideDeletionProposal::Done).not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_create_ride_deletion_proposal_ride_id")

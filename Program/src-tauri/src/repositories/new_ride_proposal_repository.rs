@@ -1,11 +1,11 @@
 use sea_orm::ActiveModelTrait;
 use tauri::State;
 
-use super::customer_repository::AppState;
 use crate::models::new_ride_proposal::ActiveModel as NewRideProposalActiveModel;
 use crate::models::new_ride_proposal::Column as NewRideProposalColumn;
 use crate::models::new_ride_proposal::Entity as NewRideProposals;
 use crate::models::new_ride_proposal::Model as NewRideProposalModel;
+use crate::modules::app_state::AppState;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 

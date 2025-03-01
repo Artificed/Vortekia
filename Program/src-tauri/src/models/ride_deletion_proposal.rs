@@ -11,8 +11,8 @@ pub struct Model {
     pub id: String,
     pub ride_id: String,
     pub reason: String,
-    pub approved: String,
-    pub done: String,
+    pub approved: i8,
+    pub done: i8,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

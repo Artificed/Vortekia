@@ -82,7 +82,10 @@ pub async fn run() {
             new_ride_proposal_service::get_new_ride_proposals,
             new_ride_proposal_service::update_new_ride_proposal_approval,
             ride_service::get_all_rides,
-            ride_service::update_ride
+            ride_service::update_ride,
+            ride_deletion_proposal_service::insert_ride_deletion_proposal,
+            ride_deletion_proposal_service::get_all_ride_deletion_proposals,
+            ride_deletion_proposal_service::update_ride_deletion_proposal_approval,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
