@@ -10,6 +10,7 @@ pub mod models;
 pub mod modules;
 pub mod repositories;
 pub mod services;
+pub mod viewmodels;
 
 pub use services::*;
 
@@ -86,6 +87,7 @@ pub async fn run() {
             ride_deletion_proposal_service::insert_ride_deletion_proposal,
             ride_deletion_proposal_service::get_all_ride_deletion_proposals,
             ride_deletion_proposal_service::update_ride_deletion_proposal_approval,
+            staff_schedule_service::get_all_ride_staff_schedules
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

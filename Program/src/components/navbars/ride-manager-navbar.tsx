@@ -36,6 +36,14 @@ export default function RideManagerNavbar() {
                 Dashboard
               </a>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/ride-manager/view-schedules"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                View Schedules
+              </a>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

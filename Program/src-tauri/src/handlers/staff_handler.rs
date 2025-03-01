@@ -57,6 +57,6 @@ pub async fn get_lnf_staffs(state: State<'_, AppState>) -> Result<Vec<StaffModel
     staff_repository::get_staff_by_role(&state, "Lost and Found Staff").await
 }
 
-pub async fn get_ride_staffs(state: State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
-    staff_repository::get_staff_by_role(&state, "Ride Staff").await
+pub async fn get_ride_staffs(state: &State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
+    staff_repository::get_staff_by_role(state, "Ride Staff").await
 }

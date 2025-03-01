@@ -8,21 +8,6 @@ use crate::models::staff_schedule::Model as StaffScheduleModel;
 
 use super::customer_repository::AppState;
 
-pub async fn get_staff_schedule_from_id(
-    state: &State<'_, AppState>,
-    id: &str,
-) -> Result<Option<StaffScheduleModel>, String> {
-    let result = StaffSchedules::find()
-        .filter(StaffScheduleColumn::Id.eq(id))
-        .one(&state.conn)
-        .await;
-
-    match result {
-        Ok(schedule) => Ok(schedule),
-        Err(_) => Err("Failed to get staff schedule!".to_string()),
-    }
-}
-
 pub async fn get_staff_schedule_from_staff_id(
     state: &State<'_, AppState>,
     staff_id: &str,

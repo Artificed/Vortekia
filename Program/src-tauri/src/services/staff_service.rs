@@ -32,5 +32,5 @@ pub async fn get_lnf_staffs(state: State<'_, AppState>) -> Result<Vec<StaffModel
 
 #[tauri::command]
 pub async fn get_ride_staffs(state: State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
-    staff_handler::get_ride_staffs(state).await
+    staff_handler::get_ride_staffs(&state).await
 }

@@ -2,12 +2,16 @@ use chrono::NaiveTime;
 use tauri::State;
 
 use crate::repositories::staff_repository;
+use crate::viewmodels::staff_with_schedule::StaffWithSchedule;
 use crate::{
     factories::staff_schedule_factory, modules::app_state::AppState,
     repositories::staff_schedule_repository,
 };
 
+use crate::models::ride_staff::Model as RideStaffModel;
 use crate::models::staff_schedule::Model as StaffScheduleModel;
+
+use super::staff_handler;
 
 pub async fn insert_staff_schedule(
     state: &State<'_, AppState>,
@@ -76,4 +80,21 @@ pub async fn validate_staff_schedule(
     }
 
     Ok(())
+}
+
+pub async fn get_all_ride_staff_schedules(
+    state: &State<'_, AppState>,
+) -> Result<Vec<StaffWithSchedule>, String> {
+    let staff_list = staff_handler::get_ride_staffs(state).await?;
+
+    let mut staff_with_schedules = Vec::new();
+
+    for staff in staff_list {
+        let schedules: Vec<StaffScheduleModel> =
+            get_staff_schedule_from_staff_id(state, &staff.id).await?;
+
+        staff_with_schedules.push(StaffWithSchedule { staff, schedules });
+    }
+
+    Ok(staff_with_schedules)
 }
