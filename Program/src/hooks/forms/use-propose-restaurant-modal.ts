@@ -77,14 +77,14 @@ export function useProposeRestaurant() {
       const arrayBuffer = await imageFile.arrayBuffer();
       const bytes = Array.from(new Uint8Array(arrayBuffer));
 
-      // await invoke("insert_new_restaurant_proposal", {
-      //   name: formData.name,
-      //   cuisineType: formData.cuisineType,
-      //   openingTime: formData.openingTime + ":00",
-      //   closingTime: formData.closingTime + ":00",
-      //   image: imageFile.name,
-      //   imageBytes: bytes,
-      // });
+      await invoke("insert_new_restaurant_proposal", {
+        restaurantName: formData.name,
+        cuisineType: formData.cuisineType,
+        openingTime: formData.openingTime + ":00",
+        closingTime: formData.closingTime + ":00",
+        image: imageFile.name,
+        imageBytes: bytes,
+      });
 
       resetForm();
       setIsOpen(false);

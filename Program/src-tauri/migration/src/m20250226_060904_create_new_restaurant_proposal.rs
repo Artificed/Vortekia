@@ -19,17 +19,13 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(NewRestaurantProposal::Name).not_null())
                     .col(string(NewRestaurantProposal::Image).not_null())
-                    .col(
-                        string(NewRestaurantProposal::OpeningTime)
-                            .timestamp()
-                            .not_null(),
-                    )
-                    .col(
-                        string(NewRestaurantProposal::ClosingTime)
-                            .timestamp()
-                            .not_null(),
-                    )
+                    .col(string(NewRestaurantProposal::OpeningTime).time().not_null())
+                    .col(string(NewRestaurantProposal::ClosingTime).time().not_null())
                     .col(string(NewRestaurantProposal::CuisineType).not_null())
+                    .col(boolean(NewRestaurantProposal::CfoApproved).not_null())
+                    .col(boolean(NewRestaurantProposal::CfoDone).not_null())
+                    .col(boolean(NewRestaurantProposal::CeoApproved).not_null())
+                    .col(boolean(NewRestaurantProposal::CeoDone).not_null())
                     .to_owned(),
             )
             .await
@@ -51,4 +47,8 @@ enum NewRestaurantProposal {
     OpeningTime,
     ClosingTime,
     CuisineType,
+    CfoApproved,
+    CfoDone,
+    CeoApproved,
+    CeoDone,
 }

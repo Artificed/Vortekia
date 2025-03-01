@@ -11,9 +11,13 @@ pub struct Model {
     pub id: String,
     pub name: String,
     pub image: String,
-    pub opening_time: DateTimeUtc,
-    pub closing_time: DateTimeUtc,
+    pub opening_time: Time,
+    pub closing_time: Time,
     pub cuisine_type: String,
+    pub cfo_approved: i8,
+    pub cfo_done: i8,
+    pub ceo_approved: i8,
+    pub ceo_done: i8,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

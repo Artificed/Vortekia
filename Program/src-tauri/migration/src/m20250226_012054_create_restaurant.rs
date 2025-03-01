@@ -19,8 +19,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(Restaurant::Name).not_null())
                     .col(string(Restaurant::Image).not_null())
-                    .col(string(Restaurant::OpeningTime).timestamp().not_null())
-                    .col(string(Restaurant::ClosingTime).timestamp().not_null())
+                    .col(string(Restaurant::OpeningTime).time().not_null())
+                    .col(string(Restaurant::ClosingTime).time().not_null())
                     .col(string(Restaurant::CuisineType).not_null())
                     .col(boolean(Restaurant::IsOpen).not_null())
                     .to_owned(),
