@@ -14,5 +14,6 @@ pub fn create_ride(image: &str, name: &str, price: i32, status: &str) -> RideAct
         price: ActiveValue::Set(price),
         status: ActiveValue::Set(status.to_string()),
         assigned_staff: ActiveValue::NotSet,
+        is_active: ActiveValue::Set(1),
     }
 }

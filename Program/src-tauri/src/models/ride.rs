@@ -14,6 +14,7 @@ pub struct Model {
     pub price: i32,
     pub status: String,
     pub assigned_staff: Option<String>,
+    pub is_active: i8,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

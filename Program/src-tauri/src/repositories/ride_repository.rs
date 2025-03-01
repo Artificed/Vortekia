@@ -1,9 +1,12 @@
 use sea_orm::ActiveModelTrait;
+use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
+use sea_orm::QueryFilter;
 use tauri::State;
 
 use super::customer_repository::AppState;
 use crate::models::ride::ActiveModel as RideActiveModel;
+use crate::models::ride::Column as RideColumn;
 use crate::models::ride::Entity as Rides;
 use crate::models::ride::Model as RideModel;
 
@@ -18,7 +21,10 @@ pub async fn insert_ride(state: &State<'_, AppState>, ride: RideActiveModel) -> 
 }
 
 pub async fn get_all_rides(state: &State<'_, AppState>) -> Result<Vec<RideModel>, String> {
-    let result = Rides::find().all(&state.conn).await;
+    let result = Rides::find()
+        .filter(RideColumn::IsActive.eq(1))
+        .all(&state.conn)
+        .await;
 
     match result {
         Ok(rides) => Ok(rides),
@@ -30,19 +36,26 @@ pub async fn get_all_rides(state: &State<'_, AppState>) -> Result<Vec<RideModel>
 }
 
 pub async fn delete_ride(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
-    let res = Rides::delete_by_id(id).exec(&state.conn).await;
+    let existing_ride = Rides::find_by_id(id).one(&state.conn).await;
 
-    match res {
-        Ok(delete_result) => {
-            if delete_result.rows_affected > 0 {
-                Ok(())
-            } else {
-                Err("Ride not found or already deleted.".to_string())
+    match existing_ride {
+        Ok(Some(ride)) => {
+            let mut ride_to_update: RideActiveModel = ride.into();
+            ride_to_update.is_active = sea_orm::ActiveValue::Set(0);
+
+            let result = ride_to_update.update(&state.conn).await;
+            match result {
+                Ok(_) => Ok(()),
+                Err(err) => {
+                    eprintln!("Error soft deleting ride: {:?}", err);
+                    Err("Failed to soft delete ride!".to_string())
+                }
             }
         }
+        Ok(None) => Err("Ride not found!".to_string()),
         Err(err) => {
-            eprintln!("Error deleting ride: {:?}", err);
-            Err("Failed to delete ride!".to_string())
+            eprintln!("Error finding ride: {:?}", err);
+            Err("Failed to find ride!".to_string())
         }
     }
 }
@@ -52,7 +65,10 @@ pub async fn update_ride(
     id: &str,
     updated_ride: RideActiveModel,
 ) -> Result<(), String> {
-    let existing_ride = Rides::find_by_id(id).one(&state.conn).await;
+    let existing_ride = Rides::find_by_id(id)
+        .filter(RideColumn::IsActive.eq(1))
+        .one(&state.conn)
+        .await;
 
     match existing_ride {
         Ok(Some(ride)) => {
@@ -65,7 +81,6 @@ pub async fn update_ride(
             ride_to_update.image = updated_ride.image;
 
             let result = ride_to_update.update(&state.conn).await;
-
             match result {
                 Ok(_) => Ok(()),
                 Err(err) => {
@@ -74,7 +89,7 @@ pub async fn update_ride(
                 }
             }
         }
-        Ok(None) => Err("Ride not found!".to_string()),
+        Ok(None) => Err("Active ride not found!".to_string()),
         Err(err) => {
             eprintln!("Error finding ride: {:?}", err);
             Err("Failed to find ride!".to_string())
