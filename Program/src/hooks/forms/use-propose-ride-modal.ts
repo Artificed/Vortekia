@@ -67,7 +67,6 @@ export function useProposeRide() {
     }
 
     try {
-      // Convert the image file to a byte array
       const arrayBuffer = await imageFile.arrayBuffer();
       const bytes = Array.from(new Uint8Array(arrayBuffer));
 
@@ -75,7 +74,7 @@ export function useProposeRide() {
         rideName: formData.rideName,
         costReview: formData.costReview,
         image: formData.rideImage,
-        imageBytes: bytes, // Send as byte array which matches &[u8] in Rust
+        imageBytes: bytes,
       });
 
       resetForm();

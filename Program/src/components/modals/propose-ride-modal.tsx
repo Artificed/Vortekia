@@ -37,10 +37,10 @@ export default function ProposeRideModal() {
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            Submit Ride Review
+            Submit Ride Proposal
           </DialogTitle>
           <DialogDescription>
-            Share your experience with one of our rides.
+            Share your experience on the new ride
           </DialogDescription>
         </DialogHeader>
 

@@ -4,6 +4,7 @@ import CooViewProposal from "@/pages/staff/coo/coo-view-proposals";
 import CsChat from "@/pages/staff/customer-service/cs-chat";
 import CsCreateCustomer from "@/pages/staff/customer-service/cs-create-customer";
 import CsDashboard from "@/pages/staff/customer-service/cs-dashboard";
+import FnbSupervisorDashboard from "@/pages/staff/fnb-supervisor/fnb-supervisor-dashboard";
 import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
 import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashboard";
@@ -46,6 +47,12 @@ export default function StaffUI() {
 
       {/* Ride Staff Routes */}
       <Route path="ride-staff/dashboard" element={<RideStaffDashboard />} />
+
+      {/* FnB Supervisor */}
+      <Route
+        path="fnb-supervisor/dashboard"
+        element={<FnbSupervisorDashboard />}
+      />
     </Routes>
   );
 }
