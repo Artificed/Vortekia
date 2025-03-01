@@ -12,6 +12,7 @@ pub mod ride_queue;
 pub mod ride_staff;
 pub mod souvenir;
 pub mod staff;
+pub mod staff_schedule;
 pub mod store;
 pub mod store_deletion_proposal;
 pub mod store_staff;

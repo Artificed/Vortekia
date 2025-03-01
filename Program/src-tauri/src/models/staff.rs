@@ -24,8 +24,8 @@ pub enum Relation {
     RestaurantStaff,
     #[sea_orm(has_many = "super::ride::Entity")]
     Ride,
-    #[sea_orm(has_many = "super::ride_staff::Entity")]
-    RideStaff,
+    #[sea_orm(has_many = "super::staff_schedule::Entity")]
+    StaffSchedule,
 }
 
 impl Related<super::lost_and_found_log::Entity> for Entity {
@@ -46,9 +46,9 @@ impl Related<super::ride::Entity> for Entity {
     }
 }
 
-impl Related<super::ride_staff::Entity> for Entity {
+impl Related<super::staff_schedule::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::RideStaff.def()
+        Relation::StaffSchedule.def()
     }
 }
 

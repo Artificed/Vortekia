@@ -35,6 +35,25 @@ pub async fn get_all_rides(state: &State<'_, AppState>) -> Result<Vec<RideModel>
     }
 }
 
+pub async fn get_ride_by_id(
+    state: &State<'_, AppState>,
+    id: &str,
+) -> Result<Option<RideModel>, String> {
+    let result = Rides::find()
+        .filter(RideColumn::Id.eq(id))
+        .filter(RideColumn::IsActive.eq(1))
+        .one(&state.conn)
+        .await;
+
+    match result {
+        Ok(ride) => Ok(ride),
+        Err(err) => {
+            eprintln!("Error fetching ride by ID: {:?}", err);
+            Err("Failed to get ride!".to_string())
+        }
+    }
+}
+
 pub async fn delete_ride(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
     let existing_ride = Rides::find_by_id(id).one(&state.conn).await;
 

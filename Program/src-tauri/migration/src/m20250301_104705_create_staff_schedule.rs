@@ -20,8 +20,8 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(string(StaffSchedule::StaffId).not_null())
-                    .col(string(StaffSchedule::StartTime).timestamp().not_null())
-                    .col(string(StaffSchedule::EndTime).timestamp().not_null())
+                    .col(string(StaffSchedule::StartTime).time().not_null())
+                    .col(string(StaffSchedule::EndTime).time().not_null())
                     .col(string(StaffSchedule::Task).not_null())
                     .foreign_key(
                         ForeignKey::create()

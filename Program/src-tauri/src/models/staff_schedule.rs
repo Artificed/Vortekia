@@ -4,32 +4,33 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
-#[sea_orm(table_name = "store_staff")]
+#[sea_orm(table_name = "staff_schedule")]
+#[serde(rename_all = "camelCase")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
-    pub store_id: String,
     pub staff_id: String,
+    pub start_time: Time,
+    pub end_time: Time,
+    pub task: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::store::Entity",
-        from = "Column::StoreId",
-        to = "super::store::Column::Id",
+        belongs_to = "super::staff::Entity",
+        from = "Column::StaffId",
+        to = "super::staff::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    Store2,
-    #[sea_orm(
-        belongs_to = "super::store::Entity",
-        from = "Column::StoreId",
-        to = "super::store::Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    Store1,
+    Staff,
+}
+
+impl Related<super::staff::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Staff.def()
+    }
 }
 
 impl ActiveModelBehavior for ActiveModel {}

@@ -6,3 +6,4 @@ pub mod new_ride_proposal_handler;
 pub mod ride_deletion_proposal_handler;
 pub mod ride_handler;
 pub mod staff_handler;
+pub mod staff_schedule_handler;

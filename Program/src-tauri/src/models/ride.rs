@@ -25,8 +25,6 @@ pub enum Relation {
     RideDeletionProposal,
     #[sea_orm(has_many = "super::ride_queue::Entity")]
     RideQueue,
-    #[sea_orm(has_many = "super::ride_staff::Entity")]
-    RideStaff,
     #[sea_orm(
         belongs_to = "super::staff::Entity",
         from = "Column::AssignedStaff",
@@ -46,12 +44,6 @@ impl Related<super::ride_deletion_proposal::Entity> for Entity {
 impl Related<super::ride_queue::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::RideQueue.def()
-    }
-}
-
-impl Related<super::ride_staff::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::RideStaff.def()
     }
 }
 
