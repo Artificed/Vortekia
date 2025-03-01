@@ -22,7 +22,7 @@ pub async fn update_ride(
     status: &str,
     opening_time: &str,
     closing_time: &str,
-    assigned_staff: &str,
+    assigned_staff: Option<&str>,
 ) -> Result<(), String> {
     ride_handler::update_ride(
         &state,

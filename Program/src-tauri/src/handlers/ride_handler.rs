@@ -82,37 +82,46 @@ pub async fn update_ride(
     status: &str,
     opening_time: &str,
     closing_time: &str,
-    assigned_staff: &str,
+    assigned_staff: Option<&str>,
 ) -> Result<(), String> {
+    if status == "Open" && assigned_staff.is_none() {
+        return Err("Assigned staff must be set when status is 'Done'".to_string());
+    }
+
     let existing_ride: RideModel = ride_repository::get_ride_by_id(state, id)
         .await?
         .ok_or_else(|| "Ride not found!".to_string())?;
 
     let existing_task: String = format!("Assigned To Ride {}", existing_ride.name);
 
-    staff_schedule_handler::validate_staff_schedule(
-        state,
-        assigned_staff,
-        opening_time,
-        closing_time,
-        Some(existing_task.as_str()),
-    )
-    .await?;
+    if let Some(staff_id) = assigned_staff {
+        staff_schedule_handler::validate_staff_schedule(
+            state,
+            staff_id,
+            opening_time,
+            closing_time,
+            Some(existing_task.as_str()),
+        )
+        .await?;
+    }
 
     let mut updated_ride =
         ride_factory::create_ride(image, name, price, opening_time, closing_time, status);
-    updated_ride.assigned_staff = ActiveValue::Set(Some(assigned_staff.to_string()));
 
-    update_staff_schedule_for_ride(
-        state,
-        &existing_ride.name,
-        name,
-        existing_ride.assigned_staff.as_deref(),
-        assigned_staff,
-        opening_time,
-        closing_time,
-    )
-    .await?;
+    updated_ride.assigned_staff = ActiveValue::Set(assigned_staff.map(|s| s.to_string()));
+
+    if let Some(staff_id) = assigned_staff {
+        update_staff_schedule_for_ride(
+            state,
+            &existing_ride.name,
+            name,
+            existing_ride.assigned_staff.as_deref(),
+            staff_id,
+            opening_time,
+            closing_time,
+        )
+        .await?;
+    }
 
     ride_repository::update_ride(state, id, updated_ride).await
 }

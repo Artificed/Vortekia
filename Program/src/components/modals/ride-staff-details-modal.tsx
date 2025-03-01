@@ -38,8 +38,13 @@ export default function RideStaffDetailsModal({
     return timeString.substring(0, 5);
   };
 
-  const formatShiftTime = (date: Date | string) => {
-    return new Date(date).toLocaleTimeString([], {
+  const formatShiftTime = (timeString: string) => {
+    if (!timeString) return "N/A";
+    const [hours, minutes] = timeString.split(":");
+    const formattedTime = new Date();
+    formattedTime.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+
+    return formattedTime.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -60,12 +65,12 @@ export default function RideStaffDetailsModal({
         </DialogHeader>
 
         <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-14">
             <div>
               <img
                 src={ride.image}
                 alt={ride.name}
-                className="w-full h-auto object-cover rounded-md shadow"
+                className="w-full h-auto object-cover rounded-md shadow mt-4"
               />
             </div>
             <div className="flex flex-col justify-center space-y-3">
@@ -108,8 +113,8 @@ export default function RideStaffDetailsModal({
                       <TableCell>{staff.username}</TableCell>
                       <TableCell>{staff.role}</TableCell>
                       <TableCell>
-                        {formatShiftTime(staff.shiftStart)} -{" "}
-                        {formatShiftTime(staff.shiftEnd)}
+                        {formatShiftTime(staff.shiftStart.toString())} -{" "}
+                        {formatShiftTime(staff.shiftEnd.toString())}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -124,9 +129,7 @@ export default function RideStaffDetailsModal({
         <DialogFooter className="flex flex-col sm:flex-row sm:justify-between mt-4">
           <div className="flex gap-2 mb-2 sm:mb-0"></div>
           <div className="flex gap-2">
-            <Button variant="destructive">
-              {ride.status === "Closed" ? "Open Ride" : "Close Ride"}
-            </Button>
+            <Button variant="default">Manage Queue</Button>
             <DialogClose asChild>
               <Button variant="secondary">Close</Button>
             </DialogClose>
