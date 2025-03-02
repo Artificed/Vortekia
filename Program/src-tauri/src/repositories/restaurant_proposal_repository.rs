@@ -2,6 +2,7 @@ use sea_orm::ActiveModelTrait;
 use sea_orm::ActiveValue;
 use tauri::State;
 
+use crate::handlers::restaurant_handler;
 use crate::models::new_restaurant_proposal::ActiveModel as RestaurantProposalActiveModel;
 use crate::models::new_restaurant_proposal::Column as RestaurantProposalColumn;
 use crate::models::new_restaurant_proposal::Entity as RestaurantProposals;
@@ -76,38 +77,42 @@ pub async fn update_new_restaurant_proposal(
     let proposal = RestaurantProposals::find()
         .filter(RestaurantProposalColumn::Id.eq(id))
         .one(&state.conn)
-        .await;
+        .await
+        .map_err(|err| format!("Failed to find restaurant proposal: {:?}", err))?
+        .ok_or_else(|| format!("Restaurant proposal with ID {} not found", id))?;
 
-    match proposal {
-        Ok(Some(proposal)) => {
-            let mut proposal_active: RestaurantProposalActiveModel = proposal.into();
+    let name = proposal.name.clone();
+    let image = proposal.image.clone();
+    let cuisine_type = proposal.cuisine_type.clone();
+    let opening_time_str = proposal.opening_time.to_string();
+    let closing_time_str = proposal.closing_time.to_string();
 
-            proposal_active.cfo_approved = ActiveValue::Set(cfo_approve);
-            proposal_active.cfo_done = ActiveValue::Set(cfo_done);
-            proposal_active.ceo_approved = ActiveValue::Set(ceo_approve);
-            proposal_active.ceo_done = ActiveValue::Set(ceo_done);
+    let mut proposal_active: RestaurantProposalActiveModel = proposal.into();
 
-            let result = proposal_active.update(&state.conn).await;
+    proposal_active.cfo_approved = ActiveValue::Set(cfo_approve);
+    proposal_active.cfo_done = ActiveValue::Set(cfo_done);
+    proposal_active.ceo_approved = ActiveValue::Set(ceo_approve);
+    proposal_active.ceo_done = ActiveValue::Set(ceo_done);
 
-            match result {
-                Ok(_) => Ok(()),
-                Err(err) => {
-                    eprintln!(
-                        "Failed to update restaurant proposal CFO approval status: {:?}",
-                        err
-                    );
-                    Err(format!(
-                        "Failed to update restaurant proposal CFO approval status: {:?}",
-                        err
-                    ))
-                }
-            }
-        }
-        Ok(None) => Err(format!("Restaurant proposal with ID {} not found", id)),
-        Err(err) => {
-            eprintln!("Failed to find restaurant proposal: {:?}", err);
-            Err(format!("Failed to find restaurant proposal: {:?}", err))
-        }
+    proposal_active.update(&state.conn).await.map_err(|err| {
+        format!(
+            "Failed to update restaurant proposal approval status: {:?}",
+            err
+        )
+    })?;
+
+    if cfo_approve == 1 && cfo_done == 1 && ceo_approve == 1 && ceo_done == 1 {
+        restaurant_handler::insert_new_restaurant(
+            state,
+            name,
+            opening_time_str,
+            closing_time_str,
+            cuisine_type,
+            image,
+        )
+        .await
+    } else {
+        Ok(())
     }
 }
 

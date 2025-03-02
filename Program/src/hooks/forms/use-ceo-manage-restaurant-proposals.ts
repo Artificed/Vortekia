@@ -30,7 +30,7 @@ export function useCeoManageRestaurantProposals() {
       });
       ToastUtils.success({
         description: `Restaurant proposal ${
-          approved ? "approved and forwarded to CEO" : "rejected"
+          approved ? "Approved" : "rejected"
         } successfully!`,
       });
       refetch();
