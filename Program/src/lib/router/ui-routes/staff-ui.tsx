@@ -13,6 +13,7 @@ import FnbSupervisorDashboard from "@/pages/staff/fnb-supervisor/fnb-supervisor-
 import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
 import RetailManagerDashboard from "@/pages/staff/retail-manager/retail-manager-dashboard";
+import RetailManagerViewSchedules from "@/pages/staff/retail-manager/retail-manager-view-schedules";
 import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashboard";
 import RideManagerViewSchedules from "@/pages/staff/ride-manager/ride-manager-view-schedules";
 import RideStaffDashboard from "@/pages/staff/ride-staff/ride-staff-dashboard";
@@ -78,9 +79,14 @@ export default function StaffUI() {
         element={<CeoViewStoreProposals />}
       />
 
+      {/* Retail Manager */}
       <Route
         path="retail-manager/dashboard"
         element={<RetailManagerDashboard />}
+      />
+      <Route
+        path="retail-manager/view-schedules"
+        element={<RetailManagerViewSchedules />}
       />
     </Routes>
   );

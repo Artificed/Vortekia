@@ -89,6 +89,7 @@ pub async fn run() {
             ride_deletion_proposal_service::get_all_ride_deletion_proposals,
             ride_deletion_proposal_service::update_ride_deletion_proposal_approval,
             staff_schedule_service::get_all_ride_staff_schedules,
+            staff_schedule_service::get_all_sales_associate_schedules,
             ride_service::get_rides_with_staff,
             restaurant_proposal_service::insert_new_restaurant_proposal,
             restaurant_proposal_service::get_all_new_restaurant_proposals,

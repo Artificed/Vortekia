@@ -11,7 +11,6 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { useNavigate } from "react-router";
-import ProposeRideModal from "../modals/propose-ride-modal";
 import ProposeNewStoreModal from "../modals/propose-new-store-modal";
 
 export default function RetailManagerNavbar() {
@@ -35,6 +34,14 @@ export default function RetailManagerNavbar() {
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 Dashboard
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/retail-manager/view-schedules"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                View Schedules
               </a>
             </NavigationMenuItem>
           </NavigationMenuList>

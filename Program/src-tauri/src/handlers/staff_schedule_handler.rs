@@ -97,3 +97,20 @@ pub async fn get_all_ride_staff_schedules(
 
     Ok(staff_with_schedules)
 }
+
+pub async fn get_all_sales_associate_schedules(
+    state: &State<'_, AppState>,
+) -> Result<Vec<StaffWithSchedule>, String> {
+    let staff_list = staff_handler::get_sales_associates(state).await?;
+
+    let mut staff_with_schedules = Vec::new();
+
+    for staff in staff_list {
+        let schedules: Vec<StaffScheduleModel> =
+            get_staff_schedule_from_staff_id(state, &staff.id).await?;
+
+        staff_with_schedules.push(StaffWithSchedule { staff, schedules });
+    }
+
+    Ok(staff_with_schedules)
+}
