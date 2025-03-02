@@ -74,6 +74,7 @@ pub async fn run() {
             staff_service::login_staff,
             staff_service::get_lnf_staffs,
             staff_service::get_ride_staffs,
+            staff_service::get_sales_associates,
             auth_service::logout_user,
             auth_service::get_current_user,
             lnf_log_service::get_lnf_logs,

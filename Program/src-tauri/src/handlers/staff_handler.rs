@@ -60,3 +60,7 @@ pub async fn get_lnf_staffs(state: State<'_, AppState>) -> Result<Vec<StaffModel
 pub async fn get_ride_staffs(state: &State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
     staff_repository::get_staff_by_role(state, "Ride Staff").await
 }
+
+pub async fn get_sales_associates(state: &State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
+    staff_repository::get_staff_by_role(state, "Sales Associate").await
+}

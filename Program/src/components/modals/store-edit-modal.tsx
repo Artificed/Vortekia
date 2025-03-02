@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Store from "@/lib/interfaces/entities/store";
 import { useImageUpload } from "@/hooks/forms/use-image-upload";
 import { useState, useEffect } from "react";
-import { Upload, X } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -12,6 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetSalesAssociates } from "@/hooks/data/use-get-sales-associates";
+import { invoke } from "@tauri-apps/api/core";
+import { useQueryClient } from "@tanstack/react-query";
+import { ToastUtils } from "../utils/toast-helper";
 
 interface StoreEditModalProps {
   formData: Store;
@@ -22,7 +26,13 @@ export default function StoreEditModal({
   formData,
   onCancel,
 }: StoreEditModalProps) {
-  const [form, setForm] = useState<Store>({ ...formData });
+  const [form, setForm] = useState<Store>({
+    ...formData,
+    openingTime: formData.openingTime.slice(0, 5),
+    closingTime: formData.closingTime.slice(0, 5),
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     imagePreview,
     imageFile,
@@ -32,10 +42,22 @@ export default function StoreEditModal({
     setImagePreview,
   } = useImageUpload();
 
+  const { salesAssociates = [] } = useGetSalesAssociates() || {};
+
   const timeOptions = Array.from({ length: 13 }, (_, i) => {
     const hour = i + 7;
     return `${hour.toString().padStart(2, "0")}:00`;
   });
+
+  const handleOpeningTimeChange = (value: string) => {
+    setForm((prev) => ({ ...prev, openingTime: value }));
+  };
+
+  const handleClosingTimeChange = (value: string) => {
+    setForm((prev) => ({ ...prev, closingTime: value }));
+  };
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (formData.image) {
@@ -45,16 +67,52 @@ export default function StoreEditModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     let updatedForm = { ...form };
 
-    if (imageFile) {
-      console.log("Uploading image:", imageFile);
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      updatedForm.image = imagePreview || "";
+    try {
+      if (imageFile) {
+        const arrayBuffer = await imageFile.arrayBuffer();
+        const bytes = Array.from(new Uint8Array(arrayBuffer));
+
+        await invoke("update_store", {
+          storeId: updatedForm.id,
+          name: updatedForm.name,
+          openingTime: updatedForm.openingTime + ":00",
+          closingTime: updatedForm.closingTime + ":00",
+          description: updatedForm.description,
+          imageName: imageFile.name,
+          imageBytes: bytes,
+          salesAssociate: updatedForm.salesAssociate,
+        });
+      } else {
+        await invoke("update_store", {
+          storeId: updatedForm.id,
+          name: updatedForm.name,
+          openingTime: updatedForm.openingTime + ":00",
+          closingTime: updatedForm.closingTime + ":00",
+          description: updatedForm.description,
+          imageName: null,
+          imageBytes: null,
+          salesAssociate: updatedForm.salesAssociate,
+        });
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["stores"] });
+
+      ToastUtils.success({
+        description: "Successfully updated store!",
+      });
+
+      onCancel(); // Close the modal on success
+    } catch (error) {
+      ToastUtils.error({ description: String(error) });
+    } finally {
+      setIsSubmitting(false);
     }
 
-    console.log("Saving store:", updatedForm);
+    updatedForm.image = imagePreview || "";
   };
 
   const handleChange = (
@@ -66,7 +124,6 @@ export default function StoreEditModal({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-4">
-      {/* Store Image */}
       <div className="mb-6">
         <label className="text-sm font-medium mb-2 block">Store Image</label>
         <div
@@ -109,6 +166,7 @@ export default function StoreEditModal({
             value={form.name}
             onChange={handleChange}
             required
+            disabled={isSubmitting}
           />
         </div>
 
@@ -117,31 +175,31 @@ export default function StoreEditModal({
             <label className="text-sm font-medium">Opening Time</label>
             <Select
               value={form.openingTime}
-              onValueChange={(value: string) =>
-                setForm((prev) => ({ ...prev, openingTime: value }))
-              }
+              onValueChange={handleOpeningTimeChange}
+              disabled={isSubmitting}
             >
               <SelectTrigger id="openingTime">
                 <SelectValue placeholder="Select opening time" />
               </SelectTrigger>
               <SelectContent>
-                {timeOptions.map((time) => (
-                  <SelectItem key={time} value={time}>
-                    {time}
-                  </SelectItem>
-                ))}
+                {timeOptions.map((time) => {
+                  const disabled = time >= form.closingTime;
+                  return (
+                    <SelectItem key={time} value={time} disabled={disabled}>
+                      {time}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Closing Time */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Closing Time</label>
             <Select
               value={form.closingTime}
-              onValueChange={(value: string) =>
-                setForm((prev) => ({ ...prev, closingTime: value }))
-              }
+              onValueChange={handleClosingTimeChange}
+              disabled={isSubmitting}
             >
               <SelectTrigger id="closingTime">
                 <SelectValue placeholder="Select closing time" />
@@ -164,13 +222,27 @@ export default function StoreEditModal({
           <label htmlFor="salesAssociate" className="text-sm font-medium">
             Sales Associate
           </label>
-          <Input
-            id="salesAssociate"
-            name="salesAssociate"
+          <Select
             value={form.salesAssociate || ""}
-            onChange={handleChange}
-            placeholder="Not Assigned"
-          />
+            onValueChange={(value: string) =>
+              setForm((prev) => ({ ...prev, salesAssociate: value }))
+            }
+            disabled={isSubmitting}
+          >
+            <SelectTrigger id="salesAssociate">
+              <SelectValue placeholder="Select a sales associate" />
+            </SelectTrigger>
+            <SelectContent>
+              {salesAssociates.map((associate) => (
+                <SelectItem key={associate.id} value={associate.id}>
+                  {associate.username} (
+                  {associate.shiftStart.toString().slice(0, 5)}
+                  {" - "}
+                  {associate.shiftEnd.toString().slice(0, 5)})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -184,15 +256,30 @@ export default function StoreEditModal({
             onChange={handleChange}
             rows={4}
             className="resize-none"
+            disabled={isSubmitting}
           />
         </div>
       </div>
 
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
           Cancel
         </Button>
-        <Button type="submit">Save Changes</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
+        </Button>
       </div>
     </form>
   );
