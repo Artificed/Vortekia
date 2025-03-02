@@ -63,7 +63,6 @@ export default function RetailManagerNavbar() {
           <p>Not Logged In</p>
         )}
       </div>
-      <ProposeNewStoreModal />
     </nav>
   );
 }

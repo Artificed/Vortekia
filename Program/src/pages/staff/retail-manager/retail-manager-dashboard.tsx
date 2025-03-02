@@ -37,6 +37,8 @@ import { useSelectedStore } from "@/hooks/utility/use-selected-store";
 import StoreActions from "@/components/partials/retail-manager/store-actions";
 import StoreDetailsContent from "@/components/partials/retail-manager/store-details-context";
 import StoreEditModal from "@/components/modals/store-edit-modal";
+import ProposeNewStoreModal from "@/components/modals/propose-new-store-modal";
+import AddSouvenirModal from "@/components/modals/add-souvenir-modal";
 
 export default function StoreDashboard() {
   const { stores } = useGetStores();
@@ -56,7 +58,13 @@ export default function StoreDashboard() {
       <div className="flex items-center justify-center min-h-screen bg-gray-100 p-6">
         <Card className="w-full max-w-6xl">
           <CardHeader>
-            <CardTitle className="text-2xl">Store Management</CardTitle>
+            <div className="flex justify-between">
+              <CardTitle className="text-2xl">Store Management</CardTitle>
+              <div className="flex gap-4">
+                <ProposeNewStoreModal />
+                <AddSouvenirModal />
+              </div>
+            </div>
             <CardDescription>
               View and manage all store information
             </CardDescription>
