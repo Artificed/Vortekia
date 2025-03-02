@@ -8,6 +8,7 @@ pub mod restaurant_factory;
 pub mod resturant_proposal_factory;
 pub mod ride_deletion_proposal_factory;
 pub mod ride_factory;
+pub mod souvenir_factory;
 pub mod staff_factory;
 pub mod staff_schedule_factory;
 pub mod store_factory;

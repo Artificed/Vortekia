@@ -58,6 +58,46 @@ impl MigrationTrait for Migration {
                         "11:00:00".into(),
                         "19:00:00".into(),
                     ])
+                    .values_panic([
+                        "STFDRMMM".into(),
+                        "rm".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$Ur+JrOYL7XWhmuEGdNddsg$XB77iUopFfR5N/G/njP3mrBGz3R9HHkrM9/tgNtUFzM".into(),
+                        "Retail Manager".into(),
+                        "09:00:00".into(),
+                        "17:00:00".into(),
+                    ])
+                    .values_panic([
+                        "STFDRMSA".into(),
+                        "sa".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$Ur+JrOYL7XWhmuEGdNddsg$XB77iUopFfR5N/G/njP3mrBGz3R9HHkrM9/tgNtUFzM".into(),
+                        "Sales Associate".into(),
+                        "09:00:00".into(),
+                        "17:00:00".into(),
+                    ])
+                    .values_panic([
+                        "STFDRMS1".into(),
+                        "saa".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$Ur+JrOYL7XWhmuEGdNddsg$XB77iUopFfR5N/G/njP3mrBGz3R9HHkrM9/tgNtUFzM".into(),
+                        "Sales Associate".into(),
+                        "11:00:00".into(),
+                        "19:00:00".into(),
+                    ])
+                    .values_panic([
+                        "STFDRMS2".into(),
+                        "saaa".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$Ur+JrOYL7XWhmuEGdNddsg$XB77iUopFfR5N/G/njP3mrBGz3R9HHkrM9/tgNtUFzM".into(),
+                        "Sales Associate".into(),
+                        "07:00:00".into(),
+                        "15:00:00".into(),
+                    ])
+                    .values_panic([
+                        "STFDRCEO".into(),
+                        "ceo".into(),
+                        "$argon2id$v=19$m=19456,t=2,p=1$dkjPCdjeKKK8k18D073DXA$mAmCj90P2TrX9OzEdnObExYIMU3weTnUJfKJRTFQ4Z4".into(),
+                        "CEO".into(),
+                        "07:00:00".into(),
+                        "19:00:00".into(),
+                    ])
                     .to_owned(),
             )
             .await

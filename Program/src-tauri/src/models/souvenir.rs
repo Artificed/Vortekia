@@ -5,11 +5,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "souvenir")]
-#[serde(rename_all = "camelCase")]
+#[sea_orm(rename_all = "camelCase")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
     pub store_id: String,
+    pub name: String,
     pub price: i32,
     pub description: String,
     pub image: String,

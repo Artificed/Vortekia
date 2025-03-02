@@ -20,8 +20,10 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(string(Souvenir::StoreId).not_null())
+                    .col(string(Souvenir::Name).not_null())
                     .col(string(Souvenir::Price).integer().not_null())
                     .col(string(Souvenir::Description).not_null())
+                    .col(string(Souvenir::Image).not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_souvenir_store_id")
@@ -29,7 +31,6 @@ impl MigrationTrait for Migration {
                             .to(Store::Table, Store::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
-                    .col(string(Souvenir::Image).not_null())
                     .to_owned(),
             )
             .await
@@ -47,6 +48,7 @@ pub enum Souvenir {
     Table,
     Id,
     StoreId,
+    Name,
     Price,
     Description,
     Image,
