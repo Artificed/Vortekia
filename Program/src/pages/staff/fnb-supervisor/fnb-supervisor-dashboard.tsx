@@ -220,7 +220,6 @@ export default function FnbSupervisorDashboard() {
             restaurant={selectedRestaurant}
             isOpen={isEditMode}
             onClose={resetSelection}
-            onSuccess={resetSelection}
           />
         </>
       )}

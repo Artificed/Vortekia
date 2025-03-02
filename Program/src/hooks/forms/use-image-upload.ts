@@ -32,6 +32,7 @@ export function useImageUpload() {
   return {
     imagePreview,
     imageFile,
+    setImageFile,
     fileInputRef,
     handleImageClick,
     handleImageChange,
