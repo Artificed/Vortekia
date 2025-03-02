@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useNavigate } from "react-router";
 import { RestaurantProposalModal } from "../modals/propose-restaurant-modal";
+import { AddMenuModal } from "../modals/add-menu-modal";
 
 export default function FnbSupervisorNavbar() {
   const auth = useAuth();
@@ -37,6 +38,7 @@ export default function FnbSupervisorNavbar() {
               </a>
             </NavigationMenuItem>
             <RestaurantProposalModal />
+            <AddMenuModal />
           </NavigationMenuList>
         </NavigationMenu>
       </div>

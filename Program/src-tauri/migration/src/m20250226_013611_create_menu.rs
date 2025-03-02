@@ -1,5 +1,7 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
+use crate::m20250226_012054_create_restaurant::Restaurant;
+
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 
@@ -16,6 +18,13 @@ impl MigrationTrait for Migration {
                     .col(string(Menu::Name).not_null())
                     .col(string(Menu::Image).not_null())
                     .col(string(Menu::Price).integer().not_null())
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk_create_menu_restaurant_id")
+                            .from(Menu::Table, Menu::RestaurantId)
+                            .to(Restaurant::Table, Restaurant::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await
