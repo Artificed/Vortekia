@@ -110,14 +110,10 @@ export default function StoreDashboard() {
                       <TableCell>
                         <Badge
                           className={
-                            isStoreOpen(store.openingTime, store.closingTime)
-                              ? "bg-green-500"
-                              : "bg-red-500"
+                            isStoreOpen(store) ? "bg-green-500" : "bg-red-500"
                           }
                         >
-                          {isStoreOpen(store.openingTime, store.closingTime)
-                            ? "Open"
-                            : "Closed"}
+                          {isStoreOpen(store) ? "Open" : "Closed"}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -185,13 +181,21 @@ export default function StoreDashboard() {
   );
 }
 
-function isStoreOpen(openingTime: string, closingTime: string): boolean {
+function isStoreOpen(store: Store): boolean {
+  if (store.status == "Closed") {
+    return false;
+  }
+
+  if (store.salesAssociate == null) {
+    return false;
+  }
+
   const now = new Date();
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
 
-  const [openHour, openMinute] = openingTime.split(":").map(Number);
-  const [closeHour, closeMinute] = closingTime.split(":").map(Number);
+  const [openHour, openMinute] = store.openingTime.split(":").map(Number);
+  const [closeHour, closeMinute] = store.closingTime.split(":").map(Number);
 
   const currentTimeValue = currentHour * 60 + currentMinute;
   const openTimeValue = openHour * 60 + openMinute;

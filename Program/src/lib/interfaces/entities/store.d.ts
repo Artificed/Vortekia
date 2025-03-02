@@ -5,6 +5,8 @@ interface Store {
   description: string;
   openingTime: string;
   closingTime: string;
+  status: string;
+  isActive: number;
   salesAssociate: string;
 }
 

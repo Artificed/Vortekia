@@ -19,6 +19,8 @@ impl MigrationTrait for Migration {
                     .col(string(Store::Description).not_null())
                     .col(string(Store::OpeningTime).time().not_null())
                     .col(string(Store::ClosingTime).time().not_null())
+                    .col(string(Store::Status).not_null())
+                    .col(boolean(Store::IsActive).not_null())
                     .col(string(Store::SalesAssociate).null())
                     .foreign_key(
                         ForeignKey::create()
@@ -48,5 +50,7 @@ pub enum Store {
     Description,
     OpeningTime,
     ClosingTime,
+    Status,
+    IsActive,
     SalesAssociate,
 }

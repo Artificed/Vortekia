@@ -26,7 +26,10 @@ pub async fn insert_store(
 }
 
 pub async fn get_all_stores(state: &State<'_, AppState>) -> Result<Vec<StoreModel>, String> {
-    let result = Stores::find().all(&state.conn).await;
+    let result = Stores::find()
+        .filter(StoreColumn::IsActive.eq(1))
+        .all(&state.conn)
+        .await;
 
     match result {
         Ok(store_list) => Ok(store_list),
@@ -40,6 +43,7 @@ pub async fn get_all_stores(state: &State<'_, AppState>) -> Result<Vec<StoreMode
 pub async fn get_store_by_id(state: &State<'_, AppState>, id: &str) -> Result<StoreModel, String> {
     let result = Stores::find()
         .filter(StoreColumn::Id.eq(id.to_owned()))
+        .filter(StoreColumn::IsActive.eq(1))
         .one(&state.conn)
         .await;
 
@@ -82,14 +86,16 @@ pub async fn update_store(
 
 pub async fn delete_store(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
     let store = get_store_by_id(state, id).await?;
-    let active_store: StoreActiveModel = store.into();
+    let mut active_store: StoreActiveModel = store.into();
 
-    let result = active_store.delete(&state.conn).await;
+    active_store.is_active = ActiveValue::Set(0);
+
+    let result = active_store.update(&state.conn).await;
     match result {
         Ok(_) => Ok(()),
         Err(err) => {
-            eprintln!("Failed to delete store: {:?}", err);
-            Err(format!("Failed to delete store: {:?}", err))
+            eprintln!("Failed to delete (deactivate) store: {:?}", err);
+            Err(format!("Failed to delete (deactivate) store: {:?}", err))
         }
     }
 }

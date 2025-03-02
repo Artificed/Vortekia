@@ -14,6 +14,8 @@ pub struct Model {
     pub description: String,
     pub opening_time: Time,
     pub closing_time: Time,
+    pub status: String,
+    pub is_active: i8,
     pub sales_associate: Option<String>,
 }
 

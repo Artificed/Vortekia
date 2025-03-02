@@ -27,5 +27,7 @@ pub fn create_store(
         opening_time: ActiveValue::Set(opening),
         closing_time: ActiveValue::Set(closing),
         sales_associate: ActiveValue::NotSet,
+        status: ActiveValue::Set(String::from("Closed")),
+        is_active: ActiveValue::Set(1),
     }
 }
