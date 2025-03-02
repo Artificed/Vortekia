@@ -10,7 +10,7 @@ export function useImageUpload() {
   };
 
   const handleImageChange = (event?: ChangeEvent<HTMLInputElement>) => {
-    if (!event) return; // Avoid errors when calling reset
+    if (!event) return;
 
     const file = event.target.files?.[0];
     if (file) {

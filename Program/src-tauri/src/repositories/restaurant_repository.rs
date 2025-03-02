@@ -1,3 +1,6 @@
+use chrono::NaiveTime;
+use sea_orm::ActiveModelTrait;
+use sea_orm::ActiveValue;
 use tauri::State;
 
 use crate::models::restaurant::ActiveModel as RestaurantActiveModel;
@@ -36,7 +39,7 @@ pub async fn get_all_restaurants(
     }
 }
 
-pub async fn get_restaurant(
+pub async fn get_restaurant_by_id(
     state: &State<'_, AppState>,
     id: &str,
 ) -> Result<RestaurantModel, String> {
@@ -51,6 +54,31 @@ pub async fn get_restaurant(
         Err(err) => {
             eprintln!("Failed to get restaurant: {:?}", err);
             Err(format!("Failed to get restaurant: {:?}", err))
+        }
+    }
+}
+
+pub async fn update_restaurant(
+    state: &State<'_, AppState>,
+    mut restaurant: RestaurantActiveModel,
+    name: String,
+    opening_time: NaiveTime,
+    closing_time: NaiveTime,
+    cuisine_type: String,
+    url: String,
+) -> Result<(), String> {
+    restaurant.name = ActiveValue::Set(name);
+    restaurant.opening_time = ActiveValue::Set(opening_time);
+    restaurant.closing_time = ActiveValue::Set(closing_time);
+    restaurant.cuisine_type = ActiveValue::Set(cuisine_type);
+    restaurant.image = ActiveValue::Set(url);
+
+    let result = restaurant.update(&state.conn).await;
+    match result {
+        Ok(_) => Ok(()),
+        Err(err) => {
+            eprintln!("Failed to update restaurant: {:?}", err);
+            Err(format!("Failed to update restaurant: {:?}", err))
         }
     }
 }

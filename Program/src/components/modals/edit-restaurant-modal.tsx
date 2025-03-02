@@ -30,6 +30,10 @@ export function EditRestaurantModal({
   isOpen,
   onClose,
 }: EditRestaurantModalProps) {
+  const handleClose = () => {
+    onClose();
+  };
+
   const {
     formData,
     imagePreview,
@@ -39,11 +43,7 @@ export function EditRestaurantModal({
     handleImageClick,
     handleImageChange,
     handleSubmit,
-  } = useEditRestaurant(restaurant);
-
-  const handleClose = () => {
-    onClose();
-  };
+  } = useEditRestaurant(restaurant, handleClose);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>

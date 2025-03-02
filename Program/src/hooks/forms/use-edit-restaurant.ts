@@ -1,8 +1,16 @@
+import { ToastUtils } from "@/components/utils/toast-helper";
 import Restaurant from "@/lib/interfaces/entities/restaurant";
-import { useState, useRef } from "react";
+import { useState } from "react";
+import { useImageUpload } from "./use-image-upload";
+import { invoke } from "@tauri-apps/api/core";
+import { useQueryClient } from "@tanstack/react-query";
 
-export const useEditRestaurant = (initialData: Restaurant) => {
+export const useEditRestaurant = (
+  initialData: Restaurant,
+  onClose: () => void,
+) => {
   const [formData, setFormData] = useState({
+    id: initialData.id,
     name: initialData.name,
     cuisineType: initialData.cuisineType,
     openingTime: initialData.openingTime.slice(0, 5),
@@ -11,40 +19,61 @@ export const useEditRestaurant = (initialData: Restaurant) => {
     image: initialData.image,
   });
 
-  const [imagePreview, setImagePreview] = useState(initialData.image);
+  const {
+    imagePreview,
+    imageFile,
+    fileInputRef,
+    handleImageClick,
+    handleImageChange,
+    setImagePreview,
+  } = useImageUpload();
+
+  useState(() => {
+    setImagePreview(initialData.image);
+  });
+
   const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        setFormData((prev) => ({ ...prev, image: file.name }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      // Add your API call here
-      console.log("Submitting:", formData);
-      // await updateRestaurantAPI(initialData.id, formData);
-      // onClose();
+      if (imageFile) {
+        const arrayBuffer = await imageFile.arrayBuffer();
+        const bytes = Array.from(new Uint8Array(arrayBuffer));
+
+        await invoke("update_restaurant", {
+          restaurantId: formData.id,
+          name: formData.name,
+          openingTime: formData.openingTime + ":00",
+          closingTime: formData.closingTime + ":00",
+          cuisineType: formData.cuisineType,
+          imageName: imageFile?.name,
+          imageBytes: bytes,
+        });
+      } else {
+        await invoke("update_restaurant", {
+          restaurantId: formData.id,
+          name: formData.name,
+          openingTime: formData.openingTime + ":00",
+          closingTime: formData.closingTime + ":00",
+          cuisineType: formData.cuisineType,
+          imageName: null,
+          imageBytes: null,
+        });
+      }
+      ToastUtils.success({ description: "Successfully edited restaurant!" });
+      queryClient.invalidateQueries({ queryKey: ["restaurants"] });
+      onClose();
     } catch (error) {
-      console.error("Error updating restaurant:", error);
+      ToastUtils.error({ description: String(error) });
     } finally {
       setLoading(false);
     }
