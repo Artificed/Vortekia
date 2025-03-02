@@ -36,5 +36,6 @@ export function useImageUpload() {
     handleImageClick,
     handleImageChange,
     resetImage,
+    setImagePreview,
   };
 }
