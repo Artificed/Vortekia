@@ -1,5 +1,6 @@
 import CeoDashboard from "@/pages/staff/ceo/ceo-dashboard";
 import CeoViewRestaurantProposals from "@/pages/staff/ceo/ceo-view-restaurant-proposals";
+import CeoViewStoreProposals from "@/pages/staff/ceo/ceo-view-store-proposals";
 import CfoDashboard from "@/pages/staff/cfo/cfo-dashboard";
 import CfoViewRestaurantProposals from "@/pages/staff/cfo/cfo-view-restaurant-proposals";
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
@@ -71,6 +72,10 @@ export default function StaffUI() {
       <Route
         path="ceo/view-restaurant-proposals"
         element={<CeoViewRestaurantProposals />}
+      />
+      <Route
+        path="ceo/view-store-proposals"
+        element={<CeoViewStoreProposals />}
       />
 
       <Route
