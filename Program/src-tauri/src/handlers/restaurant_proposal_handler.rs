@@ -38,3 +38,12 @@ pub async fn get_all_new_restaurant_proposals(
 ) -> Result<Vec<NewRestaurantProposalModel>, String> {
     restaurant_proposal_repository::get_all_new_restaurant_proposals(state).await
 }
+
+pub async fn update_new_restaurant_proposal_cfo_approval(
+    state: &State<'_, AppState>,
+    id: &str,
+    approve: i8,
+) -> Result<(), String> {
+    restaurant_proposal_repository::update_new_restaurant_proposal_cfo_approval(state, id, approve)
+        .await
+}

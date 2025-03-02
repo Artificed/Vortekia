@@ -1,4 +1,5 @@
 use sea_orm::ActiveModelTrait;
+use sea_orm::ActiveValue;
 use tauri::State;
 
 use crate::models::new_restaurant_proposal::ActiveModel as RestaurantProposalActiveModel;
@@ -64,43 +65,43 @@ pub async fn get_restaurant_proposal(
     }
 }
 
-// pub async fn update_new_restaurant_proposal_cfo_approval(
-//     state: &State<'_, AppState>,
-//     id: &str,
-//     approve: i8,
-// ) -> Result<(), String> {
-//     let proposal = RestaurantProposals::find()
-//         .filter(RestaurantProposalColumn::Id.eq(id))
-//         .one(&state.conn)
-//         .await;
-//
-//     match proposal {
-//         Ok(Some(proposal)) => {
-//             let mut proposal_active: RestaurantProposalActiveModel = proposal.into();
-//
-//             proposal_active.cfo_approved = Set(approve);
-//             proposal_active.cfo_done = Set(1);
-//
-//             let result = proposal_active.update(&state.conn).await;
-//
-//             match result {
-//                 Ok(_) => Ok(()),
-//                 Err(err) => {
-//                     eprintln!(
-//                         "Failed to update restaurant proposal CFO approval status: {:?}",
-//                         err
-//                     );
-//                     Err(format!(
-//                         "Failed to update restaurant proposal CFO approval status: {:?}",
-//                         err
-//                     ))
-//                 }
-//             }
-//         }
-//         Ok(None) => Err(format!("Restaurant proposal with ID {} not found", id)),
-//         Err(err) => {
-//             eprintln!("Failed to find restaurant proposal: {:?}", err);
-//             Err(format!("Failed to find restaurant proposal: {:?}", err))
-//         }
-//     }
-// }
+pub async fn update_new_restaurant_proposal_cfo_approval(
+    state: &State<'_, AppState>,
+    id: &str,
+    approve: i8,
+) -> Result<(), String> {
+    let proposal = RestaurantProposals::find()
+        .filter(RestaurantProposalColumn::Id.eq(id))
+        .one(&state.conn)
+        .await;
+
+    match proposal {
+        Ok(Some(proposal)) => {
+            let mut proposal_active: RestaurantProposalActiveModel = proposal.into();
+
+            proposal_active.cfo_approved = ActiveValue::Set(approve);
+            proposal_active.cfo_done = ActiveValue::Set(1);
+
+            let result = proposal_active.update(&state.conn).await;
+
+            match result {
+                Ok(_) => Ok(()),
+                Err(err) => {
+                    eprintln!(
+                        "Failed to update restaurant proposal CFO approval status: {:?}",
+                        err
+                    );
+                    Err(format!(
+                        "Failed to update restaurant proposal CFO approval status: {:?}",
+                        err
+                    ))
+                }
+            }
+        }
+        Ok(None) => Err(format!("Restaurant proposal with ID {} not found", id)),
+        Err(err) => {
+            eprintln!("Failed to find restaurant proposal: {:?}", err);
+            Err(format!("Failed to find restaurant proposal: {:?}", err))
+        }
+    }
+}

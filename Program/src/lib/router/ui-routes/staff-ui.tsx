@@ -1,3 +1,7 @@
+import CeoDashboard from "@/pages/staff/ceo/ceo-dashboard";
+import CeoViewRestaurantProposals from "@/pages/staff/ceo/ceo-view-restaurant-proposals";
+import CfoDashboard from "@/pages/staff/cfo/cfo-dashboard";
+import CfoViewRestaurantProposals from "@/pages/staff/cfo/cfo-view-restaurant-proposals";
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
 import CooDashboard from "@/pages/staff/coo/coo-dashboard";
 import CooViewProposal from "@/pages/staff/coo/coo-view-proposals";
@@ -52,6 +56,20 @@ export default function StaffUI() {
       <Route
         path="fnb-supervisor/dashboard"
         element={<FnbSupervisorDashboard />}
+      />
+
+      {/* CFO */}
+      <Route path="cfo/dashboard" element={<CfoDashboard />} />
+      <Route
+        path="cfo/view-restaurant-proposals"
+        element={<CfoViewRestaurantProposals />}
+      />
+
+      {/* CEO */}
+      <Route path="ceo/dashboard" element={<CeoDashboard />} />
+      <Route
+        path="ceo/view-restaurant-proposals"
+        element={<CeoViewRestaurantProposals />}
       />
     </Routes>
   );
