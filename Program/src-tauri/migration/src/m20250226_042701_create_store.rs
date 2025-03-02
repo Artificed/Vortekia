@@ -1,5 +1,7 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
+use crate::m20250225_065835_create_staff::Staff;
+
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 
@@ -15,6 +17,16 @@ impl MigrationTrait for Migration {
                     .col(string(Store::Name).not_null())
                     .col(string(Store::Image).not_null())
                     .col(string(Store::Description).not_null())
+                    .col(string(Store::OpeningTime).time().not_null())
+                    .col(string(Store::ClosingTime).time().not_null())
+                    .col(string(Store::SalesAssociate).null())
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk_store_sales_associate_staff_id")
+                            .from(Store::Table, Store::SalesAssociate)
+                            .to(Staff::Table, Staff::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await
@@ -34,4 +46,7 @@ pub enum Store {
     Name,
     Image,
     Description,
+    OpeningTime,
+    ClosingTime,
+    SalesAssociate,
 }

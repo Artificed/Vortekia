@@ -5,18 +5,30 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "store")]
+#[serde(rename_all = "camelCase")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
     pub name: String,
     pub image: String,
     pub description: String,
+    pub opening_time: Time,
+    pub closing_time: Time,
+    pub sales_associate: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(has_many = "super::souvenir::Entity")]
     Souvenir,
+    #[sea_orm(
+        belongs_to = "super::staff::Entity",
+        from = "Column::SalesAssociate",
+        to = "super::staff::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Staff,
     #[sea_orm(has_many = "super::store_deletion_proposal::Entity")]
     StoreDeletionProposal,
     #[sea_orm(has_many = "super::store_transaction::Entity")]
@@ -26,6 +38,12 @@ pub enum Relation {
 impl Related<super::souvenir::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Souvenir.def()
+    }
+}
+
+impl Related<super::staff::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Staff.def()
     }
 }
 

@@ -1,17 +1,42 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import CeoNavbar from "@/components/navbars/ceo-navbar";
 import { useCeoManageNewStoreProposals } from "@/hooks/forms/use-ceo-manage-store-proposals";
 import PendingNewStoreProposalCard from "@/components/partials/ceo/pending-new-store-proposal-card";
 import ProcessedNewStoreProposalCard from "@/components/partials/ceo/processed-new-store-proposal-card";
+import { TimeSelectionModal } from "@/components/modals/time-selection-modal";
+import NewStoreProposal from "@/lib/interfaces/entities/new-store-proposal";
 
 export default function CeoViewStoreProposals() {
   const {
     pendingProposals,
     processedProposals,
-    handleApprove,
+    updateProposal,
     handleReject,
     isLoading,
   } = useCeoManageNewStoreProposals();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentProposal, setCurrentProposal] =
+    useState<NewStoreProposal | null>(null);
+
+  const handleApproveClick = (proposal: NewStoreProposal) => {
+    setCurrentProposal(proposal);
+    setModalOpen(true);
+  };
+
+  const handleModalConfirm = (openingTime: string, closingTime: string) => {
+    if (currentProposal) {
+      updateProposal(currentProposal, 1, openingTime, closingTime);
+    }
+    setModalOpen(false);
+    setCurrentProposal(null);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setCurrentProposal(null);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,7 +62,7 @@ export default function CeoViewStoreProposals() {
                 <PendingNewStoreProposalCard
                   key={proposal.id}
                   proposal={proposal}
-                  onApprove={handleApprove}
+                  onApprove={handleApproveClick}
                   onReject={handleReject}
                   isLoading={isLoading}
                 />
@@ -54,7 +79,7 @@ export default function CeoViewStoreProposals() {
             <Card>
               <CardContent className="pt-6">
                 <p className="text-center text-gray-500">
-                  No processed restaurant proposals
+                  No processed store proposals
                 </p>
               </CardContent>
             </Card>
@@ -73,6 +98,13 @@ export default function CeoViewStoreProposals() {
           )}
         </section>
       </div>
+
+      <TimeSelectionModal
+        isOpen={modalOpen}
+        onClose={handleModalClose}
+        onConfirm={handleModalConfirm}
+        title="Select Operating Hours"
+      />
     </div>
   );
 }

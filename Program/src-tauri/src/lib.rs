@@ -100,7 +100,12 @@ pub async fn run() {
             menu_service::get_all_menus,
             menu_service::get_menus_by_restaurant_id,
             new_store_proposal_service::insert_new_store_proposal,
-            new_store_proposal_service::get_all_new_store_proposals
+            new_store_proposal_service::get_all_new_store_proposals,
+            new_store_proposal_service::update_new_store_proposal_approval,
+            store_service::insert_new_store,
+            store_service::get_all_stores,
+            store_service::update_store,
+            store_service::delete_store,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

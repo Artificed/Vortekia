@@ -30,3 +30,21 @@ pub async fn get_all_new_store_proposals(
 ) -> Result<Vec<NewStoreProposalModel>, String> {
     new_store_proposal_handler::get_all_new_store_proposals(&state).await
 }
+
+#[tauri::command]
+pub async fn update_new_store_proposal_approval(
+    state: State<'_, AppState>,
+    id: String,
+    approve: i8,
+    opening_time: String,
+    closing_time: String,
+) -> Result<(), String> {
+    new_store_proposal_handler::update_new_store_proposal_approval(
+        state,
+        id,
+        approve,
+        opening_time,
+        closing_time,
+    )
+    .await
+}

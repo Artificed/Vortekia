@@ -1,13 +1,11 @@
 use tauri::State;
 
+use super::{file_handler, store_handler};
+use crate::models::new_store_proposal::Model as NewStoreProposalModel;
 use crate::{
     factories::new_store_proposal_factory, modules::app_state::AppState,
     repositories::new_store_proposal_repository,
 };
-
-use crate::models::new_store_proposal::Model as NewStoreProposalModel;
-
-use super::file_handler;
 
 pub async fn insert_new_store_proposal(
     state: &State<'_, AppState>,
@@ -37,4 +35,37 @@ pub async fn get_all_new_store_proposals(
     state: &State<'_, AppState>,
 ) -> Result<Vec<NewStoreProposalModel>, String> {
     new_store_proposal_repository::get_all_new_store_proposals(state).await
+}
+
+pub async fn update_new_store_proposal_approval(
+    state: State<'_, AppState>,
+    id: String,
+    approve: i8,
+    opening_time: String,
+    closing_time: String,
+) -> Result<(), String> {
+    new_store_proposal_repository::update_new_store_proposal_approval(&state, &id, approve)
+        .await
+        .unwrap();
+
+    if approve == 1 {
+        let proposal = new_store_proposal_repository::get_store_proposal(&state, &id).await?;
+
+        let store_name = proposal.store_name.clone();
+        let description = proposal.store_description.clone();
+        let image = proposal.store_image.clone();
+
+        store_handler::insert_new_store(
+            &state,
+            store_name,
+            opening_time,
+            closing_time,
+            description,
+            image,
+        )
+        .await
+        .expect("Failed to insert new store!");
+    }
+
+    Ok(())
 }
