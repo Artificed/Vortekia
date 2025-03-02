@@ -65,10 +65,13 @@ pub async fn get_restaurant_proposal(
     }
 }
 
-pub async fn update_new_restaurant_proposal_cfo_approval(
+pub async fn update_new_restaurant_proposal(
     state: &State<'_, AppState>,
     id: &str,
-    approve: i8,
+    cfo_approve: i8,
+    cfo_done: i8,
+    ceo_approve: i8,
+    ceo_done: i8,
 ) -> Result<(), String> {
     let proposal = RestaurantProposals::find()
         .filter(RestaurantProposalColumn::Id.eq(id))
@@ -79,8 +82,10 @@ pub async fn update_new_restaurant_proposal_cfo_approval(
         Ok(Some(proposal)) => {
             let mut proposal_active: RestaurantProposalActiveModel = proposal.into();
 
-            proposal_active.cfo_approved = ActiveValue::Set(approve);
-            proposal_active.cfo_done = ActiveValue::Set(1);
+            proposal_active.cfo_approved = ActiveValue::Set(cfo_approve);
+            proposal_active.cfo_done = ActiveValue::Set(cfo_done);
+            proposal_active.ceo_approved = ActiveValue::Set(ceo_approve);
+            proposal_active.ceo_done = ActiveValue::Set(ceo_done);
 
             let result = proposal_active.update(&state.conn).await;
 
@@ -102,6 +107,27 @@ pub async fn update_new_restaurant_proposal_cfo_approval(
         Err(err) => {
             eprintln!("Failed to find restaurant proposal: {:?}", err);
             Err(format!("Failed to find restaurant proposal: {:?}", err))
+        }
+    }
+}
+
+pub async fn get_cfo_approved_restaurant_proposals(
+    state: &State<'_, AppState>,
+) -> Result<Vec<RestaurantProposalModel>, String> {
+    let result = RestaurantProposals::find()
+        .filter(RestaurantProposalColumn::CfoApproved.eq(1))
+        .filter(RestaurantProposalColumn::CfoDone.eq(1))
+        .all(&state.conn)
+        .await;
+
+    match result {
+        Ok(proposals) => Ok(proposals),
+        Err(err) => {
+            eprintln!("Failed to get CFO approved restaurant proposals: {:?}", err);
+            Err(format!(
+                "Failed to get CFO approved restaurant proposals: {:?}",
+                err
+            ))
         }
     }
 }

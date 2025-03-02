@@ -91,7 +91,9 @@ pub async fn run() {
             ride_service::get_rides_with_staff,
             restaurant_proposal_service::insert_new_restaurant_proposal,
             restaurant_proposal_service::get_all_new_restaurant_proposals,
-            restaurant_proposal_service::update_new_restaurant_proposal_cfo_approval
+            restaurant_proposal_service::update_new_restaurant_proposal_cfo_approval,
+            restaurant_proposal_service::get_cfo_approved_restaurant_proposals,
+            restaurant_proposal_service::update_new_restaurant_proposal_ceo_approval
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

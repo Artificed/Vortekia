@@ -38,7 +38,7 @@ export default function CeoNavbar() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <a
-                href="/cfo/view-restaurant-proposals"
+                href="/ceo/view-restaurant-proposals"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 View Restaurant Proposals
