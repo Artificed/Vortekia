@@ -4,6 +4,7 @@ pub mod file_handler;
 pub mod lnf_log_handler;
 pub mod menu_handler;
 pub mod new_ride_proposal_handler;
+pub mod new_store_proposal_handler;
 pub mod restaurant_handler;
 pub mod restaurant_proposal_handler;
 pub mod ride_deletion_proposal_handler;

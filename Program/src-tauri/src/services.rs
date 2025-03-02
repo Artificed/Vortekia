@@ -4,6 +4,7 @@ pub mod customer_service;
 pub mod lnf_log_service;
 pub mod menu_service;
 pub mod new_ride_proposal_service;
+pub mod new_store_proposal_service;
 pub mod restaurant_proposal_service;
 pub mod restaurant_service;
 pub mod ride_deletion_proposal_service;

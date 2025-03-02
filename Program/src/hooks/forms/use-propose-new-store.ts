@@ -60,7 +60,7 @@ export function useProposeNewStore() {
 
       await invoke("insert_new_store_proposal", {
         storeName: formData.storeName,
-        description: formData.description,
+        storeDescription: formData.description,
         reason: formData.reason,
         image: imageFile.name,
         imageBytes: bytes,

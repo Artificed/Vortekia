@@ -99,6 +99,8 @@ pub async fn run() {
             menu_service::insert_new_menu,
             menu_service::get_all_menus,
             menu_service::get_menus_by_restaurant_id,
+            new_store_proposal_service::insert_new_store_proposal,
+            new_store_proposal_service::get_all_new_store_proposals
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
