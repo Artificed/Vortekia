@@ -43,6 +43,7 @@ export function EditRestaurantModal({
     handleImageClick,
     handleImageChange,
     handleSubmit,
+    handleDelete,
   } = useEditRestaurant(restaurant, handleClose);
 
   return (
@@ -207,12 +208,23 @@ export function EditRestaurantModal({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Save Changes"}
-            </Button>
+            <div className="flex w-full justify-between">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+              >
+                Delete Restaurant
+              </Button>
+              <div>
+                <Button type="button" variant="outline" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>

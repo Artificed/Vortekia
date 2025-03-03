@@ -91,4 +91,6 @@ pub async fn update_restaurant(
 
 pub async fn delete_restaurant(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
     restaurant_repository::delete_restaurant(state, id).await
+
+    // TODO: Free all related staff schedules
 }

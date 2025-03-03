@@ -40,6 +40,18 @@ export const useEditRestaurant = (
 
   const queryClient = useQueryClient();
 
+  const handleDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await invoke("delete_restaurant", { id: formData.id });
+      ToastUtils.success({ description: "Successfully deleted restaurant!" });
+      queryClient.invalidateQueries({ queryKey: ["restaurants"] });
+      onClose();
+    } catch (error) {
+      ToastUtils.error({ description: String(error) });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -88,5 +100,6 @@ export const useEditRestaurant = (
     handleImageClick,
     handleImageChange,
     handleSubmit,
+    handleDelete,
   };
 };
