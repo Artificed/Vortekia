@@ -27,7 +27,7 @@ pub async fn add_current_user_balance(
     state: State<'_, AppState>,
     balance: i32,
 ) -> Result<(), String> {
-    customer_handler::add_current_user_balance(state, balance).await
+    customer_handler::add_current_user_balance(&state, balance).await
 }
 
 // #[tauri::command]

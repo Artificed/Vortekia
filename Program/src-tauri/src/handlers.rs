@@ -7,6 +7,7 @@ pub mod new_ride_proposal_handler;
 pub mod new_store_proposal_handler;
 pub mod restaurant_handler;
 pub mod restaurant_proposal_handler;
+pub mod restaurant_transaction_handler;
 pub mod ride_deletion_proposal_handler;
 pub mod ride_handler;
 pub mod souvenir_handler;

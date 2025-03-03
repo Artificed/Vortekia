@@ -5,6 +5,7 @@ pub mod menu_factory;
 pub mod new_ride_proposal_factory;
 pub mod new_store_proposal_factory;
 pub mod restaurant_factory;
+pub mod restaurant_transaction_factory;
 pub mod resturant_proposal_factory;
 pub mod ride_deletion_proposal_factory;
 pub mod ride_factory;

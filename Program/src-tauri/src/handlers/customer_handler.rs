@@ -41,7 +41,7 @@ pub async fn register_customer(
 }
 
 pub async fn add_current_user_balance(
-    state: State<'_, AppState>,
+    state: &State<'_, AppState>,
     balance: i32,
 ) -> Result<(), String> {
     let mut current_user = state.current_user.lock().await;
@@ -50,10 +50,15 @@ pub async fn add_current_user_balance(
         Some(UserType::Customer(customer)) => {
             let customer_id = customer.id.clone();
             let current_balance = customer.balance;
+
+            if balance < 0 && current_balance < balance.abs() {
+                return Err(String::from("Insufficient balance!"));
+            }
+
             let new_balance = current_balance + balance;
 
             match customer_repository::update_customer_balance(
-                &state,
+                state,
                 customer_id.clone(),
                 new_balance,
             )

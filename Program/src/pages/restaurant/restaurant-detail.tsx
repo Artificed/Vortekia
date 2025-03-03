@@ -16,6 +16,8 @@ import { useGetMenus } from "@/hooks/data/use-get-menus";
 import PurchaseModal from "@/components/modals/restaurant-purchase-modal";
 import RestaurantNavbar from "@/components/navbars/restaurant-navbar";
 import useAuth from "@/hooks/auth/use-auth";
+import { ToastUtils } from "@/components/utils/toast-helper";
+import { invoke } from "@tauri-apps/api/core";
 
 const RestaurantDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -52,8 +54,28 @@ const RestaurantDetailPage: React.FC = () => {
     setSearchParams({ menuId });
   };
 
-  const handlePurchase = (quantity: number) => {
-    alert(`Purchased ${quantity} items successfully!`);
+  const handlePurchase = async (quantity: number) => {
+    const selectedMenu = restaurantMenus.find(
+      (menu) => menu.id === selectedMenuId,
+    );
+
+    if (!selectedMenu) {
+      ToastUtils.error({ description: "Menu must be selected!" });
+      return;
+    }
+
+    try {
+      await invoke("insert_restaurant_transaction", {
+        menuId: selectedMenu.id,
+        customerId: auth?.user?.id,
+        quantity: quantity,
+        price: -selectedMenu.price,
+      });
+      ToastUtils.success({ description: "Successfully bought item!" });
+    } catch (error) {
+      ToastUtils.error({ description: String(error) });
+    }
+
     setIsPurchaseModalOpen(false);
     setSearchParams({});
   };
