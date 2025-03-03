@@ -23,6 +23,7 @@ impl MigrationTrait for Migration {
                     .col(string(Restaurant::ClosingTime).time().not_null())
                     .col(string(Restaurant::CuisineType).not_null())
                     .col(boolean(Restaurant::IsOpen).not_null())
+                    .col(boolean(Restaurant::IsActive).not_null())
                     .to_owned(),
             )
             .await
@@ -45,4 +46,5 @@ pub enum Restaurant {
     ClosingTime,
     CuisineType,
     IsOpen,
+    IsActive,
 }

@@ -28,13 +28,16 @@ pub async fn insert_restaurant(
 pub async fn get_all_restaurants(
     state: &State<'_, AppState>,
 ) -> Result<Vec<RestaurantModel>, String> {
-    let result = Restaurants::find().all(&state.conn).await;
+    let result = Restaurants::find()
+        .filter(RestaurantColumn::IsActive.eq(1))
+        .all(&state.conn)
+        .await;
 
     match result {
         Ok(restaurant_list) => Ok(restaurant_list),
         Err(err) => {
-            eprintln!("Failed to get all new restaurant list: {:?}", err);
-            Err(format!("Failed to get all new restaurant list: {:?}", err))
+            eprintln!("Failed to get all restaurant list: {:?}", err);
+            Err(format!("Failed to get all restaurant list: {:?}", err))
         }
     }
 }
@@ -45,6 +48,7 @@ pub async fn get_restaurant_by_id(
 ) -> Result<RestaurantModel, String> {
     let result = Restaurants::find()
         .filter(RestaurantColumn::Id.eq(id.to_owned()))
+        .filter(RestaurantColumn::IsActive.eq(1))
         .one(&state.conn)
         .await;
 
@@ -79,6 +83,39 @@ pub async fn update_restaurant(
         Err(err) => {
             eprintln!("Failed to update restaurant: {:?}", err);
             Err(format!("Failed to update restaurant: {:?}", err))
+        }
+    }
+}
+
+pub async fn delete_restaurant(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
+    let result = Restaurants::find()
+        .filter(RestaurantColumn::Id.eq(id.to_owned()))
+        .filter(RestaurantColumn::IsActive.eq(1))
+        .one(&state.conn)
+        .await;
+
+    match result {
+        Ok(Some(restaurant_model)) => {
+            let mut restaurant_active: crate::models::restaurant::ActiveModel =
+                restaurant_model.into();
+            restaurant_active.is_active = ActiveValue::Set(0);
+
+            let update_result = restaurant_active.update(&state.conn).await;
+            match update_result {
+                Ok(_) => Ok(()),
+                Err(err) => {
+                    eprintln!("Failed to delete restaurant: {:?}", err);
+                    Err(format!("Failed to delete restaurant: {:?}", err))
+                }
+            }
+        }
+        Ok(None) => Err(format!(
+            "Restaurant with ID {} not found or already inactive",
+            id
+        )),
+        Err(err) => {
+            eprintln!("Error retrieving restaurant: {:?}", err);
+            Err(format!("Error retrieving restaurant: {:?}", err))
         }
     }
 }

@@ -15,6 +15,7 @@ pub struct Model {
     pub closing_time: Time,
     pub cuisine_type: String,
     pub is_open: i8,
+    pub is_active: i8,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
