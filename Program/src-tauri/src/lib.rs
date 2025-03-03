@@ -106,11 +106,13 @@ pub async fn run() {
             new_store_proposal_service::update_new_store_proposal_approval,
             store_service::insert_new_store,
             store_service::get_all_stores,
+            store_service::get_store_by_id,
             store_service::update_store,
             store_service::delete_store,
             souvenir_service::insert_new_souvenir,
             souvenir_service::get_all_souvenirs,
-            souvenir_service::get_souvenirs_by_store_id
+            souvenir_service::get_souvenirs_by_store_id,
+            souvenir_service::delete_souvenir
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

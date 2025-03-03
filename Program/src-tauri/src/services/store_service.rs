@@ -30,6 +30,11 @@ pub async fn get_all_stores(state: State<'_, AppState>) -> Result<Vec<StoreModel
 }
 
 #[tauri::command]
+pub async fn get_store_by_id(state: State<'_, AppState>, id: &str) -> Result<StoreModel, String> {
+    store_handler::get_store_by_id(&state, id).await
+}
+
+#[tauri::command]
 pub async fn update_store(
     state: State<'_, AppState>,
     store_id: String,

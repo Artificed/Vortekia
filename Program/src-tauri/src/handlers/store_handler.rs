@@ -28,6 +28,10 @@ pub async fn get_all_stores(state: &State<'_, AppState>) -> Result<Vec<StoreMode
     store_repository::get_all_stores(state).await
 }
 
+pub async fn get_store_by_id(state: &State<'_, AppState>, id: &str) -> Result<StoreModel, String> {
+    store_repository::get_store_by_id(state, id).await
+}
+
 pub async fn update_staff_schedule_for_store(
     state: &State<'_, AppState>,
     old_store_name: &str,

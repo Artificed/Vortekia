@@ -2,6 +2,7 @@ import { ToastUtils } from "@/components/utils/toast-helper";
 import { invoke } from "@tauri-apps/api/core";
 import { FormEvent, useState } from "react";
 import { useImageUpload } from "./use-image-upload";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SouvenirFormData {
   name: string;
@@ -28,6 +29,8 @@ export function useAddSouvenir(initialStoreId: string = "") {
     handleImageChange,
     setImagePreview,
   } = useImageUpload();
+
+  const queryClient = useQueryClient();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -94,6 +97,9 @@ export function useAddSouvenir(initialStoreId: string = "") {
       setIsOpen(false);
       ToastUtils.success({
         description: "Successfully added new souvenir!",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["souvenirs", formData.storeId],
       });
     } catch (error) {
       ToastUtils.error({ description: String(error) });

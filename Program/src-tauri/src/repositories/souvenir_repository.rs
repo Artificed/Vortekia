@@ -53,3 +53,15 @@ pub async fn get_souvenirs_by_store_id(
         .await
         .map_err(|err| format!("Failed to find souvenirs by store ID: {}", err))
 }
+
+pub async fn delete_souvenir(state: &State<'_, AppState>, souvenir_id: &str) -> Result<(), String> {
+    let result = Souvenirs::delete_many()
+        .filter(SouvenirColumn::Id.eq(souvenir_id))
+        .exec(&state.conn)
+        .await;
+
+    match result {
+        Ok(_) => Ok(()),
+        Err(err) => Err(format!("Failed to delete souvenir: {}", err)),
+    }
+}

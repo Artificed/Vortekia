@@ -100,12 +100,13 @@ export default function StoreEditModal({
       }
 
       queryClient.invalidateQueries({ queryKey: ["stores"] });
+      queryClient.invalidateQueries({ queryKey: ["store"] });
 
       ToastUtils.success({
         description: "Successfully updated store!",
       });
 
-      onCancel(); // Close the modal on success
+      onCancel();
     } catch (error) {
       ToastUtils.error({ description: String(error) });
     } finally {

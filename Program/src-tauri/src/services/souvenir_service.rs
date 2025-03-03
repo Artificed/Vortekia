@@ -37,3 +37,8 @@ pub async fn get_souvenirs_by_store_id(
 ) -> Result<Vec<SouvenirModel>, String> {
     souvenir_handler::get_souvenirs_by_store_id(&state, store_id).await
 }
+
+#[tauri::command]
+pub async fn delete_souvenir(state: State<'_, AppState>, souvenir_id: &str) -> Result<(), String> {
+    souvenir_handler::delete_souvenir(&state, souvenir_id).await
+}

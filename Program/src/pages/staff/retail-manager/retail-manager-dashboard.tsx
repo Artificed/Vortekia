@@ -35,7 +35,6 @@ import { useGetStores } from "@/hooks/data/use-get-stores";
 import { useFilterStores } from "@/hooks/data/use-filter-stores";
 import { useSelectedStore } from "@/hooks/utility/use-selected-store";
 import StoreActions from "@/components/partials/retail-manager/store-actions";
-import StoreDetailsContent from "@/components/partials/retail-manager/store-details-context";
 import StoreEditModal from "@/components/modals/store-edit-modal";
 import ProposeNewStoreModal from "@/components/modals/propose-new-store-modal";
 import AddSouvenirModal from "@/components/modals/add-souvenir-modal";
@@ -148,21 +147,6 @@ export default function StoreDashboard() {
           </CardContent>
         </Card>
       </div>
-
-      <Dialog
-        open={selectedStore !== null && !isEditMode}
-        onOpenChange={() => selectedStore && !isEditMode && resetSelection()}
-      >
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Store Details</DialogTitle>
-            <DialogDescription>
-              Complete information about this store
-            </DialogDescription>
-          </DialogHeader>
-          {selectedStore && <StoreDetailsContent store={selectedStore} />}
-        </DialogContent>
-      </Dialog>
 
       <Dialog
         open={selectedStore !== null && isEditMode}
