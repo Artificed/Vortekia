@@ -20,6 +20,7 @@ mod m20250226_074110_create_store_deletion_proposal;
 mod m20250226_075303_create_store_transaction;
 mod m20250301_052358_seed_staff;
 mod m20250301_104705_create_staff_schedule;
+mod m20250303_104318_create_restaurant_transaction;
 
 #[async_trait::async_trait]
 impl MigratorTrait for Migrator {
@@ -44,6 +45,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20250226_075303_create_store_transaction::Migration),
             Box::new(m20250301_052358_seed_staff::Migration),
             Box::new(m20250301_104705_create_staff_schedule::Migration),
+            Box::new(m20250303_104318_create_restaurant_transaction::Migration),
         ]
     }
 }

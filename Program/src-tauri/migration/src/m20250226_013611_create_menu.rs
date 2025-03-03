@@ -38,7 +38,7 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum Menu {
+pub enum Menu {
     Table,
     Id,
     RestaurantId,

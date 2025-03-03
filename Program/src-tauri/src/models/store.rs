@@ -33,8 +33,6 @@ pub enum Relation {
     Staff,
     #[sea_orm(has_many = "super::store_deletion_proposal::Entity")]
     StoreDeletionProposal,
-    #[sea_orm(has_many = "super::store_transaction::Entity")]
-    StoreTransaction,
 }
 
 impl Related<super::souvenir::Entity> for Entity {
@@ -52,12 +50,6 @@ impl Related<super::staff::Entity> for Entity {
 impl Related<super::store_deletion_proposal::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::StoreDeletionProposal.def()
-    }
-}
-
-impl Related<super::store_transaction::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::StoreTransaction.def()
     }
 }
 

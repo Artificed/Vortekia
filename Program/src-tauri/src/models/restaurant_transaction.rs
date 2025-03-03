@@ -4,44 +4,47 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
-#[sea_orm(table_name = "ride_staff")]
+#[sea_orm(table_name = "restaurant_transaction")]
 #[serde(rename_all = "camelCase")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
-    pub ride_id: String,
-    pub staff_id: String,
+    pub menu_id: String,
+    pub customer_id: String,
+    pub quantity: i32,
+    pub price: i32,
+    pub transaction_date: DateTime,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::ride::Entity",
-        from = "Column::RideId",
-        to = "super::ride::Column::Id",
+        belongs_to = "super::customer::Entity",
+        from = "Column::CustomerId",
+        to = "super::customer::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    Ride,
+    Customer,
     #[sea_orm(
-        belongs_to = "super::staff::Entity",
-        from = "Column::RideId",
-        to = "super::staff::Column::Id",
+        belongs_to = "super::menu::Entity",
+        from = "Column::MenuId",
+        to = "super::menu::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    Staff,
+    Menu,
 }
 
-impl Related<super::ride::Entity> for Entity {
+impl Related<super::customer::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Ride.def()
+        Relation::Customer.def()
     }
 }
 
-impl Related<super::staff::Entity> for Entity {
+impl Related<super::menu::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Staff.def()
+        Relation::Menu.def()
     }
 }
 

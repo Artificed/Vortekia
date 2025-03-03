@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "store_transaction")]
+#[serde(rename_all = "camelCase")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
-    pub store_id: String,
     pub souvenir_id: String,
     pub customer_id: String,
     pub quantity: i32,
@@ -35,14 +35,6 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     Souvenir,
-    #[sea_orm(
-        belongs_to = "super::store::Entity",
-        from = "Column::StoreId",
-        to = "super::store::Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    Store,
 }
 
 impl Related<super::customer::Entity> for Entity {
@@ -54,12 +46,6 @@ impl Related<super::customer::Entity> for Entity {
 impl Related<super::souvenir::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Souvenir.def()
-    }
-}
-
-impl Related<super::store::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Store.def()
     }
 }
 
