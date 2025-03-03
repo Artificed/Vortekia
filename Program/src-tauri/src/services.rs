@@ -15,3 +15,4 @@ pub mod staff_schedule_service;
 pub mod staff_service;
 pub mod store_deletion_proposal_service;
 pub mod store_service;
+pub mod store_transaction_service;

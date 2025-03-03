@@ -15,3 +15,4 @@ pub mod staff_handler;
 pub mod staff_schedule_handler;
 pub mod store_deletion_proposal_handler;
 pub mod store_handler;
+pub mod store_transaction_handler;

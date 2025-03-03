@@ -13,3 +13,5 @@ pub mod staff_repository;
 pub mod staff_schedule_repository;
 pub mod store_deletion_proposal_repository;
 pub mod store_repository;
+pub mod store_transaction_repository;
+

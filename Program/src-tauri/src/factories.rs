@@ -14,3 +14,4 @@ pub mod staff_factory;
 pub mod staff_schedule_factory;
 pub mod store_deletion_proposal_factory;
 pub mod store_factory;
+pub mod store_transaction_factory;
