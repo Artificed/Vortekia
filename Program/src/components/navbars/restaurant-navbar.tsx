@@ -10,13 +10,13 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-} from "@radix-ui/react-navigation-menu";
+} from "@/components/ui/navigation-menu";
 
 export default function RestaurantNavbar() {
   const auth = useAuth();
 
   return (
-    <nav className="flex justify-between fixed w-screen items-center px-16 p-4 shadow-md bg-white">
+    <nav className="flex justify-between fixed w-screen items-center px-16 p-4 shadow-md bg-white z-50">
       <div className="flex items-center gap-14">
         <div className="text-2xl font-bold">VorteKia</div>
         <NavigationMenu>
@@ -31,10 +31,10 @@ export default function RestaurantNavbar() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <a
-                href="/search"
+                href="/"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer"
               >
-                Search Menu
+                Purchase History
               </a>
             </NavigationMenuItem>
           </NavigationMenuList>
