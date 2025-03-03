@@ -28,6 +28,7 @@ impl MigrationTrait for Migration {
                             .date_time()
                             .not_null(),
                     )
+                    .col(string(RestaurantTransaction::Status).not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_create_restaurant_transaction_menu_id")
@@ -66,4 +67,5 @@ enum RestaurantTransaction {
     Quantity,
     Price,
     TransactionDate,
+    Status,
 }

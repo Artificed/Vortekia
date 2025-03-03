@@ -10,6 +10,7 @@ pub fn create_restaurant_transaction(
     quantity: i32,
     price: i32,
     transaction_date: NaiveDateTime,
+    status: &str,
 ) -> RestaurantTransactionActiveModel {
     let id = id_factory::generate_customer_id();
 
@@ -20,5 +21,6 @@ pub fn create_restaurant_transaction(
         quantity: ActiveValue::Set(quantity),
         price: ActiveValue::Set(price),
         transaction_date: ActiveValue::Set(transaction_date),
+        status: ActiveValue::Set(status.to_string()),
     }
 }

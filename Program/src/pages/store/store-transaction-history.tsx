@@ -30,7 +30,7 @@ import useAuth from "@/hooks/auth/use-auth";
 import { useNavigate } from "react-router";
 import { useGetCurrentUserStoreTransactions } from "@/hooks/data/use-get-current-use-store-transactions";
 
-const StoreTransactionHistoryPage: React.FC = () => {
+export default function StoreTransactionHistoryPage() {
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -239,9 +239,9 @@ const StoreTransactionHistoryPage: React.FC = () => {
                       {filteredTransactions.map((transaction) => (
                         <TableRow key={transaction.id}>
                           <TableCell>
-                            {new Date(
-                              transaction.transactionDate,
-                            ).toLocaleDateString()}
+                            {new Date(transaction.transactionDate)
+                              .toLocaleString()
+                              .replace(",", "")}
                           </TableCell>
                           <TableCell>{transaction.souvenirId}</TableCell>
                           <TableCell>{transaction.quantity}</TableCell>
@@ -289,6 +289,4 @@ const StoreTransactionHistoryPage: React.FC = () => {
       </div>
     </>
   );
-};
-
-export default StoreTransactionHistoryPage;
+}

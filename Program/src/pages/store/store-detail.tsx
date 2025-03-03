@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router";
 import {
   Card,
@@ -19,7 +19,7 @@ import useAuth from "@/hooks/auth/use-auth";
 import { ToastUtils } from "@/components/utils/toast-helper";
 import { invoke } from "@tauri-apps/api/core";
 
-const StoreDetailPage: React.FC = () => {
+export default function StoreDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -232,6 +232,4 @@ const StoreDetailPage: React.FC = () => {
       </div>
     </>
   );
-};
-
-export default StoreDetailPage;
+}

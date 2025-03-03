@@ -5,6 +5,7 @@ interface RestaurantTransaction {
   quantity: number;
   price: number;
   transactionDate: Date;
+  status: string;
 }
 
 export default RestaurantTransaction;

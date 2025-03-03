@@ -16,8 +16,12 @@ pub async fn insert_restaurant_transaction(
     price: i32,
 ) -> Result<(), String> {
     let transaction_date: NaiveDateTime = Utc::now().naive_utc();
+    let res = customer_handler::add_current_user_balance(state, price * quantity).await;
 
-    customer_handler::add_current_user_balance(state, price * quantity).await?;
+    let status = match res {
+        Ok(()) => String::from("Pending"),
+        Err(_) => String::from("Failed"),
+    };
 
     let transaction = restaurant_transaction_factory::create_restaurant_transaction(
         menu_id,
@@ -25,9 +29,16 @@ pub async fn insert_restaurant_transaction(
         quantity,
         price.abs(),
         transaction_date,
+        &status,
     );
 
-    restaurant_transaction_repository::insert_restaurant_transaction(state, transaction).await
+    _ = restaurant_transaction_repository::insert_restaurant_transaction(state, transaction).await;
+
+    if res.is_err() {
+        Err("Insufficient balance to make transaction!".to_string())
+    } else {
+        Ok(())
+    }
 }
 
 pub async fn get_all_restaurant_transactions(

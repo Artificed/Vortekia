@@ -14,6 +14,7 @@ pub struct Model {
     pub quantity: i32,
     pub price: i32,
     pub transaction_date: DateTime,
+    pub status: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

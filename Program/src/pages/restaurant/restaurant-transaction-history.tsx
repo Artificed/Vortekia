@@ -30,7 +30,7 @@ import RestaurantNavbar from "@/components/navbars/restaurant-navbar";
 import useAuth from "@/hooks/auth/use-auth";
 import { useNavigate } from "react-router";
 
-const TransactionHistoryPage: React.FC = () => {
+export default function RestaurantTransactionHistoryPage() {
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -94,7 +94,10 @@ const TransactionHistoryPage: React.FC = () => {
       (transaction) =>
         transaction.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         transaction.menuId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        transaction.customerId.toLowerCase().includes(searchTerm.toLowerCase()),
+        transaction.customerId
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        transaction.status.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [sortedTransactions, searchTerm]);
 
@@ -149,6 +152,7 @@ const TransactionHistoryPage: React.FC = () => {
                     <SelectItem value="transactionDate">Date</SelectItem>
                     <SelectItem value="price">Price</SelectItem>
                     <SelectItem value="quantity">Quantity</SelectItem>
+                    <SelectItem value="status">Status</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
@@ -212,10 +216,18 @@ const TransactionHistoryPage: React.FC = () => {
                         </TableHead>
                         <TableHead
                           onClick={() => requestSort("price")}
-                          className="cursor-pointer text-right"
+                          className="cursor-pointer"
                         >
                           Price{" "}
                           {sortConfig.key === "price" &&
+                            (sortConfig.direction === "ascending" ? "↑" : "↓")}
+                        </TableHead>
+                        <TableHead
+                          onClick={() => requestSort("status")}
+                          className="cursor-pointer"
+                        >
+                          Status{" "}
+                          {sortConfig.key === "status" &&
                             (sortConfig.direction === "ascending" ? "↑" : "↓")}
                         </TableHead>
                         <TableHead className="text-right">Total</TableHead>
@@ -225,14 +237,31 @@ const TransactionHistoryPage: React.FC = () => {
                       {filteredTransactions.map((transaction) => (
                         <TableRow key={transaction.id}>
                           <TableCell>
-                            {new Date(
-                              transaction.transactionDate,
-                            ).toLocaleDateString()}
+                            {new Date(transaction.transactionDate)
+                              .toLocaleString()
+                              .replace(",", "")}
                           </TableCell>
                           <TableCell>{transaction.menuId}</TableCell>
                           <TableCell>{transaction.quantity}</TableCell>
-                          <TableCell className="text-right">
-                            ${transaction.price.toFixed(2)}
+                          <TableCell>${transaction.price.toFixed(2)}</TableCell>
+                          <TableCell>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs ${
+                                transaction.status === "Completed"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : transaction.status === "Ready to Serve"
+                                    ? "bg-green-100 text-green-800"
+                                    : transaction.status === "Cooking"
+                                      ? "bg-orange-100 text-orange-800"
+                                      : transaction.status === "Pending"
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : transaction.status === "Cancelled"
+                                          ? "bg-red-100 text-red-800"
+                                          : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {transaction.status}
+                            </span>
                           </TableCell>
                           <TableCell className="text-right">
                             $
@@ -265,6 +294,4 @@ const TransactionHistoryPage: React.FC = () => {
       </div>
     </>
   );
-};
-
-export default TransactionHistoryPage;
+}
