@@ -39,6 +39,14 @@ pub async fn get_souvenirs_by_store_id(
 }
 
 #[tauri::command]
+pub async fn find_souvenir_by_id(
+    state: State<'_, AppState>,
+    id: &str,
+) -> Result<Option<SouvenirModel>, String> {
+    souvenir_handler::find_souvenir_by_id(&state, id).await
+}
+
+#[tauri::command]
 pub async fn delete_souvenir(state: State<'_, AppState>, souvenir_id: &str) -> Result<(), String> {
     souvenir_handler::delete_souvenir(&state, souvenir_id).await
 }

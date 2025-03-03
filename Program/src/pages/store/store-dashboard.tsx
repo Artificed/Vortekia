@@ -9,10 +9,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Search, UtensilsCrossed } from "lucide-react";
+import { Clock, Search, ShoppingBag } from "lucide-react";
 import { Link } from "react-router";
-import { useGetRestaurants } from "@/hooks/data/use-get-restaurants";
-import { useGetMenus } from "@/hooks/data/use-get-menus";
+import { useGetStores } from "@/hooks/data/use-get-stores";
+import { useGetSouvenirs } from "@/hooks/data/use-get-souvenirs";
 import {
   Select,
   SelectContent,
@@ -20,48 +20,50 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import RestaurantNavbar from "@/components/navbars/restaurant-navbar";
+import StoreNavbar from "@/components/navbars/store-navbar";
 
-export default function RestaurantDashboard() {
+export default function StoreDashboard() {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [cuisineFilter, setCuisineFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
   const [priceSort, setPriceSort] = useState<"asc" | "desc" | null>(null);
 
-  const restaurantData = useGetRestaurants();
-  const menuData = useGetMenus();
+  const storeData = useGetStores();
+  const souvenirData = useGetSouvenirs();
 
-  const filteredRestaurants = restaurantData.restaurants?.filter(
-    (restaurant) =>
-      restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (cuisineFilter === "" || restaurant.cuisineType === cuisineFilter),
+  const filteredStores = storeData.stores?.filter(
+    (store) =>
+      store.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (statusFilter === "" || store.status === statusFilter),
   );
 
-  const filteredMenus = menuData.menus?.filter((menu) =>
-    menu.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredSouvenirs = souvenirData.souvenirs?.filter((souvenir) =>
+    souvenir.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const sortedMenus =
-    filteredMenus && priceSort
-      ? [...filteredMenus].sort((a, b) =>
+  const sortedSouvenirs =
+    filteredSouvenirs && priceSort
+      ? [...filteredSouvenirs].sort((a, b) =>
           priceSort === "asc" ? a.price - b.price : b.price - a.price,
         )
-      : filteredMenus;
+      : filteredSouvenirs;
 
-  const cuisineTypes = restaurantData.restaurants
-    ? [...new Set(restaurantData.restaurants.map((r) => r.cuisineType))]
+  const statusTypes = storeData.stores
+    ? [...new Set(storeData.stores.map((s) => s.status))]
     : [];
 
   return (
     <>
-      <RestaurantNavbar />
+      <StoreNavbar />
       <div className="container mx-auto py-6">
-        <h1 className="text-3xl font-bold mb-6 mt-20">Restaurant Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-6 mt-20">
+          Souvenir Store Dashboard
+        </h1>
 
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-grow">
             <Search className="absolute left-2 top-2.5 h-4 text-gray-500" />
             <Input
-              placeholder="Search restaurants and menus..."
+              placeholder="Search stores and souvenirs..."
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -69,19 +71,19 @@ export default function RestaurantDashboard() {
           </div>
 
           <Select
-            value={cuisineFilter === "" ? "all" : cuisineFilter}
+            value={statusFilter === "" ? "all" : statusFilter}
             onValueChange={(value) =>
-              setCuisineFilter(value === "all" ? "" : value)
+              setStatusFilter(value === "all" ? "" : value)
             }
           >
             <SelectTrigger className="w-80 p-2 border rounded-md">
-              <SelectValue placeholder="All Cuisines" />
+              <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Cuisines</SelectItem>
-              {cuisineTypes.map((cuisine) => (
-                <SelectItem key={cuisine} value={cuisine}>
-                  {cuisine}
+              <SelectItem value="all">All Statuses</SelectItem>
+              {statusTypes.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -104,87 +106,85 @@ export default function RestaurantDashboard() {
           </Select>
         </div>
 
-        <Tabs defaultValue="restaurants" className="w-full">
+        <Tabs defaultValue="stores" className="w-full">
           <TabsList className="mb-4">
-            <TabsTrigger value="restaurants">Restaurants</TabsTrigger>
-            <TabsTrigger value="menus">Menus</TabsTrigger>
+            <TabsTrigger value="stores">Stores</TabsTrigger>
+            <TabsTrigger value="souvenirs">Souvenirs</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="restaurants">
-            {restaurantData.isLoading ? (
-              <div>Loading restaurants...</div>
+          <TabsContent value="stores">
+            {storeData.isLoading ? (
+              <div>Loading stores...</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredRestaurants?.map((restaurant) => (
-                  <Link to={`/restaurant/${restaurant.id}`} key={restaurant.id}>
+                {filteredStores?.map((store) => (
+                  <Link to={`/store/${store.id}`} key={store.id}>
                     <Card className="h-full hover:shadow-lg transition-shadow">
                       <CardHeader className="p-0">
                         <img
-                          src={restaurant.image}
-                          alt={restaurant.name}
+                          src={store.image}
+                          alt={store.name}
                           className="w-full h-48 object-cover rounded-t-lg"
                         />
                       </CardHeader>
                       <CardContent className="pt-4">
                         <CardTitle className="flex justify-between items-center">
-                          <span>{restaurant.name}</span>
+                          <span>{store.name}</span>
                           <Badge
-                            variant={
-                              restaurant.isOpen ? "default" : "destructive"
-                            }
+                            variant={store.isActive ? "default" : "destructive"}
                           >
-                            {restaurant.isOpen ? "Open" : "Closed"}
+                            {store.isActive ? "Active" : "Inactive"}
                           </Badge>
                         </CardTitle>
                         <div className="flex items-center mt-2 text-gray-600">
                           <Clock className="h-4 w-4 mr-1" />
                           <span className="text-sm">
-                            {restaurant.openingTime} - {restaurant.closingTime}
+                            {store.openingTime} - {store.closingTime}
                           </span>
                         </div>
                       </CardContent>
                       <CardFooter>
                         <Badge variant="outline" className="bg-gray-100">
-                          {restaurant.cuisineType}
+                          {store.status}
                         </Badge>
                       </CardFooter>
                     </Card>
                   </Link>
                 ))}
 
-                {filteredRestaurants?.length === 0 && (
+                {filteredStores?.length === 0 && (
                   <div className="col-span-3 text-center py-10">
-                    <UtensilsCrossed className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="mt-2 text-lg">No restaurants found</p>
+                    <ShoppingBag className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-lg">No stores found</p>
                   </div>
                 )}
               </div>
             )}
           </TabsContent>
 
-          <TabsContent value="menus">
-            {menuData.isLoading ? (
-              <div>Loading menus...</div>
+          <TabsContent value="souvenirs">
+            {souvenirData.isLoading ? (
+              <div>Loading souvenirs...</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sortedMenus?.map((menu) => (
+                {sortedSouvenirs?.map((souvenir) => (
                   <Link
-                    to={`/restaurant/${menu.restaurantId}?menuId=${menu.id}`}
-                    key={menu.id}
+                    to={`/store/${souvenir.storeId}?souvenirId=${souvenir.id}`}
+                    key={souvenir.id}
                   >
                     <Card className="h-full hover:shadow-lg transition-shadow">
                       <CardHeader className="p-0">
                         <img
-                          src={menu.image}
-                          alt={menu.name}
+                          src={souvenir.image}
+                          alt={souvenir.name}
                           className="w-full h-48 object-cover rounded-t-lg"
                         />
                       </CardHeader>
                       <CardContent className="pt-4">
-                        <CardTitle>{menu.name}</CardTitle>
+                        <CardTitle>{souvenir.name}</CardTitle>
                         <div className="flex justify-between items-center mt-2">
                           <span className="font-bold text-lg">
-                            ${menu.price.toFixed(2)}
+                            ${souvenir.price.toFixed(2)}
                           </span>
                         </div>
                       </CardContent>
@@ -192,10 +192,10 @@ export default function RestaurantDashboard() {
                   </Link>
                 ))}
 
-                {sortedMenus?.length === 0 && (
+                {sortedSouvenirs?.length === 0 && (
                   <div className="col-span-3 text-center py-10">
-                    <UtensilsCrossed className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="mt-2 text-lg">No menus found</p>
+                    <ShoppingBag className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-lg">No souvenirs found</p>
                   </div>
                 )}
               </div>

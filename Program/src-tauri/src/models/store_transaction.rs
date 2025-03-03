@@ -13,7 +13,7 @@ pub struct Model {
     pub customer_id: String,
     pub quantity: i32,
     pub price: i32,
-    pub transaction_date: DateTimeUtc,
+    pub transaction_date: DateTime,
     pub status: String,
 }
 

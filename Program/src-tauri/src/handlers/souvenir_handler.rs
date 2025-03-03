@@ -56,6 +56,13 @@ pub async fn get_all_souvenirs(state: &State<'_, AppState>) -> Result<Vec<Souven
     souvenir_repository::get_souvenirs(state).await
 }
 
+pub async fn find_souvenir_by_id(
+    state: &State<'_, AppState>,
+    id: &str,
+) -> Result<Option<SouvenirModel>, String> {
+    souvenir_repository::find_souvenir_by_id(state, id).await
+}
+
 pub async fn get_souvenirs_by_store_id(
     state: &State<'_, AppState>,
     store_id: &str,

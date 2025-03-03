@@ -27,7 +27,7 @@ impl MigrationTrait for Migration {
                     .col(string(StoreTransaction::Price).integer().not_null())
                     .col(
                         string(StoreTransaction::TransactionDate)
-                            .timestamp()
+                            .date_time()
                             .not_null(),
                     )
                     .col(string(StoreTransaction::Status).not_null())

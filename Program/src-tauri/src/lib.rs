@@ -115,6 +115,7 @@ pub async fn run() {
             souvenir_service::get_all_souvenirs,
             souvenir_service::get_souvenirs_by_store_id,
             souvenir_service::delete_souvenir,
+            souvenir_service::find_souvenir_by_id,
             store_deletion_proposal_service::insert_store_deletion_proposal,
             store_deletion_proposal_service::get_all_store_deletion_proposals,
             store_deletion_proposal_service::update_store_deletion_proposal_approval,
