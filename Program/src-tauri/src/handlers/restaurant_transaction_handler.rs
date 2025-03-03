@@ -23,7 +23,7 @@ pub async fn insert_restaurant_transaction(
         menu_id,
         customer_id,
         quantity,
-        price,
+        price.abs(),
         transaction_date,
     );
 
@@ -34,6 +34,12 @@ pub async fn get_all_restaurant_transactions(
     state: &State<'_, AppState>,
 ) -> Result<Vec<RestaurantTransactionModel>, String> {
     restaurant_transaction_repository::get_all_restaurant_transactions(state).await
+}
+
+pub async fn get_current_user_restaurant_transactions(
+    state: &State<'_, AppState>,
+) -> Result<Vec<RestaurantTransactionModel>, String> {
+    restaurant_transaction_repository::get_current_user_restaurant_transactions(state).await
 }
 
 pub async fn get_restaurant_transaction(

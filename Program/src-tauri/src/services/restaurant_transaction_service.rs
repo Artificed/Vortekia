@@ -39,6 +39,13 @@ pub async fn get_restaurant_transaction(
 }
 
 #[tauri::command]
+pub async fn get_current_user_restaurant_transactions(
+    state: State<'_, AppState>,
+) -> Result<Vec<RestaurantTransactionModel>, String> {
+    restaurant_transaction_handler::get_current_user_restaurant_transactions(&state).await
+}
+
+#[tauri::command]
 pub async fn delete_restaurant_transaction(
     state: State<'_, AppState>,
     id: String,

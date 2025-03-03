@@ -122,6 +122,7 @@ pub async fn run() {
             restaurant_transaction_service::get_all_restaurant_transactions,
             restaurant_transaction_service::get_restaurant_transaction,
             restaurant_transaction_service::delete_restaurant_transaction,
+            restaurant_transaction_service::get_current_user_restaurant_transactions
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

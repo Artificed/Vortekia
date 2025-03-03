@@ -31,7 +31,7 @@ export default function RestaurantNavbar() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <a
-                href="/"
+                href="/transaction-history"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer"
               >
                 Purchase History
