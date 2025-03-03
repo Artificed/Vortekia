@@ -19,3 +19,13 @@ pub async fn get_all_store_deletion_proposals(
 ) -> Result<Vec<StoreDeletionProposalModel>, String> {
     store_deletion_proposal_handler::get_all_store_deletion_proposals(&state).await
 }
+
+#[tauri::command]
+pub async fn update_store_deletion_proposal_approval(
+    state: State<'_, AppState>,
+    id: String,
+    approve: i8,
+) -> Result<(), String> {
+    store_deletion_proposal_handler::update_store_deletion_proposal_approval(&state, id, approve)
+        .await
+}

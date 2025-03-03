@@ -16,11 +16,6 @@ export function useCeoManageNewStoreProposals() {
   ) => {
     setIsLoading(true);
 
-    console.log(proposal.id);
-    console.log(approved);
-    console.log(openingTime);
-    console.log(closingTime);
-
     try {
       await invoke("update_new_store_proposal_approval", {
         id: proposal.id,

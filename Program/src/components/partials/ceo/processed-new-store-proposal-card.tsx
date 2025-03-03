@@ -39,6 +39,7 @@ export default function ProcessedStoreProposalCard({
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
+          <p className="text-sm text-gray-600 line-clamp-2">Description:</p>
           <p className="text-sm text-gray-600 line-clamp-2">
             {proposal.storeDescription}
           </p>

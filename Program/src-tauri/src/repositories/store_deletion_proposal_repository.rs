@@ -1,3 +1,5 @@
+use sea_orm::ActiveModelTrait;
+use sea_orm::ActiveValue;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
 use sea_orm::QueryFilter;
@@ -55,6 +57,48 @@ pub async fn get_delete_store_proposal(
         Err(err) => {
             eprintln!("Failed to get delete store proposal: {:?}", err);
             Err(format!("Failed to get delete store proposal: {:?}", err))
+        }
+    }
+}
+
+pub async fn update_store_deletion_proposal_approval(
+    state: &State<'_, AppState>,
+    id: &str,
+    approve: i8,
+) -> Result<String, String> {
+    let proposal = StoreDeletionProposals::find()
+        .filter(StoreDeletionProposalColumn::Id.eq(id))
+        .one(&state.conn)
+        .await;
+
+    match proposal {
+        Ok(Some(proposal)) => {
+            let mut proposal_active: StoreDeletionProposalActiveModel = proposal.clone().into();
+            let store_id = proposal.store_id;
+
+            proposal_active.approved = ActiveValue::Set(approve);
+            proposal_active.done = ActiveValue::Set(1);
+
+            let result = proposal_active.update(&state.conn).await;
+
+            match result {
+                Ok(_) => Ok(store_id),
+                Err(err) => {
+                    eprintln!(
+                        "Failed to update store deletion proposal approval status: {:?}",
+                        err
+                    );
+                    Err(format!(
+                        "Failed to update store deletion proposal approval status: {:?}",
+                        err
+                    ))
+                }
+            }
+        }
+        Ok(None) => Err(format!("Store deletion proposal with ID {} not found", id)),
+        Err(err) => {
+            eprintln!("Failed to find store deletion proposal: {:?}", err);
+            Err(format!("Failed to find store deletion proposal: {:?}", err))
         }
     }
 }
