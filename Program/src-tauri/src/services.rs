@@ -7,6 +7,7 @@ pub mod new_ride_proposal_service;
 pub mod new_store_proposal_service;
 pub mod restaurant_proposal_service;
 pub mod restaurant_service;
+pub mod restaurant_staff_service;
 pub mod restaurant_transaction_service;
 pub mod ride_deletion_proposal_service;
 pub mod ride_service;

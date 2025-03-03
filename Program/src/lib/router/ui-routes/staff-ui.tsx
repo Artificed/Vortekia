@@ -10,6 +10,7 @@ import CsChat from "@/pages/staff/customer-service/cs-chat";
 import CsCreateCustomer from "@/pages/staff/customer-service/cs-create-customer";
 import CsDashboard from "@/pages/staff/customer-service/cs-dashboard";
 import FnbSupervisorDashboard from "@/pages/staff/fnb-supervisor/fnb-supervisor-dashboard";
+import FnbSupervisorStaffManagement from "@/pages/staff/fnb-supervisor/fnb-supervisor-staff-management";
 import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
 import RetailManagerDashboard from "@/pages/staff/retail-manager/retail-manager-dashboard";
@@ -60,6 +61,10 @@ export default function StaffUI() {
       <Route
         path="fnb-supervisor/dashboard"
         element={<FnbSupervisorDashboard />}
+      />
+      <Route
+        path="fnb-supervisor/staff-management"
+        element={<FnbSupervisorStaffManagement />}
       />
 
       {/* CFO */}

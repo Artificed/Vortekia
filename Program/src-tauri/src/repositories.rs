@@ -5,6 +5,7 @@ pub mod new_ride_proposal_repository;
 pub mod new_store_proposal_repository;
 pub mod restaurant_proposal_repository;
 pub mod restaurant_repository;
+pub mod restaurant_staff_repository;
 pub mod restaurant_transaction_repository;
 pub mod ride_deletion_proposal_repository;
 pub mod ride_repository;
@@ -14,4 +15,3 @@ pub mod staff_schedule_repository;
 pub mod store_deletion_proposal_repository;
 pub mod store_repository;
 pub mod store_transaction_repository;
-
