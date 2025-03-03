@@ -21,6 +21,14 @@ pub async fn get_all_menus(state: State<'_, AppState>) -> Result<Vec<MenuModel>,
 }
 
 #[tauri::command]
+pub async fn find_menu_by_id(
+    state: State<'_, AppState>,
+    id: &str,
+) -> Result<Option<MenuModel>, String> {
+    menu_handler::find_menu_by_id(&state, id).await
+}
+
+#[tauri::command]
 pub async fn get_menus_by_restaurant_id(
     state: State<'_, AppState>,
     restaurant_id: &str,

@@ -10,7 +10,7 @@
     "assets_path": "./assets/ride"
   },
   {
-    "app_id": "restaurantk",
+    "app_id": "restaurant",
     "ui_type": "Restaurant",
     "assets_path": "./assets/restaurant"
   },

@@ -31,6 +31,8 @@ import { useGetRestaurants } from "@/hooks/data/use-get-restaurants";
 import Restaurant from "@/lib/interfaces/entities/restaurant";
 import { EditRestaurantModal } from "@/components/modals/edit-restaurant-modal";
 import { ViewRestaurantModal } from "@/components/modals/view-restaurant-modal";
+import { RestaurantProposalModal } from "@/components/modals/propose-restaurant-modal";
+import { AddMenuModal } from "@/components/modals/add-menu-modal";
 
 export default function FnbSupervisorDashboard() {
   const { restaurants } = useGetRestaurants();
@@ -94,7 +96,13 @@ export default function FnbSupervisorDashboard() {
       <div className="flex items-center justify-center min-h-screen bg-gray-100 p-6">
         <Card className="w-full max-w-6xl">
           <CardHeader>
-            <CardTitle className="text-2xl">Restaurant Management</CardTitle>
+            <div className="flex justify-between">
+              <CardTitle className="text-2xl">Restaurant Management</CardTitle>
+              <div className="flex gap-4">
+                <RestaurantProposalModal />
+                <AddMenuModal />
+              </div>
+            </div>
             <CardDescription>
               Monitor and manage all food and beverage outlets
             </CardDescription>

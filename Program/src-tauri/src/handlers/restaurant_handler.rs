@@ -33,6 +33,13 @@ pub async fn get_all_restaurants(
     restaurant_repository::get_all_restaurants(state).await
 }
 
+pub async fn get_restaurant_by_id(
+    state: &State<'_, AppState>,
+    id: &str,
+) -> Result<RestaurantModel, String> {
+    restaurant_repository::get_restaurant_by_id(state, id).await
+}
+
 pub async fn update_restaurant(
     state: &State<'_, AppState>,
     restaurant_id: String,

@@ -35,10 +35,17 @@ export default function CustomerNavbar() {
                 </a>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <a
-                  // href="/customer-service/create-customer-account"
-                  className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer"
-                >
+                <a className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer">
+                  View Stores
+                </a>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <a className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer">
+                  View Restaurants
+                </a>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <a className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer">
                   Customer Service Chat
                 </a>
               </NavigationMenuItem>

@@ -5,8 +5,6 @@ export default function CustomerUI() {
   return (
     <Routes>
       <Route path="/" element={<CustomerDashboard />} />
-      {/* <Route path="/" element={<CustomerDashboard />} /> */}
-      {/* <Route path="/" element={<CustomerDashboard />} /> */}
     </Routes>
   );
 }

@@ -46,6 +46,13 @@ pub async fn get_all_menus(state: &State<'_, AppState>) -> Result<Vec<MenuModel>
     menu_repository::get_menus(state).await
 }
 
+pub async fn find_menu_by_id(
+    state: &State<'_, AppState>,
+    id: &str,
+) -> Result<Option<MenuModel>, String> {
+    menu_repository::find_menu_by_id(state, id).await
+}
+
 pub async fn get_menus_by_restaurant_id(
     state: &State<'_, AppState>,
     restaurant_id: &str,

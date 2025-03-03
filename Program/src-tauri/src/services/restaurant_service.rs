@@ -12,6 +12,14 @@ pub async fn get_all_restaurants(
 }
 
 #[tauri::command]
+pub async fn get_restaurant_by_id(
+    state: State<'_, AppState>,
+    id: &str,
+) -> Result<RestaurantModel, String> {
+    restaurant_handler::get_restaurant_by_id(&state, id).await
+}
+
+#[tauri::command]
 pub async fn update_restaurant(
     state: State<'_, AppState>,
     restaurant_id: String,
