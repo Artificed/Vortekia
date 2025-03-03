@@ -17,6 +17,7 @@ import { useGetStoreSouvenirs } from "@/hooks/data/use-get-store-souvenirs";
 import { useState } from "react";
 import Store from "@/lib/interfaces/entities/store";
 import StoreEditModal from "@/components/modals/store-edit-modal";
+import DeleteStoreProposalModal from "@/components/modals/propose-store-deletion-modal";
 
 export default function RetailManagerStoreDetail() {
   const { storeId } = useParams();
@@ -63,6 +64,7 @@ export default function RetailManagerStoreDetail() {
                 <Edit className="mr-2 h-4 w-4" /> Edit Store
               </Button>
               <AddSouvenirModal />
+              <DeleteStoreProposalModal />
             </div>
           </div>
 
