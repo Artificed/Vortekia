@@ -1,6 +1,9 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
-use crate::{m20250225_065344_create_customers::Customer, m20250226_013611_create_menu::Menu};
+use crate::{
+    m20250225_065344_create_customers::Customer, m20250226_012054_create_restaurant::Restaurant,
+    m20250226_013611_create_menu::Menu,
+};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -19,6 +22,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .primary_key(),
                     )
+                    .col(string(RestaurantTransaction::RestaurantId).not_null())
                     .col(string(RestaurantTransaction::MenuId).not_null())
                     .col(string(RestaurantTransaction::CustomerId).not_null())
                     .col(string(RestaurantTransaction::Quantity).integer().not_null())
@@ -29,6 +33,16 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(string(RestaurantTransaction::Status).not_null())
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk_create_restaurant_transaction_restaurant_id")
+                            .from(
+                                RestaurantTransaction::Table,
+                                RestaurantTransaction::RestaurantId,
+                            )
+                            .to(Restaurant::Table, Restaurant::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_create_restaurant_transaction_menu_id")
@@ -62,6 +76,7 @@ impl MigrationTrait for Migration {
 enum RestaurantTransaction {
     Table,
     Id,
+    RestaurantId,
     MenuId,
     CustomerId,
     Quantity,

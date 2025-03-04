@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router";
 import {
   Card,
@@ -64,9 +64,12 @@ export default function RestaurantDetailPage() {
       return;
     }
 
+    console.log(selectedMenu);
+
     try {
       await invoke("insert_restaurant_transaction", {
         menuId: selectedMenu.id,
+        restaurantId: selectedMenu.restaurantId,
         customerId: auth?.user?.id,
         quantity: quantity,
         price: -selectedMenu.price,

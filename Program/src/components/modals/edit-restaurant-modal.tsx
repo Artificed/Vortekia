@@ -216,7 +216,7 @@ export function EditRestaurantModal({
               >
                 Delete Restaurant
               </Button>
-              <div>
+              <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={handleClose}>
                   Cancel
                 </Button>

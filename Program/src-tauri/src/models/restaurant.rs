@@ -24,6 +24,8 @@ pub enum Relation {
     Menu,
     #[sea_orm(has_many = "super::restaurant_staff::Entity")]
     RestaurantStaff,
+    #[sea_orm(has_many = "super::restaurant_transaction::Entity")]
+    RestaurantTransaction,
 }
 
 impl Related<super::menu::Entity> for Entity {
@@ -35,6 +37,12 @@ impl Related<super::menu::Entity> for Entity {
 impl Related<super::restaurant_staff::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::RestaurantStaff.def()
+    }
+}
+
+impl Related<super::restaurant_transaction::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::RestaurantTransaction.def()
     }
 }
 

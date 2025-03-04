@@ -4,6 +4,8 @@ use crate::handlers::restaurant_staff_handler;
 use crate::models::restaurant_staff::Model as RestaurantStaffModel;
 use crate::modules::app_state::AppState;
 
+use crate::models::restaurant::Model as RestaurantModel;
+
 #[tauri::command]
 pub async fn insert_new_restaurant_staff(
     state: State<'_, AppState>,
@@ -61,4 +63,12 @@ pub async fn get_staff_by_restaurant(
     restaurant_id: &str,
 ) -> Result<Vec<RestaurantStaffModel>, String> {
     restaurant_staff_handler::get_staff_by_restaurant(&state, restaurant_id).await
+}
+
+#[tauri::command]
+pub async fn get_staff_assigned_restaurant(
+    state: State<'_, AppState>,
+    staff_id: &str,
+) -> Result<RestaurantModel, String> {
+    restaurant_staff_handler::get_staff_assigned_restaurant(&state, staff_id).await
 }

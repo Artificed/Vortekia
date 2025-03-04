@@ -6,6 +6,7 @@ use super::id_factory;
 
 pub fn create_restaurant_transaction(
     menu_id: String,
+    restaurant_id: String,
     customer_id: String,
     quantity: i32,
     price: i32,
@@ -17,6 +18,7 @@ pub fn create_restaurant_transaction(
     RestaurantTransactionActiveModel {
         id: ActiveValue::Set(id),
         menu_id: ActiveValue::Set(menu_id),
+        restaurant_id: ActiveValue::Set(restaurant_id),
         customer_id: ActiveValue::Set(customer_id),
         quantity: ActiveValue::Set(quantity),
         price: ActiveValue::Set(price),

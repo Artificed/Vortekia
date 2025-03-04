@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
+    pub restaurant_id: String,
     pub menu_id: String,
     pub customer_id: String,
     pub quantity: i32,
@@ -35,6 +36,14 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     Menu,
+    #[sea_orm(
+        belongs_to = "super::restaurant::Entity",
+        from = "Column::RestaurantId",
+        to = "super::restaurant::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Restaurant,
 }
 
 impl Related<super::customer::Entity> for Entity {
@@ -46,6 +55,12 @@ impl Related<super::customer::Entity> for Entity {
 impl Related<super::menu::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Menu.def()
+    }
+}
+
+impl Related<super::restaurant::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Restaurant.def()
     }
 }
 

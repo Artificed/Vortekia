@@ -64,6 +64,26 @@ pub async fn get_restaurant_transaction(
     }
 }
 
+pub async fn get_restaurant_transactions_by_status(
+    state: &State<'_, AppState>,
+    id: &str,
+    status: &str,
+) -> Result<Vec<RestaurantTransactionModel>, String> {
+    let result = RestaurantTransactions::find()
+        .filter(RestaurantTransactionColumn::RestaurantId.eq(id.to_owned()))
+        .filter(RestaurantTransactionColumn::Status.eq(status.to_owned()))
+        .all(&state.conn)
+        .await;
+
+    match result {
+        Ok(transactions) => Ok(transactions),
+        Err(err) => {
+            eprintln!("Failed to get restaurant transaction: {:?}", err);
+            Err(format!("Failed to get restaurant transaction: {:?}", err))
+        }
+    }
+}
+
 pub async fn get_current_user_restaurant_transactions(
     state: &State<'_, AppState>,
 ) -> Result<Vec<RestaurantTransactionModel>, String> {

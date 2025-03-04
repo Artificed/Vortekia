@@ -3,6 +3,7 @@ import CeoViewRestaurantProposals from "@/pages/staff/ceo/ceo-view-restaurant-pr
 import CeoViewStoreProposals from "@/pages/staff/ceo/ceo-view-store-proposals";
 import CfoDashboard from "@/pages/staff/cfo/cfo-dashboard";
 import CfoViewRestaurantProposals from "@/pages/staff/cfo/cfo-view-restaurant-proposals";
+import ChefDashboard from "@/pages/staff/chef/chef-dashboard";
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
 import CooDashboard from "@/pages/staff/coo/coo-dashboard";
 import CooViewProposal from "@/pages/staff/coo/coo-view-proposals";
@@ -20,6 +21,7 @@ import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashbo
 import RideManagerViewSchedules from "@/pages/staff/ride-manager/ride-manager-view-schedules";
 import RideStaffDashboard from "@/pages/staff/ride-staff/ride-staff-dashboard";
 import StaffLogin from "@/pages/staff/staff-login";
+import WaiterDashboard from "@/pages/staff/waiter/waiter-dashboard";
 import { Route, Routes } from "react-router";
 
 export default function StaffUI() {
@@ -66,6 +68,12 @@ export default function StaffUI() {
         path="fnb-supervisor/staff-management"
         element={<FnbSupervisorStaffManagement />}
       />
+
+      {/* Waiter */}
+      <Route path="waiter/dashboard" element={<WaiterDashboard />} />
+
+      {/* Chef */}
+      <Route path="chef/dashboard" element={<ChefDashboard />} />
 
       {/* CFO */}
       <Route path="cfo/dashboard" element={<CfoDashboard />} />

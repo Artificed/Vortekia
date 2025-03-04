@@ -125,6 +125,7 @@ pub async fn run() {
             restaurant_transaction_service::insert_restaurant_transaction,
             restaurant_transaction_service::get_all_restaurant_transactions,
             restaurant_transaction_service::get_restaurant_transaction,
+            restaurant_transaction_service::get_restaurant_transactions_by_status,
             restaurant_transaction_service::delete_restaurant_transaction,
             restaurant_transaction_service::get_current_user_restaurant_transactions,
             store_transaction_service::insert_store_transaction,
@@ -138,6 +139,7 @@ pub async fn run() {
             restaurant_staff_service::get_all_restaurant_staff,
             restaurant_staff_service::get_restaurant_staff,
             restaurant_staff_service::get_staff_by_restaurant,
+            restaurant_staff_service::get_staff_assigned_restaurant
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

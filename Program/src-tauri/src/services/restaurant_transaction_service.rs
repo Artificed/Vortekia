@@ -9,6 +9,7 @@ use crate::models::restaurant_transaction::Model as RestaurantTransactionModel;
 pub async fn insert_restaurant_transaction(
     state: State<'_, AppState>,
     menu_id: String,
+    restaurant_id: String,
     customer_id: String,
     quantity: i32,
     price: i32,
@@ -16,6 +17,7 @@ pub async fn insert_restaurant_transaction(
     restaurant_transaction_handler::insert_restaurant_transaction(
         &state,
         menu_id,
+        restaurant_id,
         customer_id,
         quantity,
         price,
@@ -36,6 +38,15 @@ pub async fn get_restaurant_transaction(
     id: String,
 ) -> Result<RestaurantTransactionModel, String> {
     restaurant_transaction_handler::get_restaurant_transaction(&state, id).await
+}
+
+#[tauri::command]
+pub async fn get_restaurant_transactions_by_status(
+    state: State<'_, AppState>,
+    id: &str,
+    status: &str,
+) -> Result<Vec<RestaurantTransactionModel>, String> {
+    restaurant_transaction_handler::get_restaurant_transactions_by_status(&state, id, status).await
 }
 
 #[tauri::command]

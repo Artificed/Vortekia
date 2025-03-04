@@ -11,6 +11,7 @@ use super::customer_handler;
 pub async fn insert_restaurant_transaction(
     state: &State<'_, AppState>,
     menu_id: String,
+    restaurant_id: String,
     customer_id: String,
     quantity: i32,
     price: i32,
@@ -25,6 +26,7 @@ pub async fn insert_restaurant_transaction(
 
     let transaction = restaurant_transaction_factory::create_restaurant_transaction(
         menu_id,
+        restaurant_id,
         customer_id,
         quantity,
         price.abs(),
@@ -51,6 +53,15 @@ pub async fn get_current_user_restaurant_transactions(
     state: &State<'_, AppState>,
 ) -> Result<Vec<RestaurantTransactionModel>, String> {
     restaurant_transaction_repository::get_current_user_restaurant_transactions(state).await
+}
+
+pub async fn get_restaurant_transactions_by_status(
+    state: &State<'_, AppState>,
+    id: &str,
+    status: &str,
+) -> Result<Vec<RestaurantTransactionModel>, String> {
+    restaurant_transaction_repository::get_restaurant_transactions_by_status(state, id, status)
+        .await
 }
 
 pub async fn get_restaurant_transaction(

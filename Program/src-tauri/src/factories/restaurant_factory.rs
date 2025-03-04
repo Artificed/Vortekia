@@ -26,6 +26,6 @@ pub fn create_restaurant(
         closing_time: ActiveValue::Set(closing_time_naive),
         cuisine_type: ActiveValue::Set(cuisine_type.to_string()),
         is_open: ActiveValue::Set(0),
-        is_active: ActiveValue::Set(0),
+        is_active: ActiveValue::Set(1),
     }
 }

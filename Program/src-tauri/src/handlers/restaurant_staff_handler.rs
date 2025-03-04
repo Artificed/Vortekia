@@ -6,6 +6,7 @@ use crate::{
     repositories::{restaurant_staff_repository, staff_repository, staff_schedule_repository},
 };
 
+use crate::models::restaurant::Model as RestaurantModel;
 use crate::models::restaurant_staff::Model as RestaurantStaffModel;
 
 use super::{restaurant_handler, staff_schedule_handler};
@@ -220,4 +221,11 @@ pub async fn get_staff_by_restaurant(
     restaurant_id: &str,
 ) -> Result<Vec<RestaurantStaffModel>, String> {
     restaurant_staff_repository::get_staff_by_restaurant(state, restaurant_id).await
+}
+
+pub async fn get_staff_assigned_restaurant(
+    state: &State<'_, AppState>,
+    staff_id: &str,
+) -> Result<RestaurantModel, String> {
+    restaurant_staff_repository::get_staff_assigned_restaurant(state, staff_id).await
 }
