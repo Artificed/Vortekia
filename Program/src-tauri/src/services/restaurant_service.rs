@@ -3,6 +3,7 @@ use tauri::State;
 use crate::handlers::restaurant_handler;
 use crate::models::restaurant::Model as RestaurantModel;
 use crate::modules::app_state::AppState;
+use crate::viewmodels::restaurant_with_staff_schedule::RestaurantWithStaffSchedule;
 
 #[tauri::command]
 pub async fn get_all_restaurants(
@@ -46,4 +47,11 @@ pub async fn update_restaurant(
 #[tauri::command]
 pub async fn delete_restaurant(state: State<'_, AppState>, id: &str) -> Result<(), String> {
     restaurant_handler::delete_restaurant(&state, id).await
+}
+
+#[tauri::command]
+pub async fn get_restaurants_with_staff_schedules(
+    state: State<'_, AppState>,
+) -> Result<Vec<RestaurantWithStaffSchedule>, String> {
+    restaurant_handler::get_restaurants_with_staff_schedules(&state).await
 }

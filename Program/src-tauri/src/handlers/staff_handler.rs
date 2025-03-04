@@ -64,3 +64,27 @@ pub async fn get_ride_staffs(state: &State<'_, AppState>) -> Result<Vec<StaffMod
 pub async fn get_sales_associates(state: &State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
     staff_repository::get_staff_by_role(state, "Sales Associate").await
 }
+
+pub async fn get_restaurant_staffs(state: &State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
+    let waiters = staff_repository::get_staff_by_role(state, "Waiter").await;
+    let chefs = staff_repository::get_staff_by_role(state, "Chef").await;
+
+    match (waiters, chefs) {
+        (Ok(mut waiters), Ok(mut chefs)) => {
+            waiters.append(&mut chefs);
+            Ok(waiters)
+        }
+        (Ok(waiters), Err(e)) => {
+            println!("Error retrieving chefs: {}", e);
+            Ok(waiters)
+        }
+        (Err(e), Ok(chefs)) => {
+            println!("Error retrieving waiters: {}", e);
+            Ok(chefs)
+        }
+        (Err(e1), Err(e2)) => Err(format!(
+            "Errors retrieving staff: waiters - {}, chefs - {}",
+            e1, e2
+        )),
+    }
+}
