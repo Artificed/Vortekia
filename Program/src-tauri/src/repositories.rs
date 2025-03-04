@@ -8,6 +8,7 @@ pub mod restaurant_repository;
 pub mod restaurant_staff_repository;
 pub mod restaurant_transaction_repository;
 pub mod ride_deletion_proposal_repository;
+pub mod ride_queue_repository;
 pub mod ride_repository;
 pub mod souvenir_repository;
 pub mod staff_repository;

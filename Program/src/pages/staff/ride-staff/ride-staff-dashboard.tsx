@@ -5,6 +5,7 @@ import { useGetRideWithStaff } from "@/hooks/data/use-get-ride-with-staff";
 import RideWithStaff from "@/lib/interfaces/viewmodels/ride-with-staff";
 import RideCard from "@/components/partials/ride-staff/ride-card";
 import RideStaffDetailsModal from "@/components/modals/ride-staff-details-modal";
+import RideQueueModal from "@/components/modals/ride-queue-modal";
 import RideStaffNavbar from "@/components/navbars/ride-staff-navbar";
 
 export default function RideStaffDashboard() {
@@ -12,6 +13,7 @@ export default function RideStaffDashboard() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRide, setSelectedRide] = useState<RideWithStaff | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+  const [isQueueOpen, setIsQueueOpen] = useState<boolean>(false);
 
   const filteredRides =
     ridesWithStaff?.filter((rideWithStaff: RideWithStaff) =>
@@ -21,6 +23,11 @@ export default function RideStaffDashboard() {
   const handleDetailsClick = (ride: RideWithStaff) => {
     setSelectedRide(ride);
     setIsDetailsOpen(true);
+  };
+
+  const handleManageQueue = (ride: RideWithStaff) => {
+    setSelectedRide(ride);
+    setIsQueueOpen(true);
   };
 
   return (
@@ -46,6 +53,7 @@ export default function RideStaffDashboard() {
                 key={rideWithStaff.ride.id}
                 rideWithStaff={rideWithStaff}
                 onDetailsClick={handleDetailsClick}
+                onManageQueue={handleManageQueue}
               />
             ))}
           </div>
@@ -64,7 +72,11 @@ export default function RideStaffDashboard() {
         isOpen={isDetailsOpen}
         onOpenChange={setIsDetailsOpen}
       />
+      <RideQueueModal
+        rideWithStaff={selectedRide}
+        isOpen={isQueueOpen}
+        onOpenChange={setIsQueueOpen}
+      />
     </>
   );
 }
-

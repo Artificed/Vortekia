@@ -10,6 +10,7 @@ pub mod restaurant_service;
 pub mod restaurant_staff_service;
 pub mod restaurant_transaction_service;
 pub mod ride_deletion_proposal_service;
+pub mod ride_queue_service;
 pub mod ride_service;
 pub mod souvenir_service;
 pub mod staff_schedule_service;

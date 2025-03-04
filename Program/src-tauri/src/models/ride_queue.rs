@@ -11,6 +11,8 @@ pub struct Model {
     pub id: String,
     pub ride_id: String,
     pub customer_id: String,
+    pub start_time: DateTime,
+    pub end_time: DateTime,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

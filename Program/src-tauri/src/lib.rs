@@ -141,7 +141,13 @@ pub async fn run() {
             restaurant_staff_service::get_all_restaurant_staff,
             restaurant_staff_service::get_restaurant_staff,
             restaurant_staff_service::get_staff_by_restaurant,
-            restaurant_staff_service::get_staff_assigned_restaurant
+            restaurant_staff_service::get_staff_assigned_restaurant,
+            ride_queue_service::insert_ride_queue,
+            ride_queue_service::get_all_ride_queues,
+            ride_queue_service::get_ride_queue,
+            ride_queue_service::get_ride_queues_by_ride,
+            ride_queue_service::update_ride_queue,
+            ride_queue_service::get_ride_queues_by_customer,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

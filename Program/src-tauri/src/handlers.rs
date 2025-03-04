@@ -11,6 +11,7 @@ pub mod restaurant_staff_handler;
 pub mod restaurant_transaction_handler;
 pub mod ride_deletion_proposal_handler;
 pub mod ride_handler;
+pub mod ride_queue_handler;
 pub mod souvenir_handler;
 pub mod staff_handler;
 pub mod staff_schedule_handler;

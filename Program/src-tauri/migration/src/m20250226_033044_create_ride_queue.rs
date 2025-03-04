@@ -21,6 +21,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(RideQueue::RideId).not_null())
                     .col(string(RideQueue::CustomerId).not_null())
+                    .col(string(RideQueue::StartTime).date_time().not_null())
+                    .col(string(RideQueue::EndTime).date_time().not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_ride_id")
@@ -53,4 +55,6 @@ pub enum RideQueue {
     Id,
     RideId,
     CustomerId,
+    StartTime,
+    EndTime,
 }
