@@ -12,10 +12,13 @@ import { useGetRidesWithQueues } from "@/hooks/data/use-get-rides-with-queues";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams } from "react-router";
 import RideNavbar from "@/components/navbars/ride-navbar";
+import { Button } from "@/components/ui/button";
+import useAuth from "@/hooks/auth/use-auth";
 
 export default function RideDetails() {
   const { ridesWithQueues, isLoading, isError } = useGetRidesWithQueues();
   const params = useParams();
+  const auth = useAuth();
 
   if (isLoading) {
     return (
@@ -35,6 +38,8 @@ export default function RideDetails() {
     );
   }
 
+  const queueForRide = () => {};
+
   const selectedRide = ridesWithQueues?.find(
     (rideWithQueue) => rideWithQueue.ride.id === params.rideId,
   );
@@ -50,7 +55,6 @@ export default function RideDetails() {
           <CardContent className="space-y-6">
             {selectedRide && (
               <div className="space-y-6">
-                {/* Ride Details Section */}
                 <div className="border rounded-lg p-6 shadow-sm">
                   <div className="flex justify-between items-start mb-4">
                     <h2 className="text-xl font-semibold">
@@ -68,26 +72,29 @@ export default function RideDetails() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <div>
-                        <p className="font-medium">Price:</p>
-                        <p className="text-muted-foreground">
-                          {selectedRide.ride.price}
-                        </p>
+                    <div className="flex flex-col justify-between">
+                      <div className="space-y-3">
+                        <div>
+                          <p className="font-medium">Price:</p>
+                          <p className="text-muted-foreground">
+                            {selectedRide.ride.price}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="font-medium">Operating Hours:</p>
+                          <p className="text-muted-foreground">
+                            {selectedRide.ride.openingTime} -{" "}
+                            {selectedRide.ride.closingTime}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="font-medium">Assigned Staff:</p>
+                          <p className="text-muted-foreground">
+                            {selectedRide.ride.assignedStaff}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">Operating Hours:</p>
-                        <p className="text-muted-foreground">
-                          {selectedRide.ride.openingTime} -{" "}
-                          {selectedRide.ride.closingTime}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="font-medium">Assigned Staff:</p>
-                        <p className="text-muted-foreground">
-                          {selectedRide.ride.assignedStaff}
-                        </p>
-                      </div>
+                      <div>{auth?.user && <Button>Queue For Ride</Button>}</div>
                     </div>
 
                     {selectedRide.ride.image && (
@@ -100,7 +107,6 @@ export default function RideDetails() {
                   </div>
                 </div>
 
-                {/* Queue Section */}
                 <div className="border rounded-lg p-6 shadow-sm">
                   <h2 className="text-xl font-semibold mb-4">Current Queue</h2>
                   <Table>

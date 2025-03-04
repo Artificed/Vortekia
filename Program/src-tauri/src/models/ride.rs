@@ -21,10 +21,14 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(has_many = "super::queue_request::Entity")]
+    QueueRequest,
     #[sea_orm(has_many = "super::ride_deletion_proposal::Entity")]
     RideDeletionProposal,
     #[sea_orm(has_many = "super::ride_queue::Entity")]
     RideQueue,
+    #[sea_orm(has_many = "super::ride_transaction::Entity")]
+    RideTransaction,
     #[sea_orm(
         belongs_to = "super::staff::Entity",
         from = "Column::AssignedStaff",
@@ -33,6 +37,12 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     Staff,
+}
+
+impl Related<super::queue_request::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::QueueRequest.def()
+    }
 }
 
 impl Related<super::ride_deletion_proposal::Entity> for Entity {
@@ -44,6 +54,12 @@ impl Related<super::ride_deletion_proposal::Entity> for Entity {
 impl Related<super::ride_queue::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::RideQueue.def()
+    }
+}
+
+impl Related<super::ride_transaction::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::RideTransaction.def()
     }
 }
 

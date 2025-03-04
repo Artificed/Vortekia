@@ -17,10 +17,14 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_many = "super::lost_and_found_log::Entity")]
     LostAndFoundLog,
+    #[sea_orm(has_many = "super::queue_request::Entity")]
+    QueueRequest,
     #[sea_orm(has_many = "super::restaurant_transaction::Entity")]
     RestaurantTransaction,
     #[sea_orm(has_many = "super::ride_queue::Entity")]
     RideQueue,
+    #[sea_orm(has_many = "super::ride_transaction::Entity")]
+    RideTransaction,
     #[sea_orm(has_many = "super::store_transaction::Entity")]
     StoreTransaction,
 }
@@ -28,6 +32,12 @@ pub enum Relation {
 impl Related<super::lost_and_found_log::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::LostAndFoundLog.def()
+    }
+}
+
+impl Related<super::queue_request::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::QueueRequest.def()
     }
 }
 
@@ -40,6 +50,12 @@ impl Related<super::restaurant_transaction::Entity> for Entity {
 impl Related<super::ride_queue::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::RideQueue.def()
+    }
+}
+
+impl Related<super::ride_transaction::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::RideTransaction.def()
     }
 }
 
