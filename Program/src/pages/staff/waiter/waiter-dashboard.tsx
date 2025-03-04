@@ -76,6 +76,23 @@ export default function WaiterDashboard() {
     }
   };
 
+  const deliverOrderToCustomer = async (transactionId: string) => {
+    try {
+      await invoke("update_restaurant_transaction_status", {
+        id: transactionId,
+        newStatus: "Completed",
+      });
+      ToastUtils.success({
+        description: "Successfully delivered order to customer!",
+      });
+      queryClient.invalidateQueries({ queryKey: ["restaurantTransactions"] });
+    } catch (error) {
+      ToastUtils.error({
+        description: String(error),
+      });
+    }
+  };
+
   return (
     <>
       <WaiterNavbar />
@@ -105,9 +122,13 @@ export default function WaiterDashboard() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
-                    <SelectItem value="Pending">Pending</SelectItem>
                     <SelectItem value="Cancelled">Cancelled</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Cooking">Cooking</SelectItem>
+                    <SelectItem value="Ready to Serve">
+                      Ready to Serve
+                    </SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -158,6 +179,16 @@ export default function WaiterDashboard() {
                               onClick={() => forwardOrderToChef(transaction.id)}
                             >
                               Forward To Chef
+                            </Button>
+                          ) : transaction.status === "Ready to Serve" ? (
+                            <Button
+                              size="sm"
+                              variant="default"
+                              onClick={() =>
+                                deliverOrderToCustomer(transaction.id)
+                              }
+                            >
+                              Serve Customer
                             </Button>
                           ) : (
                             <h1>-</h1>
