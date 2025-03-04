@@ -1,6 +1,8 @@
+use chrono::{NaiveDateTime, Utc};
 use tauri::State;
 
-use crate::repositories::{customer_repository, ride_repository};
+use crate::factories::ride_transaction_factory;
+use crate::repositories::{ride_repository, ride_transaction_repository};
 use crate::{
     factories::queue_request_factory, modules::app_state::AppState,
     repositories::queue_request_repository,
@@ -16,29 +18,32 @@ pub async fn insert_new_queue_request(
     customer_id: String,
 ) -> Result<(), String> {
     let ride = ride_repository::get_ride_by_id(state, &ride_id).await?;
+    let selected_ride = match ride {
+        Some(r) => r,
+        None => return Err("Failed to get ride!".to_string()),
+    };
 
-    if let Some(selected_ride) = ride {
-        let ride_cost = selected_ride.price;
-        let res = customer_handler::add_current_user_balance(state, ride_cost).await;
+    let ride_cost = selected_ride.price;
 
-        let status = match res {
-            Ok(()) => String::from("Pending"),
-            Err(_) => String::from("Failed"),
-        };
-
-        // _ = restaurant_transaction_repository::insert_restaurant_transaction(state, transaction).await;
-        //
-        // if res.is_err() {
-        //     Err("Insufficient balance to make transaction!".to_string())
-        // } else {
-        //     Ok(())
-        // }
-
-        let request = queue_request_factory::create_queue_request(&ride_id, &customer_id);
-        queue_request_repository::insert_queue_request(state, request).await
-    } else {
-        return Err("Failed to get ride!".to_string());
+    let balance_check = customer_handler::add_current_user_balance(state, ride_cost).await;
+    if balance_check.is_err() {
+        return Err("Insufficient balance to make transaction!".to_string());
     }
+
+    let queue_request = queue_request_factory::create_queue_request(&ride_id, &customer_id);
+    queue_request_repository::insert_queue_request(state, queue_request).await?;
+
+    let transaction_date: NaiveDateTime = Utc::now().naive_utc();
+    let ride_transaction = ride_transaction_factory::create_ride_transaction(
+        customer_id,
+        ride_id,
+        selected_ride.price.abs(),
+        transaction_date,
+        "In Progress",
+    );
+    ride_transaction_repository::insert_ride_transaction(state, ride_transaction).await?;
+
+    Ok(())
 }
 
 pub async fn get_all_queue_requests(

@@ -14,11 +14,15 @@ import { useParams } from "react-router";
 import RideNavbar from "@/components/navbars/ride-navbar";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/auth/use-auth";
+import { ToastUtils } from "@/components/utils/toast-helper";
+import { invoke } from "@tauri-apps/api/core";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function RideDetails() {
   const { ridesWithQueues, isLoading, isError } = useGetRidesWithQueues();
   const params = useParams();
   const auth = useAuth();
+  const queryClient = useQueryClient();
 
   if (isLoading) {
     return (
@@ -38,7 +42,20 @@ export default function RideDetails() {
     );
   }
 
-  const queueForRide = () => {};
+  const queueForRide = async (rideId: string) => {
+    try {
+      await invoke("insert_new_queue_request", {
+        rideId,
+        customerId: auth?.user?.id,
+      });
+      ToastUtils.success({
+        title: "Successfully queued for a ride!",
+        description: "Please wait for the staff to send your schedule!",
+      });
+    } catch (error) {
+      ToastUtils.error({ description: String(error) });
+    }
+  };
 
   const selectedRide = ridesWithQueues?.find(
     (rideWithQueue) => rideWithQueue.ride.id === params.rideId,
@@ -94,7 +111,9 @@ export default function RideDetails() {
                           </p>
                         </div>
                       </div>
-                      <div>{auth?.user && <Button>Queue For Ride</Button>}</div>
+                      <div onClick={() => queueForRide(selectedRide.ride.id)}>
+                        {auth?.user && <Button>Queue For Ride</Button>}
+                      </div>
                     </div>
 
                     {selectedRide.ride.image && (
