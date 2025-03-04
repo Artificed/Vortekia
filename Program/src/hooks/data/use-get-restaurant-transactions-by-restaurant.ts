@@ -3,22 +3,19 @@ import RestaurantTransaction from "@/lib/interfaces/entities/restaurant-transact
 import { useQuery } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
 
-export function useGetRestaurantTransactionsByStatus(
-  restaurantId: string,
-  status: string,
-) {
+export function useGetRestaurantTransactionsByRestaurant(restaurantId: string) {
   const {
     data: restaurantTransactions,
     isLoading,
     isError,
     refetch,
   } = useQuery<RestaurantTransaction[], unknown>({
-    queryKey: ["restaurantTransactions", restaurantId, status],
+    queryKey: ["restaurantTransactions", restaurantId],
     queryFn: async () => {
       try {
         const result = await invoke<RestaurantTransaction[]>(
-          "get_restaurant_transactions_by_status",
-          { id: restaurantId, status },
+          "get_restaurant_transactions_by_restaurant",
+          { restaurantId },
         );
         return result;
       } catch (error) {

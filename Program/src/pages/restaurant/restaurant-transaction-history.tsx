@@ -29,6 +29,7 @@ import { useGetCurrentUserRestaurantTransactions } from "@/hooks/data/use-get-cu
 import RestaurantNavbar from "@/components/navbars/restaurant-navbar";
 import useAuth from "@/hooks/auth/use-auth";
 import { useNavigate } from "react-router";
+import useTransactionStatusBadge from "@/hooks/utility/use-get-transaction-status-badge";
 
 export default function RestaurantTransactionHistoryPage() {
   const auth = useAuth();
@@ -49,6 +50,8 @@ export default function RestaurantTransactionHistoryPage() {
     key: "transactionDate",
     direction: "descending",
   });
+
+  const { getStatusBadgeColor } = useTransactionStatusBadge();
 
   if (isError) {
     return (
@@ -246,19 +249,7 @@ export default function RestaurantTransactionHistoryPage() {
                           <TableCell>${transaction.price.toFixed(2)}</TableCell>
                           <TableCell>
                             <span
-                              className={`px-2 py-1 rounded-full text-xs ${
-                                transaction.status === "Completed"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : transaction.status === "Ready to Serve"
-                                    ? "bg-green-100 text-green-800"
-                                    : transaction.status === "Cooking"
-                                      ? "bg-orange-100 text-orange-800"
-                                      : transaction.status === "Pending"
-                                        ? "bg-yellow-100 text-yellow-800"
-                                        : transaction.status === "Cancelled"
-                                          ? "bg-red-100 text-red-800"
-                                          : "bg-gray-100 text-gray-800"
-                              }`}
+                              className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeColor(transaction.status)}`}
                             >
                               {transaction.status}
                             </span>

@@ -128,6 +128,8 @@ pub async fn run() {
             restaurant_transaction_service::get_restaurant_transactions_by_status,
             restaurant_transaction_service::delete_restaurant_transaction,
             restaurant_transaction_service::get_current_user_restaurant_transactions,
+            restaurant_transaction_service::update_restaurant_transaction_status,
+            restaurant_transaction_service::get_restaurant_transactions_by_restaurant,
             store_transaction_service::insert_store_transaction,
             store_transaction_service::get_all_store_transactions,
             store_transaction_service::get_store_transaction,

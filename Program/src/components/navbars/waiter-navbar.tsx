@@ -29,20 +29,20 @@ export default function WaiterNavbar() {
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>
               <a
-                href="/fnb-supervisor/dashboard"
+                href="/waiter/dashboard"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 Dashboard
               </a>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              <a
-                href="/fnb-supervisor/staff-management"
-                className="px-4 py-2 hover:bg-gray-200 rounded-md"
-              >
-                Staff Management
-              </a>
-            </NavigationMenuItem>
+            {/* <NavigationMenuItem> */}
+            {/*   <a */}
+            {/*     href="/staff-management" */}
+            {/*     className="px-4 py-2 hover:bg-gray-200 rounded-md" */}
+            {/*   > */}
+            {/*     Staff Management */}
+            {/*   </a> */}
+            {/* </NavigationMenuItem> */}
           </NavigationMenuList>
         </NavigationMenu>
       </div>

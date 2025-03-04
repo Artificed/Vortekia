@@ -130,7 +130,6 @@ const RestaurantStaffPage: React.FC = () => {
                   className="border-b pb-8 mb-8 last:border-b-0"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                    {/* Restaurant info card */}
                     <Card className="md:col-span-2">
                       <CardHeader>
                         <CardTitle>{restaurantData.restaurant.name}</CardTitle>
@@ -174,7 +173,6 @@ const RestaurantStaffPage: React.FC = () => {
                       </CardContent>
                     </Card>
 
-                    {/* Staff listing card */}
                     <Card className="md:col-span-3">
                       <CardHeader>
                         <div className="flex justify-between items-center">

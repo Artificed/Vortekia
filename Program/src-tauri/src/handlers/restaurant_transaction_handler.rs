@@ -49,6 +49,17 @@ pub async fn get_all_restaurant_transactions(
     restaurant_transaction_repository::get_all_restaurant_transactions(state).await
 }
 
+pub async fn get_restaurant_transactions_by_restaurant(
+    state: &State<'_, AppState>,
+    restaurant_id: &str,
+) -> Result<Vec<RestaurantTransactionModel>, String> {
+    restaurant_transaction_repository::get_restaurant_transactions_by_restaurant(
+        state,
+        restaurant_id,
+    )
+    .await
+}
+
 pub async fn get_current_user_restaurant_transactions(
     state: &State<'_, AppState>,
 ) -> Result<Vec<RestaurantTransactionModel>, String> {
@@ -76,4 +87,13 @@ pub async fn delete_restaurant_transaction(
     id: String,
 ) -> Result<(), String> {
     restaurant_transaction_repository::delete_restaurant_transaction(state, &id).await
+}
+
+pub async fn update_restaurant_transaction_status(
+    state: &State<'_, AppState>,
+    id: &str,
+    new_status: &str,
+) -> Result<(), String> {
+    restaurant_transaction_repository::update_restaurant_transaction_status(state, id, new_status)
+        .await
 }

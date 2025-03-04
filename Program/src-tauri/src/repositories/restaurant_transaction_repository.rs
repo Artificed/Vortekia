@@ -1,3 +1,4 @@
+use sea_orm::ActiveValue;
 use tauri::State;
 
 use crate::models::restaurant_transaction::ActiveModel as RestaurantTransactionActiveModel;
@@ -40,6 +41,30 @@ pub async fn get_all_restaurant_transactions(
             Err(format!(
                 "Failed to get all restaurant transactions: {:?}",
                 err
+            ))
+        }
+    }
+}
+
+pub async fn get_restaurant_transactions_by_restaurant(
+    state: &State<'_, AppState>,
+    restaurant_id: &str,
+) -> Result<Vec<RestaurantTransactionModel>, String> {
+    let result = RestaurantTransactions::find()
+        .filter(RestaurantTransactionColumn::RestaurantId.eq(restaurant_id.to_owned()))
+        .all(&state.conn)
+        .await;
+
+    match result {
+        Ok(transactions) => Ok(transactions),
+        Err(err) => {
+            eprintln!(
+                "Failed to get transactions for restaurant {}: {:?}",
+                restaurant_id, err
+            );
+            Err(format!(
+                "Failed to get transactions for restaurant {}: {:?}",
+                restaurant_id, err
             ))
         }
     }
@@ -133,6 +158,44 @@ pub async fn delete_restaurant_transaction(
                 "Failed to delete restaurant transaction: {:?}",
                 err
             ))
+        }
+    }
+}
+
+pub async fn update_restaurant_transaction_status(
+    state: &State<'_, AppState>,
+    id: &str,
+    new_status: &str,
+) -> Result<(), String> {
+    let transaction_result = RestaurantTransactions::find()
+        .filter(RestaurantTransactionColumn::Id.eq(id.to_owned()))
+        .one(&state.conn)
+        .await;
+
+    match transaction_result {
+        Ok(Some(transaction)) => {
+            let mut active_transaction: RestaurantTransactionActiveModel = transaction.into();
+            active_transaction.status = ActiveValue::Set(new_status.to_owned());
+
+            let update_result = RestaurantTransactions::update(active_transaction)
+                .exec(&state.conn)
+                .await;
+
+            match update_result {
+                Ok(_) => Ok(()),
+                Err(err) => {
+                    eprintln!("Failed to update restaurant transaction: {:?}", err);
+                    Err(format!(
+                        "Failed to update restaurant transaction: {:?}",
+                        err
+                    ))
+                }
+            }
+        }
+        Ok(None) => Err(format!("Restaurant transaction with ID {} not found", id)),
+        Err(err) => {
+            eprintln!("Failed to get restaurant transaction: {:?}", err);
+            Err(format!("Failed to get restaurant transaction: {:?}", err))
         }
     }
 }
