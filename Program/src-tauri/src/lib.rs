@@ -101,7 +101,7 @@ pub async fn run() {
             restaurant_service::update_restaurant,
             restaurant_service::get_restaurant_by_id,
             restaurant_service::delete_restaurant,
-            restaurant_service::get_restaurants_with_staff_schedules,
+            restaurant_service::get_restaurants_with_staffs,
             menu_service::insert_new_menu,
             menu_service::get_all_menus,
             menu_service::find_menu_by_id,

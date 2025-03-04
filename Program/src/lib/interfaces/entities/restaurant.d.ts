@@ -5,7 +5,8 @@ interface Restaurant {
   openingTime: string;
   closingTime: string;
   cuisineType: string;
-  isOpen: bool;
+  isOpen: number;
+  isActive: number;
 }
 
 export default Restaurant;

@@ -1,20 +1,20 @@
 import { ToastUtils } from "@/components/utils/toast-helper";
-import RestaurantWithStaffSchedule from "@/lib/interfaces/viewmodels/restaurant-with-staff-schedule";
+import RestaurantWithStaffs from "@/lib/interfaces/viewmodels/restaurant-with-staffs";
 import { useQuery } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
 
-export function useGetRestaurantsWithStaffSchedules() {
+export function useGetRestaurantsWithStaffs() {
   const {
-    data: restaurantsWithStaffSchedules,
+    data: restaurantsWithStaffs,
     isLoading,
     isError,
     refetch,
-  } = useQuery<RestaurantWithStaffSchedule[], unknown>({
+  } = useQuery<RestaurantWithStaffs[], unknown>({
     queryKey: ["restaurantsWithStaffSchedules"],
     queryFn: async () => {
       try {
-        const result = await invoke<RestaurantWithStaffSchedule[]>(
-          "get_restaurants_with_staff_schedules",
+        const result = await invoke<RestaurantWithStaffs[]>(
+          "get_restaurants_with_staffs",
         );
         return result;
       } catch (error) {
@@ -26,5 +26,5 @@ export function useGetRestaurantsWithStaffSchedules() {
     },
   });
 
-  return { restaurantsWithStaffSchedules, isLoading, isError, refetch };
+  return { restaurantsWithStaffs, isLoading, isError, refetch };
 }

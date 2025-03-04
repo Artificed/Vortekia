@@ -103,9 +103,7 @@ export default function FnbSupervisorDashboard() {
                 <AddMenuModal />
               </div>
             </div>
-            <CardDescription>
-              Monitor and manage all food and beverage outlets
-            </CardDescription>
+            <CardDescription>Monitor and manage all F</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-4 flex-col sm:flex-row">
@@ -172,7 +170,9 @@ export default function FnbSupervisorDashboard() {
                       </TableCell>
                       <TableCell>
                         <Badge
-                          className={getStatusBadgeColor(restaurant.isOpen)}
+                          className={getStatusBadgeColor(
+                            restaurant.isOpen == 1,
+                          )}
                         >
                           {restaurant.isOpen ? "Open" : "Closed"}
                         </Badge>

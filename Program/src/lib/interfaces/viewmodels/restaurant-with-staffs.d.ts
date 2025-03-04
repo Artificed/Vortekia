@@ -1,9 +1,10 @@
 import Restaurant from "../entities/restaurant";
+import Staff from "../entities/staff";
 import StaffWithSchedule from "./staff-with-schedule";
 
-interface RestaurantWithStaffSchedule {
+interface RestaurantWithStaffs {
   restaurant: Restaurant;
-  staffWithSchedule: StaffWithSchedule[];
+  staffs: Staff[];
 }
 
-export default RestaurantWithStaffSchedule;
+export default RestaurantWithStaffs;

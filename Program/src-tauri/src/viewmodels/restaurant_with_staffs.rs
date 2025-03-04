@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use super::staff_with_schedule::StaffWithSchedule;
 use crate::models::restaurant::Model as RestaurantModel;
+use crate::models::staff::Model as StaffModel;
 
 #[derive(Serialize, Deserialize)]
-pub struct RestaurantWithStaffSchedule {
+pub struct RestaurantWithStaffs {
     pub restaurant: RestaurantModel,
-    pub schedules: Vec<StaffWithSchedule>,
+    pub staffs: Vec<StaffModel>,
 }

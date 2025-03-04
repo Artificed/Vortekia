@@ -102,7 +102,7 @@ pub async fn remove_restaurant_staff(
         }
     }
 
-    restaurant_staff_repository::delete_restaurant_staff(state, staff_id, restaurant_id)
+    restaurant_staff_repository::delete_restaurant_staff(state, restaurant_id, staff_id)
         .await
         .map_err(|e| format!("Failed to delete restaurant staff relationship: {}", e))
 }
