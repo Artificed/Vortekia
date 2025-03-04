@@ -20,3 +20,11 @@ pub async fn get_all_queue_requests(
 ) -> Result<Vec<QueueRequestModel>, String> {
     queue_request_handler::get_all_queue_requests(&state).await
 }
+
+#[tauri::command]
+pub async fn get_queue_requests_by_ride(
+    state: State<'_, AppState>,
+    ride_id: &str,
+) -> Result<Vec<QueueRequestModel>, String> {
+    queue_request_handler::get_queue_requests_by_ride(&state, ride_id).await
+}

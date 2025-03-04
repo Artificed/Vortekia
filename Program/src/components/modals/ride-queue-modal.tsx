@@ -28,6 +28,7 @@ import { ToastUtils } from "@/components/utils/toast-helper";
 import RideWithStaff from "@/lib/interfaces/viewmodels/ride-with-staff";
 import RideQueue from "@/lib/interfaces/entities/ride-queue";
 import { invoke } from "@tauri-apps/api/core";
+import { useGetRideQueueRequests } from "@/hooks/data/use-get-ride-queue-requests";
 
 interface RideQueueModalProps {
   rideWithStaff: RideWithStaff | null;
@@ -109,25 +110,9 @@ export default function RideQueueModal({
     }
   };
 
-  const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const calculateWaitTime = (startTime: Date, endTime: Date) => {
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-    const diffMinutes = Math.round(
-      (end.getTime() - start.getTime()) / (1000 * 60),
-    );
-    return diffMinutes;
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-[90vw] max-h-[90vh] overflow-auto">
+      <DialogContent className="w-screen min-w-[80vw] min-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-3">
             Queue Management for {ride.name}
@@ -136,7 +121,6 @@ export default function RideQueueModal({
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
-          {/* Add Customer Section */}
           <div className="flex gap-2">
             {isAddingCustomer ? (
               <>
@@ -162,8 +146,8 @@ export default function RideQueueModal({
           </div>
 
           {/* Queue Table */}
-          <div className="max-h-96 overflow-y-auto">
-            <Table className="w-full">
+          <div className="h-full w-full overflow-y-auto">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Customer ID</TableHead>
@@ -204,14 +188,15 @@ export default function RideQueueModal({
                           queueEntry.customerId
                         )}
                       </TableCell>
-                      <TableCell>{formatTime(queueEntry.startTime)}</TableCell>
-                      <TableCell>{formatTime(queueEntry.endTime)}</TableCell>
                       <TableCell>
-                        {calculateWaitTime(
-                          queueEntry.startTime,
-                          queueEntry.endTime,
-                        )}{" "}
-                        mins
+                        {queueEntry.startTime
+                          ? new Date(queueEntry.startTime).toLocaleString()
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {queueEntry.endTime
+                          ? new Date(queueEntry.endTime).toLocaleString()
+                          : "N/A"}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
@@ -284,20 +269,8 @@ export default function RideQueueModal({
             </Table>
           </div>
 
-          {/* Queue Summary */}
           <div className="bg-gray-100 p-4 rounded-md">
-            <p className="font-semibold">Queue Summary</p>
             <p>Total People in Queue: {rideQueue?.length || 0}</p>
-            {rideQueue && rideQueue.length > 0 && (
-              <p>
-                Estimated Longest Wait:{" "}
-                {calculateWaitTime(
-                  rideQueue[rideQueue.length - 1].startTime,
-                  rideQueue[rideQueue.length - 1].endTime,
-                )}{" "}
-                mins
-              </p>
-            )}
           </div>
         </div>
 

@@ -52,6 +52,25 @@ pub async fn get_queue_request(state: &AppState, id: &str) -> Result<QueueReques
         }
     }
 }
+
+pub async fn get_queue_requests_by_ride(
+    state: &State<'_, AppState>,
+    ride_id: &str,
+) -> Result<Vec<QueueRequestModel>, String> {
+    let result = QueueRequests::find()
+        .filter(QueueRequestColumn::RideId.eq(ride_id.to_owned()))
+        .all(&state.conn)
+        .await;
+
+    match result {
+        Ok(requests) => Ok(requests),
+        Err(err) => {
+            eprintln!("Failed to get queue requests by ride: {:?}", err);
+            Err(format!("Failed to get queue requests by ride: {:?}", err))
+        }
+    }
+}
+
 //
 // pub async fn update_queue_request_approval(
 //     state: &State<'_, AppState>,
