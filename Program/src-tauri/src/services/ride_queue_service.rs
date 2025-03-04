@@ -1,6 +1,7 @@
 use crate::handlers::ride_queue_handler;
 use crate::models::ride_queue::Model as RideQueueModel;
 use crate::modules::app_state::AppState;
+use crate::viewmodels::ride_with_queue::RideWithQueue;
 
 use chrono::NaiveDateTime;
 use tauri::State;
@@ -58,4 +59,19 @@ pub async fn update_ride_queue(
 ) -> Result<(), String> {
     ride_queue_handler::update_ride_queue(&state, id, ride_id, customer_id, start_time, end_time)
         .await
+}
+
+#[tauri::command]
+pub async fn get_ride_with_queue(
+    state: State<'_, AppState>,
+    ride_id: &str,
+) -> Result<RideWithQueue, String> {
+    ride_queue_handler::get_ride_with_queue(&state, ride_id).await
+}
+
+#[tauri::command]
+pub async fn get_all_rides_with_queues(
+    state: State<'_, AppState>,
+) -> Result<Vec<RideWithQueue>, String> {
+    ride_queue_handler::get_all_rides_with_queues(&state).await
 }

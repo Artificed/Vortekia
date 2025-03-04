@@ -1,13 +1,16 @@
+use futures::future::join_all;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
 use sea_orm::QueryFilter;
 use tauri::State;
 
 use super::customer_repository::AppState;
+use super::ride_repository;
 use crate::models::ride_queue::ActiveModel as RideQueueActiveModel;
 use crate::models::ride_queue::Column as RideQueueColumn;
 use crate::models::ride_queue::Entity as RideQueues;
 use crate::models::ride_queue::Model as RideQueueModel;
+use crate::viewmodels::ride_with_queue::RideWithQueue;
 
 pub async fn insert_ride_queue(
     state: &State<'_, AppState>,
@@ -131,4 +134,38 @@ pub async fn update_ride_queue(
             Err(format!("Failed to update ride queue: {:?}", err))
         }
     }
+}
+
+pub async fn get_ride_with_queue(
+    state: &State<'_, AppState>,
+    ride_id: &str,
+) -> Result<RideWithQueue, String> {
+    let ride_opt = ride_repository::get_ride_by_id(state, ride_id).await?;
+    let ride = match ride_opt {
+        Some(ride) => ride,
+        None => return Err(format!("Ride with id {} not found", ride_id)),
+    };
+
+    let ride_queues = get_ride_queues_by_ride(state, ride_id).await?;
+
+    Ok(RideWithQueue { ride, ride_queues })
+}
+
+pub async fn get_all_rides_with_queues(
+    state: &State<'_, AppState>,
+) -> Result<Vec<RideWithQueue>, String> {
+    let rides = ride_repository::get_all_rides(state).await?;
+
+    let ride_with_queue_futures = rides.into_iter().map(|ride| {
+        let state_ref = state;
+        let ride_id = ride.id.clone();
+        async move {
+            let ride_queues = get_ride_queues_by_ride(state_ref, &ride_id).await?;
+            Ok(RideWithQueue { ride, ride_queues })
+        }
+    });
+
+    let rides_with_queues_results = join_all(ride_with_queue_futures).await;
+
+    rides_with_queues_results.into_iter().collect()
 }

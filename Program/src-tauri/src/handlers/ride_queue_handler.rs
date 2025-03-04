@@ -1,4 +1,5 @@
 use crate::models::ride_queue::Model as RideQueueModel;
+use crate::viewmodels::ride_with_queue::RideWithQueue;
 use crate::{
     factories::ride_queue_factory,
     models::ride_queue::{Column as RideQueueColumn, Entity as RideQueues},
@@ -162,4 +163,17 @@ pub async fn update_ride_queue(
             Err(format!("Failed to update ride queue: {:?}", err))
         }
     }
+}
+
+pub async fn get_ride_with_queue(
+    state: &State<'_, AppState>,
+    ride_id: &str,
+) -> Result<RideWithQueue, String> {
+    ride_queue_repository::get_ride_with_queue(state, ride_id).await
+}
+
+pub async fn get_all_rides_with_queues(
+    state: &State<'_, AppState>,
+) -> Result<Vec<RideWithQueue>, String> {
+    ride_queue_repository::get_all_rides_with_queues(state).await
 }

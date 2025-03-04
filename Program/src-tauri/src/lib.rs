@@ -148,6 +148,8 @@ pub async fn run() {
             ride_queue_service::get_ride_queues_by_ride,
             ride_queue_service::update_ride_queue,
             ride_queue_service::get_ride_queues_by_customer,
+            ride_queue_service::get_ride_with_queue,
+            ride_queue_service::get_all_rides_with_queues
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
