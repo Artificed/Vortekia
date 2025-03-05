@@ -4,7 +4,7 @@ interface MaintenanceTask {
   id: number;
   name: string;
   description: string;
-  assignedStaff: Staff;
+  assignedStaff: String;
   startTime: Date;
   endTime: Date;
   status: string;

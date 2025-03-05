@@ -1,5 +1,6 @@
 use tauri::State;
 
+use crate::models::maintenance_task::Model as MaintenanceTaskModel;
 use crate::{handlers::maintenance_task_handler, modules::app_state::AppState};
 
 #[tauri::command]
@@ -22,4 +23,11 @@ pub async fn insert_new_maintenance_task(
         status,
     )
     .await
+}
+
+#[tauri::command]
+pub async fn get_all_maintenance_tasks(
+    state: State<'_, AppState>,
+) -> Result<Vec<MaintenanceTaskModel>, String> {
+    maintenance_task_handler::get_all_maintenance_tasks(&state).await
 }

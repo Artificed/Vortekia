@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useGetMaintenanceStaffs } from "../data/use-get-maintenance-staffs";
 import { ToastUtils } from "@/components/utils/toast-helper";
 import { invoke } from "@tauri-apps/api/core";
+import { useQueryClient } from "@tanstack/react-query";
 
 const generateTimeOptions = () => {
   const options = [];
@@ -27,6 +28,7 @@ export function useMaintenanceTask() {
   const [loading, setLoading] = useState(false);
 
   const { maintenanceStaffs } = useGetMaintenanceStaffs();
+  const queryClient = useQueryClient();
 
   const initialFormData: Partial<MaintenanceTask> = {
     name: "",
@@ -56,7 +58,7 @@ export function useMaintenanceTask() {
     );
     setFormData((prev) => ({
       ...prev,
-      assignedStaff: selectedStaff,
+      assignedStaff: selectedStaff?.id,
     }));
   };
 
@@ -137,13 +139,11 @@ export function useMaintenanceTask() {
 
     setLoading(true);
 
-    console.log(formData.assignedStaff);
-
     try {
       await invoke("insert_new_maintenance_task", {
         name: formData.name,
         description: formData.description,
-        assignedStaff: formData.assignedStaff.id,
+        assignedStaff: formData.assignedStaff,
         startTime: format(formData.startTime, "yyyy-MM-dd HH:mm:ss"),
         endTime: format(formData.endTime, "yyyy-MM-dd HH:mm:ss"),
         status: formData.status!,
@@ -151,6 +151,7 @@ export function useMaintenanceTask() {
       ToastUtils.success({
         description: "Successfully added maintenance task!",
       });
+      queryClient.invalidateQueries({ queryKey: ["maintenanceTasks"] });
       resetForm();
       setIsOpen(false);
     } catch (error) {

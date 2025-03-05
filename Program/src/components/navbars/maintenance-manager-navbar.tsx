@@ -36,7 +36,6 @@ export default function MaintenanceManagerNavbar() {
                 Dashboard
               </a>
             </NavigationMenuItem>
-            <MaintenanceTaskModal />
           </NavigationMenuList>
         </NavigationMenu>
       </div>
