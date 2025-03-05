@@ -164,7 +164,9 @@ pub async fn run() {
             maintenance_task_service::insert_new_maintenance_task,
             maintenance_task_service::get_all_maintenance_tasks,
             maintenance_task_service::get_maintenance_task_by_staff,
-            maintenance_log_service::insert_new_maintenance_log
+            maintenance_log_service::insert_new_maintenance_log,
+            maintenance_log_service::get_all_maintenance_logs,
+            maintenance_log_service::update_maintenance_log,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

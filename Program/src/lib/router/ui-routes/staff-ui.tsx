@@ -15,6 +15,7 @@ import FnbSupervisorStaffManagement from "@/pages/staff/fnb-supervisor/fnb-super
 import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
 import MaintenanceManagerDashboard from "@/pages/staff/maintenance-manager/maintenance-manager-dashboard";
+import ManageLogsPage from "@/pages/staff/maintenance-manager/manage-logs-page";
 import MaintenanceStaffDashboard from "@/pages/staff/maintenance-staff/maintenance-staff-dashboard";
 import RetailManagerDashboard from "@/pages/staff/retail-manager/retail-manager-dashboard";
 import RetailManagerStoreDetail from "@/pages/staff/retail-manager/retail-manager-store-detail";
@@ -88,6 +89,10 @@ export default function StaffUI() {
       <Route
         path="maintenance-manager/dashboard"
         element={<MaintenanceManagerDashboard />}
+      />
+      <Route
+        path="maintenance-manager/manage-logs"
+        element={<ManageLogsPage />}
       />
 
       {/* Maintenance Staff */}

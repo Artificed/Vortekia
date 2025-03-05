@@ -38,6 +38,14 @@ export default function MaintenanceManagerNavbar() {
                 Dashboard
               </a>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/maintenance-manager/manage-logs"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Manage Logs
+              </a>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

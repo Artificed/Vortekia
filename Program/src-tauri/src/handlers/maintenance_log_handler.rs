@@ -27,17 +27,10 @@ pub async fn get_maintenance_log_by_id(
     maintenance_log_repository::get_maintenance_log_by_id(state, &id).await
 }
 
-// pub async fn update_maintenance_log(
-//     state: &State<'_, AppState>,
-//     log: MaintenanceLogModel,
-//     message: String,
-//     approved: i8,
-//     done: i8,
-// ) -> Result<(), String> {
-//     maintenance_log_repository::update_maintenance_log(state, log.into(), message, approved, done)
-//         .await
-// }
-
-pub async fn delete_maintenance_log(state: &State<'_, AppState>, id: String) -> Result<(), String> {
-    maintenance_log_repository::delete_maintenance_log(state, &id).await
+pub async fn update_maintenance_log(
+    state: &State<'_, AppState>,
+    log_id: String,
+    approved: i8,
+) -> Result<(), String> {
+    maintenance_log_repository::update_maintenance_log(state, log_id, approved).await
 }

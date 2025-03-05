@@ -54,16 +54,16 @@ pub async fn get_maintenance_log_by_id(
 
 pub async fn update_maintenance_log(
     state: &State<'_, AppState>,
-    mut log: MaintenanceLogActiveModel,
-    message: String,
+    log_id: String,
     approved: i8,
-    done: i8,
 ) -> Result<(), String> {
-    log.message = ActiveValue::Set(message);
-    log.approved = ActiveValue::Set(approved);
-    log.done = ActiveValue::Set(done);
+    let log = get_maintenance_log_by_id(state, &log_id).await?;
 
-    let result = log.update(&state.conn).await;
+    let mut updated_log: MaintenanceLogActiveModel = log.into();
+    updated_log.approved = ActiveValue::Set(approved);
+    updated_log.done = ActiveValue::Set(1);
+
+    let result = updated_log.update(&state.conn).await;
     match result {
         Ok(_) => Ok(()),
         Err(err) => {
