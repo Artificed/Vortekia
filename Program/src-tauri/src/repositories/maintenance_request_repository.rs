@@ -54,13 +54,16 @@ pub async fn get_maintenance_request_by_id(
 
 pub async fn update_maintenance_request(
     state: &State<'_, AppState>,
-    mut request: MaintenanceRequestActiveModel,
-    title: String,
-    content: String,
+    request_id: String,
+    approved: i8,
 ) -> Result<(), String> {
-    request.title = ActiveValue::Set(title);
-    request.content = ActiveValue::Set(content);
-    let result = request.update(&state.conn).await;
+    let request = get_maintenance_request_by_id(state, &request_id).await?;
+
+    let mut updated_request: MaintenanceRequestActiveModel = request.into();
+    updated_request.approved = ActiveValue::Set(approved);
+    updated_request.done = ActiveValue::Set(1);
+
+    let result = updated_request.update(&state.conn).await;
     match result {
         Ok(_) => Ok(()),
         Err(err) => {

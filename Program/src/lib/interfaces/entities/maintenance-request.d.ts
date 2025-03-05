@@ -3,6 +3,8 @@ interface MaintenanceRequest {
   title: string;
   content: string;
   createdAt: Date;
+  approved: number;
+  done: number;
 }
 
 export default MaintenanceRequest;

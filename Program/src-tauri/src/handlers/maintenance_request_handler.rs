@@ -4,6 +4,8 @@ use crate::modules::app_state::AppState;
 use crate::repositories::maintenance_request_repository;
 use tauri::State;
 
+use super::{maintenance_report_handler, maintenance_task_handler};
+
 pub async fn insert_new_maintenance_request(
     state: &State<'_, AppState>,
     title: String,
@@ -28,17 +30,30 @@ pub async fn get_maintenance_request_by_id(
 
 pub async fn update_maintenance_request(
     state: &State<'_, AppState>,
-    request: MaintenanceRequestModel,
-    title: String,
-    content: String,
+    request_id: String,
+    approved: i8,
+    description: String,
+    start_time: String,
+    end_time: String,
+    assigned_staff: String,
 ) -> Result<(), String> {
-    maintenance_request_repository::update_maintenance_request(
-        state,
-        request.into(),
-        title,
-        content,
-    )
-    .await
+    maintenance_request_repository::update_maintenance_request(state, request_id.clone(), approved)
+        .await?;
+
+    if approved == 1 {
+        maintenance_task_handler::insert_new_maintenance_task(
+            state,
+            String::from("Ride Maintenance"),
+            description,
+            start_time,
+            end_time,
+            assigned_staff,
+            String::from("Pending"),
+        )
+        .await
+    } else {
+        Ok(())
+    }
 }
 
 pub async fn delete_maintenance_request(
