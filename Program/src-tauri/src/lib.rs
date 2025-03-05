@@ -162,7 +162,9 @@ pub async fn run() {
             ride_transaction_service::get_current_user_ride_transactions,
             ride_transaction_service::delete_ride_transaction,
             maintenance_task_service::insert_new_maintenance_task,
-            maintenance_task_service::get_all_maintenance_tasks
+            maintenance_task_service::get_all_maintenance_tasks,
+            maintenance_task_service::get_maintenance_task_by_staff,
+            maintenance_log_service::insert_new_maintenance_log
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

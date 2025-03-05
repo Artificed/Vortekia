@@ -1,4 +1,4 @@
-use crate::factories::maintenance_log_factory;
+use crate::factories::{id_factory, maintenance_log_factory};
 use crate::models::maintenance_log::Model as MaintenanceLogModel;
 use crate::modules::app_state::AppState;
 use crate::repositories::maintenance_log_repository;
@@ -6,10 +6,10 @@ use tauri::State;
 
 pub async fn insert_new_maintenance_log(
     state: &State<'_, AppState>,
-    id: String,
     task_id: String,
     message: String,
 ) -> Result<(), String> {
+    let id = id_factory::generate_customer_id();
     let log = maintenance_log_factory::create_maintenance_log(id, task_id, message);
     maintenance_log_repository::insert_maintenance_log(state, log).await
 }

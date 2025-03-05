@@ -34,6 +34,30 @@ pub async fn get_all_maintenance_tasks(
     }
 }
 
+pub async fn get_maintenance_task_by_staff(
+    state: &State<'_, AppState>,
+    staff_id: &str,
+) -> Result<Vec<MaintenanceTaskModel>, String> {
+    let result = MaintenanceTasks::find()
+        .filter(MaintenanceTaskColumn::AssignedStaff.eq(staff_id.to_owned()))
+        .all(&state.conn)
+        .await;
+
+    match result {
+        Ok(tasks) => Ok(tasks),
+        Err(err) => {
+            eprintln!(
+                "Failed to get maintenance tasks for staff {}: {:?}",
+                staff_id, err
+            );
+            Err(format!(
+                "Failed to get maintenance tasks for staff {}: {:?}",
+                staff_id, err
+            ))
+        }
+    }
+}
+
 pub async fn get_maintenance_task_by_id(
     state: &State<'_, AppState>,
     id: &str,

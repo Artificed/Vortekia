@@ -58,6 +58,13 @@ pub async fn get_maintenance_task_by_id(
     maintenance_task_repository::get_maintenance_task_by_id(state, &id).await
 }
 
+pub async fn get_maintenance_task_by_staff(
+    state: &State<'_, AppState>,
+    staff_id: String,
+) -> Result<Vec<MaintenanceTaskModel>, String> {
+    maintenance_task_repository::get_maintenance_task_by_staff(state, &staff_id).await
+}
+
 // pub async fn update_maintenance_task(
 //     state: &State<'_, AppState>,
 //     task: MaintenanceTaskModel,

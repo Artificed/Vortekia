@@ -31,3 +31,11 @@ pub async fn get_all_maintenance_tasks(
 ) -> Result<Vec<MaintenanceTaskModel>, String> {
     maintenance_task_handler::get_all_maintenance_tasks(&state).await
 }
+
+#[tauri::command]
+pub async fn get_maintenance_task_by_staff(
+    state: State<'_, AppState>,
+    staff_id: String,
+) -> Result<Vec<MaintenanceTaskModel>, String> {
+    maintenance_task_handler::get_maintenance_task_by_staff(&state, staff_id).await
+}
