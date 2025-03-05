@@ -8,7 +8,6 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -18,11 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useGetRideQueueByRide } from "@/hooks/data/use-get-ride-queue-by-ride";
 import { ToastUtils } from "@/components/utils/toast-helper";
 import RideWithStaff from "@/lib/interfaces/viewmodels/ride-with-staff";
@@ -56,6 +50,11 @@ export default function RideQueueModal({
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
   const [selectedOpeningTime, setSelectedOpeningTime] = useState("");
   const [selectedClosingTime, setSelectedClosingTime] = useState("");
+
+  const timeOptions = Array.from({ length: 13 }, (_, i) => {
+    const hour = i + 7;
+    return `${hour.toString().padStart(2, "0")}:00`;
+  });
 
   const handleTimeConfirm = (openingTime: string, closingTime: string) => {
     setSelectedOpeningTime(openingTime);
@@ -102,7 +101,7 @@ export default function RideQueueModal({
 
     try {
       await invoke("update_queue_request_approval", {
-        id: newCustomerId, // TODO: Rename this to request ID
+        id: newCustomerId,
         approve: 1,
         startTime: start,
         endTime: end,
@@ -121,8 +120,10 @@ export default function RideQueueModal({
 
   const removeCustomerFromQueue = async (queueId: string) => {
     try {
-      await invoke("remove_customer_from_ride_queue", { queueId });
-      ToastUtils.success({ description: "Customer removed from queue" });
+      await invoke("delete_ride_queue", { id: queueId });
+      ToastUtils.success({
+        description: "Successfully removed entry from queue",
+      });
       refetch();
     } catch (error) {
       ToastUtils.error({
@@ -135,11 +136,40 @@ export default function RideQueueModal({
     if (!editingQueue) return;
 
     try {
-      await invoke("update_ride_queue_entry", {
-        queueId: newCustomerId, // TODO: Rename this to request ID
+      const startTime = new Date();
+      const [startHour, startMinute] = editingQueue.startTime
+        ? new Date(editingQueue.startTime)
+            .toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+            .split(":")
+            .map(Number)
+        : [7, 0];
+      startTime.setHours(startHour + 7, startMinute, 0, 0);
+      const start = startTime.toISOString().slice(0, 19).replace("T", " ");
+
+      const endTime = new Date();
+      const [endHour, endMinute] = editingQueue.endTime
+        ? new Date(editingQueue.endTime)
+            .toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+            .split(":")
+            .map(Number)
+        : [19, 0];
+      endTime.setHours(endHour + 7, endMinute, 0, 0);
+      const end = endTime.toISOString().slice(0, 19).replace("T", " ");
+
+      await invoke("update_ride_queue", {
+        id: editingQueue.id,
+        rideId: editingQueue.rideId,
         customerId: editingQueue.customerId,
-        startTime: editingQueue.startTime,
-        endTime: editingQueue.endTime,
+        startTime: start,
+        endTime: end,
       });
 
       ToastUtils.success({ description: "Queue entry updated" });
@@ -199,7 +229,6 @@ export default function RideQueueModal({
             )}
           </div>
 
-          {/* Queue Table */}
           <div className="h-full w-full overflow-y-auto">
             <Table>
               <TableHeader>
@@ -207,7 +236,6 @@ export default function RideQueueModal({
                   <TableHead>Customer ID</TableHead>
                   <TableHead>Start Time</TableHead>
                   <TableHead>End Time</TableHead>
-                  <TableHead>Wait Time</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -227,30 +255,112 @@ export default function RideQueueModal({
                 ) : rideQueue && rideQueue.length > 0 ? (
                   rideQueue.map((queueEntry: RideQueue) => (
                     <TableRow key={queueEntry.id}>
+                      <TableCell>{queueEntry.customerId}</TableCell>
                       <TableCell>
                         {editingQueue?.id === queueEntry.id ? (
-                          <Input
-                            value={editingQueue.customerId}
-                            onChange={(e) =>
+                          <Select
+                            value={
+                              editingQueue.startTime
+                                ? new Date(
+                                    editingQueue.startTime,
+                                  ).toLocaleTimeString("en-US", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                  })
+                                : "07:00"
+                            }
+                            onValueChange={(value) =>
                               setEditingQueue({
                                 ...editingQueue,
-                                customerId: e.target.value,
+                                startTime: new Date(`1970-01-01T${value}:00`),
                               })
                             }
-                          />
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Start Time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {timeOptions.map((time) => (
+                                <SelectItem
+                                  key={time}
+                                  value={time}
+                                  disabled={
+                                    editingQueue.endTime
+                                      ? time >=
+                                        new Date(
+                                          editingQueue.endTime,
+                                        ).toLocaleTimeString("en-US", {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                          hour12: false,
+                                        })
+                                      : false
+                                  }
+                                >
+                                  {time}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : queueEntry.startTime ? (
+                          new Date(queueEntry.startTime).toLocaleString()
                         ) : (
-                          queueEntry.customerId
+                          "N/A"
                         )}
                       </TableCell>
                       <TableCell>
-                        {queueEntry.startTime
-                          ? new Date(queueEntry.startTime).toLocaleString()
-                          : "N/A"}
-                      </TableCell>
-                      <TableCell>
-                        {queueEntry.endTime
-                          ? new Date(queueEntry.endTime).toLocaleString()
-                          : "N/A"}
+                        {editingQueue?.id === queueEntry.id ? (
+                          <Select
+                            value={
+                              editingQueue.endTime
+                                ? new Date(
+                                    editingQueue.endTime,
+                                  ).toLocaleTimeString("en-US", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                  })
+                                : "19:00"
+                            }
+                            onValueChange={(value) =>
+                              setEditingQueue({
+                                ...editingQueue,
+                                endTime: new Date(`1970-01-01T${value}:00`),
+                              })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="End Time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {timeOptions.map((time) => (
+                                <SelectItem
+                                  key={time}
+                                  value={time}
+                                  disabled={
+                                    editingQueue.startTime
+                                      ? time <=
+                                        new Date(
+                                          editingQueue.startTime,
+                                        ).toLocaleTimeString("en-US", {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                          hour12: false,
+                                        })
+                                      : false
+                                  }
+                                >
+                                  {time}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : queueEntry.endTime ? (
+                          new Date(queueEntry.endTime).toLocaleString()
+                        ) : (
+                          "N/A"
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
@@ -280,29 +390,15 @@ export default function RideQueueModal({
                               >
                                 Edit
                               </Button>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button variant="destructive" size="sm">
-                                    Remove
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent>
-                                  <div className="flex flex-col gap-2">
-                                    <p>
-                                      Are you sure you want to remove this
-                                      customer?
-                                    </p>
-                                    <Button
-                                      variant="destructive"
-                                      onClick={() =>
-                                        removeCustomerFromQueue(queueEntry.id)
-                                      }
-                                    >
-                                      Confirm Remove
-                                    </Button>
-                                  </div>
-                                </PopoverContent>
-                              </Popover>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() =>
+                                  removeCustomerFromQueue(queueEntry.id)
+                                }
+                              >
+                                Remove
+                              </Button>
                             </>
                           )}
                         </div>

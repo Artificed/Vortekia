@@ -1,4 +1,5 @@
 use crate::models::ride_queue::Model as RideQueueModel;
+use crate::repositories::ride_repository;
 use crate::viewmodels::ride_with_queue::RideWithQueue;
 use crate::{
     factories::ride_queue_factory,
@@ -146,15 +147,43 @@ pub async fn update_ride_queue(
     id: &str,
     ride_id: &str,
     customer_id: &str,
-    start_time: NaiveDateTime,
-    end_time: NaiveDateTime,
+    start_time: String,
+    end_time: String,
 ) -> Result<(), String> {
-    validate_ride_queue_conflict(state, ride_id, start_time, end_time, Some(id)).await?;
+    let existing_queue = RideQueues::find()
+        .filter(RideQueueColumn::Id.eq(id))
+        .one(&state.conn)
+        .await
+        .map_err(|err| {
+            eprintln!("Failed to fetch existing ride queue: {:?}", err);
+            format!("Failed to fetch existing ride queue: {:?}", err)
+        })?
+        .ok_or_else(|| format!("Ride queue with ID {} not found", id))?;
+
+    let ride = ride_repository::get_ride_by_id(state, ride_id)
+        .await?
+        .ok_or_else(|| "Ride not found".to_string())?;
+
+    let start = NaiveDateTime::parse_from_str(&start_time, "%Y-%m-%d %H:%M:%S")
+        .map_err(|e| format!("Failed to parse start_time: {}", e))?;
+    let end = NaiveDateTime::parse_from_str(&end_time, "%Y-%m-%d %H:%M:%S")
+        .map_err(|e| format!("Failed to parse end_time: {}", e))?;
+
+    if start.time() < ride.opening_time || end.time() > ride.closing_time {
+        return Err(format!(
+            "Selected time must be between {} and {}",
+            ride.opening_time, ride.closing_time
+        ));
+    }
+
+    validate_ride_queue_conflict(state, ride_id, start, end, Some(id)).await?;
 
     let updated_ride_queue =
-        ride_queue_factory::create_ride_queue(ride_id, customer_id, start_time, end_time);
+        ride_queue_factory::create_ride_queue(ride_id, customer_id, start, end);
 
     let result = ride_queue_repository::update_ride_queue(state, updated_ride_queue).await;
+
+    // ride_queue_repository::delete_ride_queue(state, &existing_queue.id).await?;
 
     match result {
         Ok(_) => Ok(()),
@@ -176,4 +205,8 @@ pub async fn get_all_rides_with_queues(
     state: &State<'_, AppState>,
 ) -> Result<Vec<RideWithQueue>, String> {
     ride_queue_repository::get_all_rides_with_queues(state).await
+}
+
+pub async fn delete_ride_queue(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
+    ride_queue_repository::delete_ride_queue(state, id).await
 }

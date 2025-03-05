@@ -35,7 +35,6 @@ export default function RideStaffDashboard() {
       <RideStaffNavbar />
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Ride Manager Dashboard</h1>
           <Button>Add New Ride</Button>
         </div>
         <div className="mt-10 mb-6">

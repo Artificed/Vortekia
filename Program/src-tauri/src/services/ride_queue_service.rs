@@ -54,8 +54,8 @@ pub async fn update_ride_queue(
     id: &str,
     ride_id: &str,
     customer_id: &str,
-    start_time: NaiveDateTime,
-    end_time: NaiveDateTime,
+    start_time: String,
+    end_time: String,
 ) -> Result<(), String> {
     ride_queue_handler::update_ride_queue(&state, id, ride_id, customer_id, start_time, end_time)
         .await
@@ -74,4 +74,9 @@ pub async fn get_all_rides_with_queues(
     state: State<'_, AppState>,
 ) -> Result<Vec<RideWithQueue>, String> {
     ride_queue_handler::get_all_rides_with_queues(&state).await
+}
+
+#[tauri::command]
+pub async fn delete_ride_queue(state: State<'_, AppState>, id: &str) -> Result<(), String> {
+    ride_queue_handler::delete_ride_queue(&state, id).await
 }

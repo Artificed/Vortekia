@@ -150,6 +150,7 @@ pub async fn run() {
             ride_queue_service::get_ride_queues_by_customer,
             ride_queue_service::get_ride_with_queue,
             ride_queue_service::get_all_rides_with_queues,
+            ride_queue_service::delete_ride_queue,
             queue_request_service::insert_new_queue_request,
             queue_request_service::get_all_queue_requests,
             queue_request_service::get_queue_requests_by_ride,
