@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useNavigate } from "react-router";
 import ProposeRideModal from "../modals/propose-ride-modal";
+import MaintenanceRequestModal from "../modals/propose-maintenance-request";
 
 export default function RideManagerNavbar() {
   const auth = useAuth();
@@ -67,6 +68,7 @@ export default function RideManagerNavbar() {
         )}
       </div>
       <ProposeRideModal />
+      <MaintenanceRequestModal />
     </nav>
   );
 }

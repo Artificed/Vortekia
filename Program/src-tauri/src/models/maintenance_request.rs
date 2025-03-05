@@ -11,6 +11,8 @@ pub struct Model {
     pub id: String,
     pub title: String,
     pub content: String,
+    pub approved: i8,
+    pub done: i8,
     pub created_at: DateTime,
 }
 

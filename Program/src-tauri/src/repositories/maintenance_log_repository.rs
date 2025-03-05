@@ -1,10 +1,13 @@
 use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter};
 use tauri::State;
 
+use crate::handlers::maintenance_task_handler;
 use crate::models::maintenance_log::{
     ActiveModel as MaintenanceLogActiveModel, Column as MaintenanceLogColumn,
     Entity as MaintenanceLogs, Model as MaintenanceLogModel,
 };
+use crate::models::maintenance_task::ActiveModel as MaintenanceTaskActiveModel;
+
 use crate::modules::app_state::AppState;
 
 pub async fn insert_maintenance_log(
@@ -62,6 +65,17 @@ pub async fn update_maintenance_log(
     let mut updated_log: MaintenanceLogActiveModel = log.into();
     updated_log.approved = ActiveValue::Set(approved);
     updated_log.done = ActiveValue::Set(1);
+
+    if approved == 1 {
+        let task = maintenance_task_handler::get_maintenance_task_by_id(
+            state,
+            updated_log.task_id.clone().unwrap(),
+        )
+        .await?;
+
+        let mut updated_task: MaintenanceTaskActiveModel = task.into();
+        updated_task.status = ActiveValue::Set(String::from("Completed"));
+    }
 
     let result = updated_log.update(&state.conn).await;
     match result {

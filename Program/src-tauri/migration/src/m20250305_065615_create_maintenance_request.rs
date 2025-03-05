@@ -19,6 +19,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(MaintenanceRequest::Title).not_null())
                     .col(string(MaintenanceRequest::Content).not_null())
+                    .col(boolean(MaintenanceRequest::Approved).not_null())
+                    .col(boolean(MaintenanceRequest::Done).not_null())
                     .col(string(MaintenanceRequest::CreatedAt).date_time().not_null())
                     .to_owned(),
             )
@@ -38,5 +40,7 @@ enum MaintenanceRequest {
     Id,
     Title,
     Content,
+    Approved,
+    Done,
     CreatedAt,
 }

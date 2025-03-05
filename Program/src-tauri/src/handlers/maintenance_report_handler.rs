@@ -6,11 +6,10 @@ use tauri::State;
 
 pub async fn insert_new_maintenance_report(
     state: &State<'_, AppState>,
-    id: String,
     title: String,
     content: String,
 ) -> Result<(), String> {
-    let report = maintenance_report_factory::create_maintenance_report(id, title, content);
+    let report = maintenance_report_factory::create_maintenance_report(title, content);
     maintenance_report_repository::insert_maintenance_report(state, report).await
 }
 

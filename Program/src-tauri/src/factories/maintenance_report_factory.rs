@@ -3,11 +3,11 @@ use sea_orm::ActiveValue;
 
 use crate::models::maintenance_report::ActiveModel as MaintenanceReportActiveModel;
 
-pub fn create_maintenance_report(
-    id: String,
-    title: String,
-    content: String,
-) -> MaintenanceReportActiveModel {
+use super::id_factory;
+
+pub fn create_maintenance_report(title: String, content: String) -> MaintenanceReportActiveModel {
+    let id = id_factory::generate_customer_id();
+
     MaintenanceReportActiveModel {
         id: ActiveValue::Set(id),
         title: ActiveValue::Set(title),
