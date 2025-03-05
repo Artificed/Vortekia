@@ -181,17 +181,11 @@ pub async fn update_ride_queue(
     let updated_ride_queue =
         ride_queue_factory::create_ride_queue(ride_id, customer_id, start, end);
 
-    let result = ride_queue_repository::update_ride_queue(state, updated_ride_queue).await;
+    ride_queue_repository::insert_ride_queue(state, updated_ride_queue).await?;
 
-    // ride_queue_repository::delete_ride_queue(state, &existing_queue.id).await?;
+    ride_queue_repository::delete_ride_queue(state, &existing_queue.id).await?;
 
-    match result {
-        Ok(_) => Ok(()),
-        Err(err) => {
-            eprintln!("Failed to update ride queue: {:?}", err);
-            Err(format!("Failed to update ride queue: {:?}", err))
-        }
-    }
+    Ok(())
 }
 
 pub async fn get_ride_with_queue(
