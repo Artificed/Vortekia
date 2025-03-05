@@ -14,6 +14,7 @@ import FnbSupervisorDashboard from "@/pages/staff/fnb-supervisor/fnb-supervisor-
 import FnbSupervisorStaffManagement from "@/pages/staff/fnb-supervisor/fnb-supervisor-staff-management";
 import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
+import MaintenanceManagerDashboard from "@/pages/staff/maintenance-manager/maintenance-manager-dashboard";
 import RetailManagerDashboard from "@/pages/staff/retail-manager/retail-manager-dashboard";
 import RetailManagerStoreDetail from "@/pages/staff/retail-manager/retail-manager-store-detail";
 import RetailManagerViewSchedules from "@/pages/staff/retail-manager/retail-manager-view-schedules";
@@ -80,6 +81,16 @@ export default function StaffUI() {
       <Route
         path="cfo/view-restaurant-proposals"
         element={<CfoViewRestaurantProposals />}
+      />
+
+      {/* Maintenance Manager */}
+      <Route
+        path="maintenance-manager/dashboard"
+        element={<MaintenanceManagerDashboard />}
+      />
+      <Route
+        path="maintenance-manager/assign-task"
+        element={<MaintenanceManagerDashboard />}
       />
 
       {/* CEO */}

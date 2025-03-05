@@ -11,8 +11,9 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { useNavigate } from "react-router";
+import MaintenanceTaskModal from "../modals/maintenance-task-modal";
 
-export default function RetailManagerNavbar() {
+export default function MaintenanceManagerNavbar() {
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -29,20 +30,13 @@ export default function RetailManagerNavbar() {
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>
               <a
-                href="/retail-manager/dashboard"
+                href="/maintenance-manager/dashboard"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 Dashboard
               </a>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              <a
-                href="/retail-manager/view-schedules"
-                className="px-4 py-2 hover:bg-gray-200 rounded-md"
-              >
-                View Schedules
-              </a>
-            </NavigationMenuItem>
+            <MaintenanceTaskModal />
           </NavigationMenuList>
         </NavigationMenu>
       </div>

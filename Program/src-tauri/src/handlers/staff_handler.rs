@@ -65,6 +65,12 @@ pub async fn get_sales_associates(state: &State<'_, AppState>) -> Result<Vec<Sta
     staff_repository::get_staff_by_role(state, "Sales Associate").await
 }
 
+pub async fn get_maintenance_staffs(
+    state: &State<'_, AppState>,
+) -> Result<Vec<StaffModel>, String> {
+    staff_repository::get_staff_by_role(state, "Maintenance Staff").await
+}
+
 pub async fn get_restaurant_staffs(state: &State<'_, AppState>) -> Result<Vec<StaffModel>, String> {
     let waiters = staff_repository::get_staff_by_role(state, "Waiter").await;
     let chefs = staff_repository::get_staff_by_role(state, "Chef").await;

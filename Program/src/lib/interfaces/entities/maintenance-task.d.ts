@@ -1,0 +1,13 @@
+import Staff from "./staff";
+
+interface MaintenanceTask {
+  id: number;
+  name: string;
+  description: string;
+  assignedStaff: Staff;
+  startTime: Date;
+  endTime: Date;
+  status: string;
+}
+
+export default MaintenanceTask;

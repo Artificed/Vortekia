@@ -76,6 +76,7 @@ pub async fn run() {
             staff_service::get_ride_staffs,
             staff_service::get_sales_associates,
             staff_service::get_restaurant_staffs,
+            staff_service::get_maintenance_staffs,
             auth_service::logout_user,
             auth_service::get_current_user,
             lnf_log_service::get_lnf_logs,
@@ -160,6 +161,7 @@ pub async fn run() {
             ride_transaction_service::get_ride_transaction,
             ride_transaction_service::get_current_user_ride_transactions,
             ride_transaction_service::delete_ride_transaction,
+            maintenance_task_service::insert_new_maintenance_task
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
