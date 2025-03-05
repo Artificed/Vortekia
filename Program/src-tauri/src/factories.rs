@@ -1,6 +1,10 @@
 pub mod customer_factory;
 pub mod id_factory;
 pub mod lnf_log_factory;
+pub mod maintenance_log_factory;
+pub mod maintenance_report_factory;
+pub mod maintenance_request_factory;
+pub mod maintenance_task_factory;
 pub mod menu_factory;
 pub mod new_ride_proposal_factory;
 pub mod new_store_proposal_factory;

@@ -1,5 +1,9 @@
 pub mod customer_repository;
 pub mod lnf_log_repository;
+pub mod maintenance_log_repository;
+pub mod maintenance_report_repository;
+pub mod maintenance_request_repository;
+pub mod maintenance_task_repository;
 pub mod menu_repository;
 pub mod new_ride_proposal_repository;
 pub mod new_store_proposal_repository;
