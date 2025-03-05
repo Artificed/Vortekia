@@ -1,5 +1,9 @@
 pub mod customer;
 pub mod lost_and_found_log;
+pub mod maintenance_log;
+pub mod maintenance_report;
+pub mod maintenance_request;
+pub mod maintenance_task;
 pub mod menu;
 pub mod new_restaurant_proposal;
 pub mod new_ride_proposal;

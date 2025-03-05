@@ -23,6 +23,10 @@ mod m20250301_104705_create_staff_schedule;
 mod m20250303_104318_create_restaurant_transaction;
 mod m20250304_210020_create_queue_request;
 mod m20250304_213207_create_ride_transaction;
+mod m20250305_051953_create_maintenance_task;
+mod m20250305_052031_create_maintenance_report;
+mod m20250305_065615_create_maintenance_request;
+mod m20250305_065625_create_maintenance_log;
 
 #[async_trait::async_trait]
 impl MigratorTrait for Migrator {
@@ -50,6 +54,10 @@ impl MigratorTrait for Migrator {
             Box::new(m20250303_104318_create_restaurant_transaction::Migration),
             Box::new(m20250304_210020_create_queue_request::Migration),
             Box::new(m20250304_213207_create_ride_transaction::Migration),
+            Box::new(m20250305_051953_create_maintenance_task::Migration),
+            Box::new(m20250305_052031_create_maintenance_report::Migration),
+            Box::new(m20250305_065615_create_maintenance_request::Migration),
+            Box::new(m20250305_065625_create_maintenance_log::Migration),
         ]
     }
 }
