@@ -273,29 +273,26 @@ export default function MaintenanceLogsPage() {
                             ) : (
                               <X className="h-3 w-3 mr-1" />
                             )}
-                            {log.approved ? "Approved" : "Pending"}
-                          </Badge>
-                          <Badge>
-                            {log.done ? (
-                              <Check className="h-3 w-3 mr-1" />
-                            ) : (
-                              <X className="h-3 w-3 mr-1" />
-                            )}
+                            {log.approved ? "Completed" : "In Progress"}
                           </Badge>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-2 items-center">
-                          <Button onClick={() => manageSubmission(log.id, 1)}>
-                            Approve
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            onClick={() => manageSubmission(log.id, 0)}
-                          >
-                            Reject
-                          </Button>
-                        </div>
+                        {!log.done ? (
+                          <div className="flex gap-2 items-center">
+                            <Button onClick={() => manageSubmission(log.id, 1)}>
+                              Approve
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              onClick={() => manageSubmission(log.id, 0)}
+                            >
+                              Reject
+                            </Button>
+                          </div>
+                        ) : (
+                          <div>-</div>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
