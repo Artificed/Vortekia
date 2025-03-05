@@ -24,7 +24,9 @@ export default function FnbSupervisorNavbar() {
   return (
     <nav className="flex justify-between fixed w-screen items-center px-16 py-4 z-10 gap-12 shadow-md bg-white">
       <div className="flex items-center w-screen gap-14">
-        <div className="text-3xl font-bold">VorteKia</div>
+        <div className="text-3xl font-bold">
+          VorteKia <span className="text-xs font-normal">Fnb Supervisor</span>
+        </div>{" "}
         <NavigationMenu>
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>

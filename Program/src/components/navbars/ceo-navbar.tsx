@@ -24,8 +24,9 @@ export default function CeoNavbar() {
   return (
     <nav className="flex justify-between fixed w-screen items-center px-16 py-4 shadow-md bg-white">
       <div className="flex items-center gap-14">
-        <div className="text-3xl font-bold">VorteKia</div>
-
+        <div className="text-3xl font-bold">
+          VorteKia <span className="text-xs font-normal">CEO</span>
+        </div>{" "}
         <NavigationMenu>
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>

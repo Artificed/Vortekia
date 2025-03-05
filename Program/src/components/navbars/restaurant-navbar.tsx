@@ -18,7 +18,10 @@ export default function RestaurantNavbar() {
   return (
     <nav className="flex justify-between fixed w-screen items-center px-16 p-4 shadow-md bg-white z-50">
       <div className="flex items-center gap-14">
-        <div className="text-2xl font-bold">VorteKia</div>
+        <div className="text-3xl font-bold">
+          VorteKia
+          <span className="text-xs font-normal">Restaurant</span>
+        </div>{" "}
         <NavigationMenu>
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>

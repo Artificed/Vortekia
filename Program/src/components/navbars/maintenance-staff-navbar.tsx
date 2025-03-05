@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useNavigate } from "react-router";
 
-export default function LnfStaffNavbar() {
+export default function MaintenanceStaffNavbar() {
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -22,33 +22,25 @@ export default function LnfStaffNavbar() {
   };
 
   return (
-    <nav className="flex justify-between fixed w-screen items-center px-16 py-4 z-10 shadow-md bg-white">
-      <div className="flex items-center gap-14">
+    <nav className="flex justify-between fixed w-screen items-center px-16 py-4 z-10 gap-12 shadow-md bg-white">
+      <div className="flex items-center w-screen gap-14">
         <div className="text-3xl font-bold">
-          VorteKia <span className="text-xs font-normal">LnF Staff</span>
+          VorteKia
+          <span className="text-xs font-normal">Maintenance Staff</span>
         </div>{" "}
         <NavigationMenu>
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>
               <a
-                href="/lost-and-found-staff/dashboard"
+                href="/maintenance-staff/dashboard"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 Dashboard
               </a>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              <a
-                href="/lost-and-found-staff/add-log"
-                className="px-4 py-2 hover:bg-gray-200 rounded-md"
-              >
-                Add Log
-              </a>
-            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
-
       <div>
         {auth?.user ? (
           <DropdownMenu>
