@@ -100,7 +100,7 @@ export default function MaintenanceTaskModal() {
               Assigned Staff
             </Label>
             <Select
-              value={formData.assignedStaff?.id || ""}
+              value={formData.assignedStaff as string}
               onValueChange={handleStaffChange}
             >
               <SelectTrigger className="col-span-3" id="assignedStaff">

@@ -11,7 +11,7 @@ pub async fn insert_new_maintenance_task(
     description: String,
     start_time: String,
     end_time: String,
-    assigned_staff: Option<String>,
+    assigned_staff: String,
     status: String,
 ) -> Result<(), String> {
     let start = NaiveDateTime::parse_from_str(&start_time, "%Y-%m-%d %H:%M:%S")
@@ -20,17 +20,28 @@ pub async fn insert_new_maintenance_task(
     let end = NaiveDateTime::parse_from_str(&end_time, "%Y-%m-%d %H:%M:%S")
         .map_err(|e| format!("Failed to parse end_time: {}", e))?;
 
+    let tasks = maintenance_task_repository::get_all_maintenance_tasks(state).await?;
+    for task in tasks.iter() {
+        if task.assigned_staff == assigned_staff && start < task.end_time && task.start_time < end {
+            return Err(
+                "Schedule conflict: The assigned staff already has a task during this time period."
+                    .into(),
+            );
+        }
+    }
+
     let id = id_factory::generate_customer_id();
 
     let task = maintenance_task_factory::create_maintenance_task(
         id,
-        name,
+        name.clone(),
         description,
-        assigned_staff,
+        assigned_staff.clone(),
         start,
         end,
         status,
     );
+
     maintenance_task_repository::insert_maintenance_task(state, task).await
 }
 

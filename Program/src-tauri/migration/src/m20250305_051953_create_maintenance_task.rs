@@ -21,7 +21,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(MaintenanceTask::Name).not_null())
                     .col(string(MaintenanceTask::Description).not_null())
-                    .col(string(MaintenanceTask::AssignedStaff).null())
+                    .col(string(MaintenanceTask::AssignedStaff).not_null())
                     .col(string(MaintenanceTask::StartTime).date_time().not_null())
                     .col(string(MaintenanceTask::EndTime).date_time().not_null())
                     .col(string(MaintenanceTask::Status).not_null())

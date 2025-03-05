@@ -33,7 +33,7 @@ export function useMaintenanceTask() {
   const initialFormData: Partial<MaintenanceTask> = {
     name: "",
     description: "",
-    assignedStaff: undefined,
+    assignedStaff: "",
     startTime: undefined,
     endTime: undefined,
     status: "Incoming",
@@ -155,7 +155,7 @@ export function useMaintenanceTask() {
       resetForm();
       setIsOpen(false);
     } catch (error) {
-      ToastUtils.error({ description: "Failed to create maintenance task" });
+      ToastUtils.error({ description: String(error) });
     } finally {
       setLoading(false);
     }

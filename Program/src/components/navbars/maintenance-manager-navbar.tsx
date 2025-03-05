@@ -11,7 +11,6 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { useNavigate } from "react-router";
-import MaintenanceTaskModal from "../modals/maintenance-task-modal";
 
 export default function MaintenanceManagerNavbar() {
   const auth = useAuth();

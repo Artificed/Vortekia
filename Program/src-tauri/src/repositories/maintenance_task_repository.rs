@@ -57,7 +57,7 @@ pub async fn update_maintenance_task(
     mut task: MaintenanceTaskActiveModel,
     name: String,
     description: String,
-    assigned_staff: Option<String>,
+    assigned_staff: String,
     status: String,
 ) -> Result<(), String> {
     task.name = ActiveValue::Set(name);

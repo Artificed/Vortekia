@@ -10,7 +10,7 @@ pub async fn insert_new_maintenance_task(
     description: String,
     start_time: String,
     end_time: String,
-    assigned_staff: Option<String>,
+    assigned_staff: String,
     status: String,
 ) -> Result<(), String> {
     maintenance_task_handler::insert_new_maintenance_task(

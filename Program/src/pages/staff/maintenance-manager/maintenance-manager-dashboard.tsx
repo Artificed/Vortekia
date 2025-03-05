@@ -2,7 +2,6 @@ import MaintenanceManagerNavbar from "@/components/navbars/maintenance-manager-n
 import { useGetAllMaintenanceTasks } from "@/hooks/data/use-get-all-maintenance-tasks";
 import { ToastUtils } from "@/components/utils/toast-helper";
 import type MaintenanceTask from "@/lib/interfaces/entities/maintenance-task";
-import { useState } from "react";
 import { MaintenanceTaskTable } from "@/components/partials/maintenance-manager/maintenance-tasks-table";
 import MaintenanceTaskModal from "@/components/modals/maintenance-task-modal";
 

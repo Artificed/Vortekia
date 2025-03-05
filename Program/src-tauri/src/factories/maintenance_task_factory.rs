@@ -7,7 +7,7 @@ pub fn create_maintenance_task(
     id: String,
     name: String,
     description: String,
-    assigned_staff: Option<String>,
+    assigned_staff: String,
     start_time: NaiveDateTime,
     end_time: NaiveDateTime,
     status: String,
