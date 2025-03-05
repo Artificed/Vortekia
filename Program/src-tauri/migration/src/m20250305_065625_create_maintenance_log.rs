@@ -21,6 +21,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(MaintenanceLog::TaskId).not_null())
                     .col(string(MaintenanceLog::Message).not_null())
+                    .col(string(MaintenanceLog::CreatedAt).date_time().not_null())
                     .col(boolean(MaintenanceLog::Approved).not_null())
                     .col(boolean(MaintenanceLog::Done).not_null())
                     .foreign_key(
@@ -48,6 +49,7 @@ enum MaintenanceLog {
     Id,
     TaskId,
     Message,
+    CreatedAt,
     Approved,
     Done,
 }

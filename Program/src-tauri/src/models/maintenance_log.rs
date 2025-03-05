@@ -11,6 +11,7 @@ pub struct Model {
     pub id: String,
     pub task_id: String,
     pub message: String,
+    pub created_at: DateTime,
     pub approved: i8,
     pub done: i8,
 }

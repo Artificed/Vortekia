@@ -19,6 +19,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(string(MaintenanceReport::Title).not_null())
                     .col(string(MaintenanceReport::Content).not_null())
+                    .col(string(MaintenanceReport::CreatedAt).date_time().not_null())
                     .to_owned(),
             )
             .await
@@ -37,4 +38,5 @@ enum MaintenanceReport {
     Id,
     Title,
     Content,
+    CreatedAt,
 }

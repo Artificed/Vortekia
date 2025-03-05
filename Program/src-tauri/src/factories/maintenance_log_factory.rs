@@ -1,3 +1,4 @@
+use chrono::Utc;
 use sea_orm::ActiveValue;
 
 use crate::models::maintenance_log::ActiveModel as MaintenanceLogActiveModel;
@@ -13,5 +14,6 @@ pub fn create_maintenance_log(
         message: ActiveValue::Set(message),
         approved: ActiveValue::Set(0),
         done: ActiveValue::Set(0),
+        created_at: ActiveValue::Set(Utc::now().naive_utc()),
     }
 }

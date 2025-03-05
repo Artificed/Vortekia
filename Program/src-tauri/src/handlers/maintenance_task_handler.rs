@@ -2,6 +2,7 @@ use crate::factories::maintenance_task_factory;
 use crate::models::maintenance_task::Model as MaintenanceTaskModel;
 use crate::modules::app_state::AppState;
 use crate::repositories::maintenance_task_repository;
+use chrono::NaiveDateTime;
 use tauri::State;
 
 pub async fn insert_new_maintenance_task(
@@ -9,14 +10,24 @@ pub async fn insert_new_maintenance_task(
     id: String,
     name: String,
     description: String,
+    start_time: String,
+    end_time: String,
     assigned_staff: Option<String>,
     status: String,
 ) -> Result<(), String> {
+    let start = NaiveDateTime::parse_from_str(&start_time, "%Y-%m-%d %H:%M:%S")
+        .map_err(|e| format!("Failed to parse start_time: {}", e))?;
+
+    let end = NaiveDateTime::parse_from_str(&end_time, "%Y-%m-%d %H:%M:%S")
+        .map_err(|e| format!("Failed to parse end_time: {}", e))?;
+
     let task = maintenance_task_factory::create_maintenance_task(
         id,
         name,
         description,
         assigned_staff,
+        start,
+        end,
         status,
     );
     maintenance_task_repository::insert_maintenance_task(state, task).await
