@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +29,15 @@ import RideWithStaff from "@/lib/interfaces/viewmodels/ride-with-staff";
 import RideQueue from "@/lib/interfaces/entities/ride-queue";
 import { invoke } from "@tauri-apps/api/core";
 import { useGetRideQueueRequests } from "@/hooks/data/use-get-ride-queue-requests";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import QueueRequest from "@/lib/interfaces/entities/queue-request";
+import { TimeSelectionModal } from "./time-selection-modal";
 
 interface RideQueueModalProps {
   rideWithStaff: RideWithStaff | null;
@@ -44,6 +53,24 @@ export default function RideQueueModal({
   const [newCustomerId, setNewCustomerId] = useState("");
   const [editingQueue, setEditingQueue] = useState<RideQueue | null>(null);
   const [isAddingCustomer, setIsAddingCustomer] = useState(false);
+  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+  const [selectedOpeningTime, setSelectedOpeningTime] = useState("");
+  const [selectedClosingTime, setSelectedClosingTime] = useState("");
+
+  const handleTimeConfirm = (openingTime: string, closingTime: string) => {
+    setSelectedOpeningTime(openingTime);
+    setSelectedClosingTime(closingTime);
+    setIsTimeModalOpen(false);
+    setIsAddingCustomer(true);
+  };
+
+  const openTimeSelection = () => {
+    setIsTimeModalOpen(true);
+  };
+
+  const { rideQueueRequests } = useGetRideQueueRequests(
+    rideWithStaff?.ride.id || "",
+  );
 
   const { rideQueue, isLoading, isError, refetch } = useGetRideQueueByRide(
     rideWithStaff?.ride.id || "",
@@ -59,10 +86,26 @@ export default function RideQueueModal({
       return;
     }
 
+    let startTime = new Date();
+    if (selectedOpeningTime) {
+      const [hour, minute] = selectedOpeningTime.split(":").map(Number);
+      startTime.setHours(hour + 7, minute, 0, 0);
+    }
+    let start = startTime.toISOString().slice(0, 19).replace("T", " ");
+
+    let endTime = new Date();
+    if (selectedClosingTime) {
+      const [hour, minute] = selectedClosingTime.split(":").map(Number);
+      endTime.setHours(hour + 7, minute, 0, 0);
+    }
+    let end = endTime.toISOString().slice(0, 19).replace("T", " ");
+
     try {
-      await invoke("add_customer_to_ride_queue", {
-        rideId: ride.id,
-        customerId: newCustomerId,
+      await invoke("update_queue_request_approval", {
+        id: newCustomerId, // TODO: Rename this to request ID
+        approve: 1,
+        startTime: start,
+        endTime: end,
       });
 
       ToastUtils.success({ description: "Customer added to queue" });
@@ -79,7 +122,6 @@ export default function RideQueueModal({
   const removeCustomerFromQueue = async (queueId: string) => {
     try {
       await invoke("remove_customer_from_ride_queue", { queueId });
-
       ToastUtils.success({ description: "Customer removed from queue" });
       refetch();
     } catch (error) {
@@ -94,7 +136,7 @@ export default function RideQueueModal({
 
     try {
       await invoke("update_ride_queue_entry", {
-        queueId: editingQueue.id,
+        queueId: newCustomerId, // TODO: Rename this to request ID
         customerId: editingQueue.customerId,
         startTime: editingQueue.startTime,
         endTime: editingQueue.endTime,
@@ -124,12 +166,26 @@ export default function RideQueueModal({
           <div className="flex gap-2">
             {isAddingCustomer ? (
               <>
-                <Input
-                  placeholder="Enter Customer ID"
+                <Select
                   value={newCustomerId}
-                  onChange={(e) => setNewCustomerId(e.target.value)}
-                  className="flex-grow"
-                />
+                  onValueChange={(value) => setNewCustomerId(value)}
+                >
+                  <SelectTrigger className="flex-grow">
+                    <SelectValue placeholder="Select Customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rideQueueRequests &&
+                      rideQueueRequests.map((request: QueueRequest) => (
+                        <SelectItem key={request.id} value={request.id}>
+                          {"Request Code: " +
+                            request.id +
+                            " - Customer (" +
+                            request.customerId +
+                            ")"}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
                 <Button onClick={addCustomerToQueue}>Confirm</Button>
                 <Button
                   variant="secondary"
@@ -139,9 +195,7 @@ export default function RideQueueModal({
                 </Button>
               </>
             ) : (
-              <Button onClick={() => setIsAddingCustomer(true)}>
-                Add Customer to Queue
-              </Button>
+              <Button onClick={openTimeSelection}>Add Customer to Queue</Button>
             )}
           </div>
 
@@ -286,6 +340,13 @@ export default function RideQueueModal({
             Refresh Queue
           </Button>
         </DialogFooter>
+
+        <TimeSelectionModal
+          isOpen={isTimeModalOpen}
+          onClose={() => setIsTimeModalOpen(false)}
+          onConfirm={handleTimeConfirm}
+          title="Select Ride Schedule"
+        />
       </DialogContent>
     </Dialog>
   );

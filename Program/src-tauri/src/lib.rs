@@ -153,6 +153,7 @@ pub async fn run() {
             queue_request_service::insert_new_queue_request,
             queue_request_service::get_all_queue_requests,
             queue_request_service::get_queue_requests_by_ride,
+            queue_request_service::update_queue_request_approval,
             ride_transaction_service::insert_ride_transaction,
             ride_transaction_service::get_all_ride_transactions,
             ride_transaction_service::get_ride_transaction,

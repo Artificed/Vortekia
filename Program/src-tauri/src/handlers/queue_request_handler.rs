@@ -10,7 +10,7 @@ use crate::{
 
 use crate::models::queue_request::Model as QueueRequestModel;
 
-use super::customer_handler;
+use super::{customer_handler, ride_queue_handler};
 
 pub async fn insert_new_queue_request(
     state: &State<'_, AppState>,
@@ -59,17 +59,35 @@ pub async fn get_queue_requests_by_ride(
     queue_request_repository::get_queue_requests_by_ride(state, ride_id).await
 }
 
-// pub async fn update_queue_request_approval(
-//     state: &State<'_, AppState>,
-//     id: String,
-//     approve: i8,
-// ) -> Result<(), String> {
-//     let ride_id = queue_request_repository::update_queue_request_approval(state, &id, approve)
-//         .await
-//         .unwrap();
-//
-//     // Optionally, if you want to trigger additional ride-related actions on approval,
-//     // you could add those here. For example, if approve == 1 { ride_repository::join_ride(state, &ride_id).await?; }
-//
-//     Ok(())
-// }
+pub async fn update_queue_request_approval(
+    state: &State<'_, AppState>,
+    id: String,
+    approve: i8,
+    start_time: String,
+    end_time: String,
+) -> Result<(), String> {
+    let (ride_id, customer_id) =
+        queue_request_repository::update_queue_request_approval(state, &id, approve).await?;
+
+    let ride = ride_repository::get_ride_by_id(state, &ride_id)
+        .await?
+        .ok_or_else(|| "Ride not found".to_string())?;
+
+    let start = NaiveDateTime::parse_from_str(&start_time, "%Y-%m-%d %H:%M:%S")
+        .map_err(|e| format!("Failed to parse start_time: {}", e))?;
+    let end = NaiveDateTime::parse_from_str(&end_time, "%Y-%m-%d %H:%M:%S")
+        .map_err(|e| format!("Failed to parse end_time: {}", e))?;
+
+    if start.time() < ride.opening_time || end.time() > ride.closing_time {
+        return Err(format!(
+            "Selected time must be between {} and {}",
+            ride.opening_time, ride.closing_time
+        ));
+    }
+
+    if approve == 1 {
+        ride_queue_handler::insert_ride_queue(state, &ride_id, &customer_id, start, end).await?
+    }
+
+    Ok(())
+}

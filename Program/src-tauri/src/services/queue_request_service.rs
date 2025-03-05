@@ -28,3 +28,15 @@ pub async fn get_queue_requests_by_ride(
 ) -> Result<Vec<QueueRequestModel>, String> {
     queue_request_handler::get_queue_requests_by_ride(&state, ride_id).await
 }
+
+#[tauri::command]
+pub async fn update_queue_request_approval(
+    state: State<'_, AppState>,
+    id: String,
+    approve: i8,
+    start_time: String,
+    end_time: String,
+) -> Result<(), String> {
+    queue_request_handler::update_queue_request_approval(&state, id, approve, start_time, end_time)
+        .await
+}

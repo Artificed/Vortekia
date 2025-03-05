@@ -1,4 +1,5 @@
 use sea_orm::ActiveModelTrait;
+use sea_orm::ActiveValue;
 use tauri::State;
 
 use crate::models::queue_request::ActiveModel as QueueRequestActiveModel;
@@ -26,8 +27,10 @@ pub async fn insert_queue_request(
 pub async fn get_all_queue_requests(
     state: &State<'_, AppState>,
 ) -> Result<Vec<QueueRequestModel>, String> {
-    let result = QueueRequests::find().all(&state.conn).await;
-
+    let result = QueueRequests::find()
+        .filter(QueueRequestColumn::Done.eq(0))
+        .all(&state.conn)
+        .await;
     match result {
         Ok(requests) => Ok(requests),
         Err(err) => {
@@ -40,12 +43,15 @@ pub async fn get_all_queue_requests(
 pub async fn get_queue_request(state: &AppState, id: &str) -> Result<QueueRequestModel, String> {
     let result = QueueRequests::find()
         .filter(QueueRequestColumn::Id.eq(id.to_owned()))
+        .filter(QueueRequestColumn::Done.eq(0))
         .one(&state.conn)
         .await;
-
     match result {
         Ok(Some(request)) => Ok(request),
-        Ok(None) => Err(format!("Queue request with ID {} not found", id)),
+        Ok(None) => Err(format!(
+            "Queue request with ID {} not found or already completed",
+            id
+        )),
         Err(err) => {
             eprintln!("Failed to get queue request: {:?}", err);
             Err(format!("Failed to get queue request: {:?}", err))
@@ -59,9 +65,9 @@ pub async fn get_queue_requests_by_ride(
 ) -> Result<Vec<QueueRequestModel>, String> {
     let result = QueueRequests::find()
         .filter(QueueRequestColumn::RideId.eq(ride_id.to_owned()))
+        .filter(QueueRequestColumn::Done.eq(0))
         .all(&state.conn)
         .await;
-
     match result {
         Ok(requests) => Ok(requests),
         Err(err) => {
@@ -71,43 +77,41 @@ pub async fn get_queue_requests_by_ride(
     }
 }
 
-//
-// pub async fn update_queue_request_approval(
-//     state: &State<'_, AppState>,
-//     id: &str,
-//     approve: i8,
-// ) -> Result<String, String> {
-//     let request = QueueRequests::find()
-//         .filter(QueueRequestColumn::Id.eq(id))
-//         .one(&state.conn)
-//         .await;
-//
-//     match request {
-//         Ok(Some(request)) => {
-//             let mut request_active: QueueRequestActiveModel = request.into();
-//
-//             // Capture ride_id (or any other field you may need)
-//             let ride_id = request.ride_id;
-//
-//             request_active.approved = Set(approve);
-//             request_active.done = Set(1);
-//
-//             let result = request_active.update(&state.conn).await;
-//             match result {
-//                 Ok(_) => Ok(ride_id),
-//                 Err(err) => {
-//                     eprintln!("Failed to update queue request approval status: {:?}", err);
-//                     Err(format!(
-//                         "Failed to update queue request approval status: {:?}",
-//                         err
-//                     ))
-//                 }
-//             }
-//         }
-//         Ok(None) => Err(format!("Queue request with ID {} not found", id)),
-//         Err(err) => {
-//             eprintln!("Failed to find queue request: {:?}", err);
-//             Err(format!("Failed to find queue request: {:?}", err))
-//         }
-//     }
-// }
+pub async fn update_queue_request_approval(
+    state: &State<'_, AppState>,
+    id: &str,
+    approve: i8,
+) -> Result<(String, String), String> {
+    let request = QueueRequests::find()
+        .filter(QueueRequestColumn::Id.eq(id))
+        .one(&state.conn)
+        .await;
+
+    match request {
+        Ok(Some(request)) => {
+            let ride_id = request.ride_id.clone();
+            let customer_id = request.customer_id.clone();
+            let mut request_active: QueueRequestActiveModel = request.into();
+
+            request_active.approved = ActiveValue::Set(approve);
+            request_active.done = ActiveValue::Set(1);
+
+            let result = request_active.update(&state.conn).await;
+            match result {
+                Ok(_) => Ok((ride_id, customer_id)),
+                Err(err) => {
+                    eprintln!("Failed to update queue request approval status: {:?}", err);
+                    Err(format!(
+                        "Failed to update queue request approval status: {:?}",
+                        err
+                    ))
+                }
+            }
+        }
+        Ok(None) => Err(format!("Queue request with ID {} not found", id)),
+        Err(err) => {
+            eprintln!("Failed to find queue request: {:?}", err);
+            Err(format!("Failed to find queue request: {:?}", err))
+        }
+    }
+}
