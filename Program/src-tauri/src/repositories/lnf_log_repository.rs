@@ -1,3 +1,4 @@
+use redis::Commands;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ActiveValue;
 use sea_orm::ColumnTrait;
@@ -9,14 +10,31 @@ use crate::models::lost_and_found_log::ActiveModel as LnfLogActiveModel;
 use crate::models::lost_and_found_log::Column as LnfColumn;
 use crate::models::lost_and_found_log::Entity as LnfLogs;
 use crate::models::lost_and_found_log::Model as LnfLogModel;
+use crate::modules::state_helper;
 
 use super::customer_repository::AppState;
+
+const CACHE_TTL: u64 = 300;
 
 pub async fn insert_lnf_log(
     state: State<'_, AppState>,
     lnf_log: LnfLogActiveModel,
 ) -> Result<(), String> {
+    let log_id = lnf_log.id.clone().unwrap().to_string();
     let result = LnfLogs::insert(lnf_log).exec(&state.conn).await;
+
+    if result.is_ok() {
+        let mut redis_conn = state_helper::get_redis_conn(&state)?;
+
+        let lnf_log_cache_key = format!("lnf_logs:{}", log_id);
+        let _: () = redis_conn
+            .del(&lnf_log_cache_key)
+            .map_err(|e| format!("Redis cache invalidation error: {}", e))?;
+
+        let _: () = redis_conn
+            .del("all_lnf_logs")
+            .map_err(|e| format!("Redis cache invalidation error: {}", e))?;
+    }
 
     if result.is_ok() {
         Ok(())
@@ -26,10 +44,39 @@ pub async fn insert_lnf_log(
 }
 
 pub async fn get_lnf_logs(state: State<'_, AppState>) -> Result<Vec<LnfLogModel>, String> {
+    let mut redis_conn = state_helper::get_redis_conn(&state)?;
+
+    let cache_key = "all_lnf_logs";
+    let cached: Option<String> = redis_conn
+        .get(cache_key)
+        .map_err(|e| format!("Redis get error: {}", e))?;
+
+    if let Some(cached_data) = cached {
+        match serde_json::from_str::<Vec<LnfLogModel>>(&cached_data) {
+            Ok(logs) => {
+                return Ok(logs);
+            }
+            Err(e) => {
+                eprintln!("Error deserializing cached lost and found log!: {:?}", e);
+            }
+        }
+    }
+
     let result = LnfLogs::find().all(&state.conn).await;
 
     match result {
-        Ok(lnf_logs) => Ok(lnf_logs),
+        Ok(lnf_logs) => {
+            match serde_json::to_string(&lnf_logs) {
+                Ok(json_string) => {
+                    let _: () = redis_conn
+                        .set_ex(cache_key, json_string, CACHE_TTL)
+                        .map_err(|e| eprintln!("Redis cache update error: {:?}", e))
+                        .unwrap_or(());
+                }
+                Err(e) => eprintln!("Error serializing logs for cache: {:?}", e),
+            }
+            Ok(lnf_logs)
+        }
         Err(err) => {
             eprintln!("Error getting lost and found logs: {:?}", err);
             Err("Failed to get lost and found logs".to_string())
@@ -40,11 +87,48 @@ pub async fn get_lnf_logs(state: State<'_, AppState>) -> Result<Vec<LnfLogModel>
 pub async fn find_lnf_log_by_id(
     state: &State<'_, AppState>,
     id: &str,
-) -> Result<Option<LnfLogModel>, sea_orm::DbErr> {
-    LnfLogs::find()
+) -> Result<Option<LnfLogModel>, String> {
+    let mut redis_conn = state_helper::get_redis_conn(state)?;
+
+    let cache_key = format!("lnf_logs:{}", id);
+    let cached: Option<String> = redis_conn
+        .get(&cache_key)
+        .map_err(|e| format!("Redis get error: {}", e))?;
+
+    if let Some(cached_data) = cached {
+        match serde_json::from_str::<LnfLogModel>(&cached_data) {
+            Ok(log) => {
+                return Ok(Some(log));
+            }
+            Err(e) => {
+                eprintln!("Error deserializing cached lost and found log: {:?}", e);
+            }
+        }
+    }
+
+    let result = LnfLogs::find()
         .filter(LnfColumn::Id.contains(id))
         .one(&state.conn)
-        .await
+        .await;
+
+    match result {
+        Ok(maybe_log) => {
+            if let Some(ref log) = maybe_log {
+                match serde_json::to_string(log) {
+                    Ok(json_string) => {
+                        let _: () = redis_conn
+                            .set_ex(&cache_key, json_string, CACHE_TTL)
+                            .map_err(|e| eprintln!("Redis cache update error: {:?}", e))
+                            .unwrap_or(());
+                    }
+                    Err(e) => eprintln!("Error serializing log for cache: {:?}", e),
+                }
+            }
+
+            Ok(maybe_log)
+        }
+        Err(err) => Err(format!("Failed to find lost and found log by ID: {}", err)),
+    }
 }
 
 pub async fn update_lnf_log(
@@ -81,16 +165,30 @@ pub async fn update_lnf_log(
         }
 
         updated_log.name = ActiveValue::Set(name.to_string());
-        updated_log.name = ActiveValue::Set(name.to_string());
         updated_log.r#type = ActiveValue::Set(r#type.to_string());
         updated_log.color = ActiveValue::Set(color.to_string());
         updated_log.last_seen_location = ActiveValue::Set(last_seen_location.to_string());
         updated_log.owner = ActiveValue::Set(owner.to_string());
         updated_log.status = ActiveValue::Set(status.to_string());
 
-        updated_log.update(&state.conn).await.unwrap();
+        let result = updated_log.update(&state.conn).await;
 
-        Ok(())
+        if result.is_ok() {
+            let mut redis_conn = state_helper::get_redis_conn(&state)?;
+
+            let lnf_log_cache_key = format!("lnf_logs:{}", id);
+            let _: () = redis_conn
+                .del(&lnf_log_cache_key)
+                .map_err(|e| format!("Redis cache invalidation error: {}", e))?;
+
+            let _: () = redis_conn
+                .del("all_lnf_logs")
+                .map_err(|e| format!("Redis cache invalidation error: {}", e))?;
+
+            Ok(())
+        } else {
+            Err("Failed to update lost and found log".to_string())
+        }
     } else {
         Err("Lost and found log not found".to_string())
     }
