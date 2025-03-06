@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Ride from "@/lib/interfaces/entities/ride";
+import useAuth from "@/hooks/auth/use-auth";
+import Staff from "@/lib/interfaces/entities/staff";
 
 interface RideDetailsModalProps {
   ride: Ride;
@@ -16,6 +18,8 @@ export default function RideDetailsModal({
   onEdit,
   onDelete,
 }: RideDetailsModalProps) {
+  const auth = useAuth();
+
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-2xl">
@@ -84,19 +88,21 @@ export default function RideDetailsModal({
             </div>
           </div>
 
-          <div className="flex justify-between pt-5">
-            <Button variant="destructive" onClick={onDelete}>
-              Delete Ride
-            </Button>
-            <div className="flex gap-4">
-              <Button variant="outline" onClick={onClose}>
-                Close
+          {(auth?.user as Staff).role === "Ride Manager" && (
+            <div className="flex justify-between pt-5">
+              <Button variant="destructive" onClick={onDelete}>
+                Delete Ride
               </Button>
-              <Button variant="default" onClick={onEdit}>
-                Edit Ride
-              </Button>
+              <div className="flex gap-4">
+                <Button variant="outline" onClick={onClose}>
+                  Close
+                </Button>
+                <Button variant="default" onClick={onEdit}>
+                  Edit Ride
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

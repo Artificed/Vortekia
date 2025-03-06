@@ -54,6 +54,22 @@ export default function CustomerServiceNavbar() {
                 Chat
               </a>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/customer-service/view-rides"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                View Rides
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/customer-service/view-restaurants"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                View Restaurants
+              </a>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
