@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import {
   Card,
   CardContent,
@@ -11,15 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, ArrowLeft } from "lucide-react";
 import { useGetSouvenirs } from "@/hooks/data/use-get-souvenirs";
-import PurchaseModal from "@/components/modals/store-purchase-modal";
 import useAuth from "@/hooks/auth/use-auth";
-import { ToastUtils } from "@/components/utils/toast-helper";
-import { invoke } from "@tauri-apps/api/core";
 import { useGetStaffAssignedStore } from "@/hooks/data/use-get-staff-assigned-store";
 import SalesAssociateNavbar from "@/components/navbars/sales-associate-navbar";
 
 export default function SalesAssociateDashboard() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const auth = useAuth();
 
@@ -28,50 +23,9 @@ export default function SalesAssociateDashboard() {
   );
   const { souvenirs, isLoading: isLoadingSouvenirs } = useGetSouvenirs();
 
-  const [selectedSouvenirId, setSelectedSouvenirId] = useState<string | null>(
-    searchParams.get("souvenirId"),
-  );
-
   const storeSouvenirs =
     souvenirs?.filter((souvenir) => souvenir.storeId === assignedStore?.id) ||
     [];
-
-  useEffect(() => {
-    if (searchParams.get("souvenirId")) {
-      setSelectedSouvenirId(searchParams.get("souvenirId"));
-    }
-  }, [searchParams]);
-
-  const handleSouvenirSelect = (souvenirId: string) => {
-    setSelectedSouvenirId(souvenirId);
-    setSearchParams({ souvenirId });
-  };
-
-  const handlePurchase = async (quantity: number) => {
-    const selectedSouvenir = storeSouvenirs.find(
-      (souvenir) => souvenir.id === selectedSouvenirId,
-    );
-
-    if (!selectedSouvenir) {
-      ToastUtils.error({ description: "Souvenir must be selected!" });
-      return;
-    }
-
-    try {
-      await invoke("insert_store_transaction", {
-        souvenirId: selectedSouvenir.id,
-        customerId: auth?.user?.id,
-        quantity: quantity,
-        price: -selectedSouvenir.price,
-      });
-      ToastUtils.success({ description: "Successfully purchased souvenir!" });
-    } catch (error) {
-      ToastUtils.error({ description: String(error) });
-    }
-
-    setSearchParams({});
-  };
-
   const handleBackClick = () => {
     navigate("/");
   };
@@ -157,15 +111,7 @@ export default function SalesAssociateDashboard() {
                 </CardContent>
                 {auth?.user && (
                   <CardFooter>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSouvenirSelect(souvenir.id);
-                      }}
-                      className="cursor-pointer"
-                    >
-                      Purchase Now
-                    </Button>
+                    <Button className="cursor-pointer">Purchase Now</Button>
                   </CardFooter>
                 )}
               </Card>
@@ -177,15 +123,6 @@ export default function SalesAssociateDashboard() {
               No souvenir items available for this store
             </p>
           </div>
-        )}
-
-        {selectedSouvenirId && (
-          <PurchaseModal
-            souvenirId={selectedSouvenirId}
-            isOpen={!!selectedSouvenirId}
-            onClose={() => setSelectedSouvenirId(null)}
-            onPurchase={handlePurchase}
-          />
         )}
       </div>
     </>

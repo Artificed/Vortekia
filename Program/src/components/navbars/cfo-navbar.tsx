@@ -45,6 +45,38 @@ export default function CfoNavbar() {
                 View Restaurant Proposals
               </a>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/cfo/view-restaurant-transactions"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Restaurant Transactions
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/cfo/view-store-transactions"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Store Transactions
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/cfo/view-ride-transactions"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Ride Transactions
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/chat"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Chat
+              </a>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

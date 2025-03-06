@@ -1,4 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import {
   Table,
   TableBody,
@@ -7,387 +20,320 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Download, Filter, Search } from "lucide-react";
+import type { DateRange } from "react-day-picker";
+import { addDays, format } from "date-fns";
+import { useGetAllStoreTransactions } from "@/hooks/data/use-get-all-store-transactions";
 import StoreTransaction from "@/lib/interfaces/entities/store-transaction";
-import StoreNavbar from "@/components/navbars/store-navbar";
-import useAuth from "@/hooks/auth/use-auth";
-import { useNavigate, useParams } from "react-router";
-import { useGetCurrentUserStoreTransactions } from "@/hooks/data/use-get-current-use-store-transactions";
-import { useGetStoreById } from "@/hooks/data/use-get-store-by-id";
-import { useGetSouvenirs } from "@/hooks/data/use-get-souvenirs";
+import RetailManagerNavbar from "@/components/navbars/retail-manager-navbar";
 
-export default function StoreTransactionHistoryPage() {
-  const auth = useAuth();
-  const navigate = useNavigate();
-  const { storeId } = useParams();
+export default function StoreTransactionsPage() {
+  const { storeTransactions, isLoading } = useGetAllStoreTransactions();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof StoreTransaction | null;
-    direction: "ascending" | "descending";
-  }>({
-    key: "transactionDate",
-    direction: "descending",
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [souvenirFilter, setSouvenirFilter] = useState("all");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: addDays(new Date(), -30),
+    to: new Date(),
   });
 
-  // Auth check effect - runs on mount and when auth changes
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    StoreTransaction[]
+  >([]);
+
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [todayRevenue, setTodayRevenue] = useState(0);
+  const [averageOrderValue, setAverageOrderValue] = useState(0);
+
   useEffect(() => {
-    if (!auth?.user) {
-      navigate("/");
+    if (!storeTransactions) return;
+
+    let filtered = [...storeTransactions];
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (transaction) =>
+          transaction.id.toLowerCase().includes(query) ||
+          transaction.souvenirId.toLowerCase().includes(query) ||
+          transaction.customerId.toLowerCase().includes(query),
+      );
     }
-  }, [auth, navigate]);
 
-  // Safe refetch function with auth check
-  const safeRefetch = useCallback(async () => {
-    if (!auth?.user) {
-      navigate("/");
-      return false;
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(
+        (transaction) =>
+          transaction.status.toLowerCase() === statusFilter.toLowerCase(),
+      );
     }
-    return true;
-  }, [auth, navigate]);
 
-  const {
-    currentUserStoreTransactions,
-    isLoading: isLoadingTransactions,
-    isError,
-    refetch: refetchTransactions,
-  } = useGetCurrentUserStoreTransactions();
-
-  const { store, isLoading: isLoadingStore } = useGetStoreById(storeId || "");
-  const { souvenirs, isLoading: isLoadingSouvenirs } = useGetSouvenirs();
-
-  // Combined refetch function with auth check
-  const handleRefetch = useCallback(async () => {
-    const canProceed = await safeRefetch();
-    if (canProceed) {
-      refetchTransactions();
+    if (souvenirFilter !== "all") {
+      filtered = filtered.filter(
+        (transaction) => transaction.souvenirId === souvenirFilter,
+      );
     }
-  }, [safeRefetch, refetchTransactions]);
 
-  // Initial data load with auth check
-  useEffect(() => {
-    if (auth?.user) {
-      refetchTransactions();
-    }
-  }, [auth, refetchTransactions]);
-
-  // Error handling for auth related issues
-  useEffect(() => {
-    if (isError && auth?.user) {
-      // Check if error is auth related (you might need to adjust this depending on your error structure)
-      handleRefetch();
-    }
-  }, [isError, auth, handleRefetch]);
-
-  const isLoading =
-    isLoadingTransactions || isLoadingStore || isLoadingSouvenirs;
-
-  if (isError) {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
-          <CardDescription>Your souvenir purchase history</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center p-6">
-          <p className="text-destructive mb-4">
-            Failed to load transaction history
-          </p>
-          <Button onClick={handleRefetch}>Try Again</Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Get IDs of souvenirs belonging to this store
-  const storeSouvenirIds = React.useMemo(() => {
-    if (!souvenirs || !storeId) return [];
-
-    return souvenirs
-      .filter((souvenir) => souvenir.storeId === storeId)
-      .map((souvenir) => souvenir.id);
-  }, [souvenirs, storeId]);
-
-  // Filter transactions by store's souvenirs - with null checks
-  const storeTransactions = React.useMemo(() => {
-    if (
-      !currentUserStoreTransactions ||
-      !Array.isArray(currentUserStoreTransactions) ||
-      !storeSouvenirIds ||
-      storeSouvenirIds.length === 0
-    )
-      return [];
-
-    return currentUserStoreTransactions.filter((transaction) =>
-      storeSouvenirIds.includes(transaction.souvenirId),
-    );
-  }, [currentUserStoreTransactions, storeSouvenirIds]);
-
-  const sortedTransactions = React.useMemo(() => {
-    if (!storeTransactions || !storeTransactions.length) return [];
-
-    const sortableTransactions = [...storeTransactions];
-
-    if (sortConfig.key) {
-      sortableTransactions.sort((a, b) => {
-        // Null check for values
-        const aValue = a[sortConfig.key!] || "";
-        const bValue = b[sortConfig.key!] || "";
-
-        if (aValue < bValue) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
+    if (dateRange?.from) {
+      filtered = filtered.filter((transaction) => {
+        const transactionDate = new Date(transaction.transactionDate);
+        if (dateRange.from && transactionDate < dateRange.from) return false;
+        if (dateRange.to && transactionDate > dateRange.to) return false;
+        return true;
       });
     }
 
-    return sortableTransactions;
-  }, [storeTransactions, sortConfig]);
+    setFilteredTransactions(filtered);
 
-  const filteredTransactions = React.useMemo(() => {
-    if (!sortedTransactions || !sortedTransactions.length) return [];
+    if (storeTransactions.length > 0) {
+      const total = filtered.reduce(
+        (sum, transaction) => sum + transaction.price * transaction.quantity,
+        0,
+      );
+      setTotalRevenue(total);
 
-    if (!searchTerm) return sortedTransactions;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayTransactions = filtered.filter((transaction) => {
+        const transactionDate = new Date(transaction.transactionDate);
+        transactionDate.setHours(0, 0, 0, 0);
+        return transactionDate.getTime() === today.getTime();
+      });
+      const todayTotal = todayTransactions.reduce(
+        (sum, transaction) => sum + transaction.price * transaction.quantity,
+        0,
+      );
+      setTodayRevenue(todayTotal);
 
-    const searchTermLower = searchTerm.toLowerCase();
-    return sortedTransactions.filter(
-      (transaction) =>
-        (transaction.id &&
-          transaction.id.toLowerCase().includes(searchTermLower)) ||
-        (transaction.souvenirId &&
-          transaction.souvenirId.toLowerCase().includes(searchTermLower)) ||
-        (transaction.customerId &&
-          transaction.customerId.toLowerCase().includes(searchTermLower)) ||
-        (transaction.status &&
-          transaction.status.toLowerCase().includes(searchTermLower)),
-    );
-  }, [sortedTransactions, searchTerm]);
-
-  const requestSort = (key: keyof StoreTransaction) => {
-    let direction: "ascending" | "descending" = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
+      setAverageOrderValue(total / filtered.length || 0);
     }
-    setSortConfig({ key, direction });
+  }, [storeTransactions, searchQuery, statusFilter, dateRange, souvenirFilter]);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
   };
 
-  const totalSpent = React.useMemo(() => {
-    if (!filteredTransactions || !filteredTransactions.length) return 0;
+  const formatDate = (date: Date) => {
+    return format(new Date(date), "MMM d, yyyy");
+  };
 
-    return filteredTransactions.reduce((sum, transaction) => {
-      const price = transaction.price || 0;
-      const quantity = transaction.quantity || 0;
-      return sum + price * quantity;
-    }, 0);
-  }, [filteredTransactions]);
+  const truncateId = (id: string) => {
+    return id.length > 8 ? `${id.substring(0, 8)}...` : id;
+  };
 
-  // Get souvenir name by id - with null checks
-  const getSouvenirName = (souvenirId: string) => {
-    if (!souvenirId || !souvenirs) return "Unknown Item";
-    const souvenir = souvenirs.find((s) => s && s.id === souvenirId);
-    return souvenir ? souvenir.name : "Unknown Item";
+  const resetFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+    setSouvenirFilter("all");
+    setDateRange({
+      from: addDays(new Date(), -30),
+      to: new Date(),
+    });
   };
 
   return (
     <>
-      <StoreNavbar />
-      <div className="w-full p-4 md:p-20 flex">
-        <Card className="w-full mt-4 md:mt-10">
-          <CardHeader>
-            <CardTitle>
-              {isLoadingStore ? "Loading..." : store?.name || "Store"}{" "}
-              Transaction History
-            </CardTitle>
-            <CardDescription>
-              Your purchase history from{" "}
-              {isLoadingStore ? "this store" : store?.name || "this store"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-              <div className="w-full md:w-1/3">
+      <RetailManagerNavbar />
+      <div className="container mx-auto py-8">
+        <div className="flex flex-col gap-6 mt-20">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-3xl font-bold tracking-tight">
+              Store Transactions
+            </h1>
+            <p className="text-muted-foreground">
+              View and manage all souvenir store transactions
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Total Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatCurrency(totalRevenue)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  For the selected period
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Today's Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatCurrency(todayRevenue)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {format(new Date(), "MMMM d, yyyy")}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Average Order Value
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatCurrency(averageOrderValue)}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {filteredTransactions.length} transactions
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex flex-col gap-4 md:flex-row md:items-end">
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="search">Search</Label>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search transactions..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full"
+                  id="search"
+                  placeholder="Search by ID, souvenir, or customer..."
+                  className="pl-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium">Sort by:</span>
-                <Select
-                  onValueChange={(value) =>
-                    requestSort(value as keyof StoreTransaction)
-                  }
-                  defaultValue="transactionDate"
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="transactionDate">Date</SelectItem>
-                    <SelectItem value="price">Price</SelectItem>
-                    <SelectItem value="quantity">Quantity</SelectItem>
-                    <SelectItem value="status">Status</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setSortConfig({
-                      ...sortConfig,
-                      direction:
-                        sortConfig.direction === "ascending"
-                          ? "descending"
-                          : "ascending",
-                    })
-                  }
-                >
-                  {sortConfig.direction === "ascending" ? "↑" : "↓"}
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleRefetch}>
-                  Refresh
-                </Button>
               </div>
             </div>
 
-            {isLoading ? (
-              <div className="flex justify-center items-center p-12">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : filteredTransactions.length === 0 ? (
-              <div className="text-center p-8 text-muted-foreground">
-                No transactions found for this store
-              </div>
-            ) : (
-              <>
-                <div className="rounded-md border overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead
-                          onClick={() => requestSort("transactionDate")}
-                          className="cursor-pointer"
-                        >
-                          Date{" "}
-                          {sortConfig.key === "transactionDate" &&
-                            (sortConfig.direction === "ascending" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          onClick={() => requestSort("souvenirId")}
-                          className="cursor-pointer"
-                        >
-                          Souvenir Item{" "}
-                          {sortConfig.key === "souvenirId" &&
-                            (sortConfig.direction === "ascending" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          onClick={() => requestSort("quantity")}
-                          className="cursor-pointer"
-                        >
-                          Quantity{" "}
-                          {sortConfig.key === "quantity" &&
-                            (sortConfig.direction === "ascending" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          onClick={() => requestSort("price")}
-                          className="cursor-pointer"
-                        >
-                          Price{" "}
-                          {sortConfig.key === "price" &&
-                            (sortConfig.direction === "ascending" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          onClick={() => requestSort("status")}
-                          className="cursor-pointer"
-                        >
-                          Status{" "}
-                          {sortConfig.key === "status" &&
-                            (sortConfig.direction === "ascending" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead className="text-right">Total</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredTransactions.map((transaction) => (
-                        <TableRow
-                          key={transaction.id || Math.random().toString()}
-                        >
-                          <TableCell>
-                            {transaction.transactionDate
-                              ? new Date(transaction.transactionDate)
-                                  .toLocaleString()
-                                  .replace(",", "")
-                              : "N/A"}
-                          </TableCell>
-                          <TableCell>
-                            {getSouvenirName(transaction.souvenirId)}
-                          </TableCell>
-                          <TableCell>{transaction.quantity || 0}</TableCell>
-                          <TableCell>
-                            ${(transaction.price || 0).toFixed(2)}
-                          </TableCell>
-                          <TableCell>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs ${
-                                transaction.status === "Completed"
-                                  ? "bg-green-100 text-green-800"
-                                  : transaction.status === "Failed"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {transaction.status || "Unknown"}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            $
-                            {(
-                              (transaction.quantity || 0) *
-                              (transaction.price || 0)
-                            ).toFixed(2)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+            <div className="w-full md:w-[200px] space-y-2">
+              <Label htmlFor="souvenir">Souvenir</Label>
+              <Select value={souvenirFilter} onValueChange={setSouvenirFilter}>
+                <SelectTrigger id="souvenir">
+                  <SelectValue placeholder="Select souvenir" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Souvenirs</SelectItem>
+                  {/* You would need to fetch souvenirs to populate this dropdown */}
+                  <SelectItem value="souvenir-1">Souvenir 1</SelectItem>
+                  <SelectItem value="souvenir-2">Souvenir 2</SelectItem>
+                  <SelectItem value="souvenir-3">Souvenir 3</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 pt-4 border-t gap-2">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Showing {filteredTransactions.length} of{" "}
-                      {storeTransactions.length} store transactions
-                    </p>
-                  </div>
-                  <div className="text-lg font-medium">
-                    Total: ${totalSpent.toFixed(2)}
-                  </div>
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
+            <div className="w-full md:w-[200px] space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger id="status">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-full md:w-auto space-y-2">
+              <Label>Date Range</Label>
+              <DatePickerWithRange
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+              />
+            </div>
+
+            <Button
+              variant="outline"
+              className="mt-2 md:mt-0"
+              onClick={resetFilters}
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Reset Filters
+            </Button>
+
+            <Button className="mt-2 md:mt-0">
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+          </div>
+
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Souvenir ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="h-24 text-center">
+                      Loading transactions...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredTransactions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="h-24 text-center">
+                      No transactions found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell className="font-medium">
+                        {truncateId(transaction.id)}
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(transaction.transactionDate)}
+                      </TableCell>
+                      <TableCell>{transaction.souvenirId}</TableCell>
+                      <TableCell>{transaction.customerId}</TableCell>
+                      <TableCell>{transaction.quantity}</TableCell>
+                      <TableCell>{formatCurrency(transaction.price)}</TableCell>
+                      <TableCell>
+                        {formatCurrency(
+                          transaction.price * transaction.quantity,
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            transaction.status.toLowerCase() === "completed"
+                              ? "bg-green-100 text-green-800 hover:bg-green-100"
+                              : transaction.status.toLowerCase() === "pending"
+                                ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                                : "bg-red-100 text-red-800 hover:bg-red-100"
+                          }
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
     </>
   );

@@ -23,40 +23,38 @@ import { Button } from "@/components/ui/button";
 import { Download, Filter, Search } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
-import { useGetAllStoreTransactions } from "@/hooks/data/use-get-all-store-transactions";
-import StoreTransaction from "@/lib/interfaces/entities/store-transaction";
-import RetailManagerNavbar from "@/components/navbars/retail-manager-navbar";
+import { useGetAllRideTransactions } from "@/hooks/data/use-get-all-ride-transactions";
+import CfoNavbar from "@/components/navbars/cfo-navbar";
 
-export default function StoreTransactionsPage() {
-  const { storeTransactions, isLoading } = useGetAllStoreTransactions();
+export default function CfoRideTransactionsPage() {
+  const { rideTransactions, isLoading } = useGetAllRideTransactions();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [souvenirFilter, setSouvenirFilter] = useState("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: addDays(new Date(), -30),
     to: new Date(),
   });
 
   const [filteredTransactions, setFilteredTransactions] = useState<
-    StoreTransaction[]
+    typeof rideTransactions
   >([]);
 
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [todayRevenue, setTodayRevenue] = useState(0);
-  const [averageOrderValue, setAverageOrderValue] = useState(0);
+  const [averageRideValue, setAverageRideValue] = useState(0);
 
   useEffect(() => {
-    if (!storeTransactions) return;
+    if (!rideTransactions) return;
 
-    let filtered = [...storeTransactions];
+    let filtered = [...rideTransactions];
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (transaction) =>
           transaction.id.toLowerCase().includes(query) ||
-          transaction.souvenirId.toLowerCase().includes(query) ||
+          transaction.rideId.toLowerCase().includes(query) ||
           transaction.customerId.toLowerCase().includes(query),
       );
     }
@@ -65,12 +63,6 @@ export default function StoreTransactionsPage() {
       filtered = filtered.filter(
         (transaction) =>
           transaction.status.toLowerCase() === statusFilter.toLowerCase(),
-      );
-    }
-
-    if (souvenirFilter !== "all") {
-      filtered = filtered.filter(
-        (transaction) => transaction.souvenirId === souvenirFilter,
       );
     }
 
@@ -85,9 +77,9 @@ export default function StoreTransactionsPage() {
 
     setFilteredTransactions(filtered);
 
-    if (storeTransactions.length > 0) {
+    if (rideTransactions.length > 0) {
       const total = filtered.reduce(
-        (sum, transaction) => sum + transaction.price * transaction.quantity,
+        (sum, transaction) => sum + transaction.ridePrice,
         0,
       );
       setTotalRevenue(total);
@@ -100,14 +92,14 @@ export default function StoreTransactionsPage() {
         return transactionDate.getTime() === today.getTime();
       });
       const todayTotal = todayTransactions.reduce(
-        (sum, transaction) => sum + transaction.price * transaction.quantity,
+        (sum, transaction) => sum + transaction.ridePrice,
         0,
       );
       setTodayRevenue(todayTotal);
 
-      setAverageOrderValue(total / filtered.length || 0);
+      setAverageRideValue(total / filtered.length || 0);
     }
-  }, [storeTransactions, searchQuery, statusFilter, dateRange, souvenirFilter]);
+  }, [rideTransactions, searchQuery, statusFilter, dateRange]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -127,24 +119,37 @@ export default function StoreTransactionsPage() {
   const resetFilters = () => {
     setSearchQuery("");
     setStatusFilter("all");
-    setSouvenirFilter("all");
     setDateRange({
       from: addDays(new Date(), -30),
       to: new Date(),
     });
   };
 
+  const getStatusBadgeClass = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "completed":
+        return "bg-green-100 text-green-800 hover:bg-green-100";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
+      case "cancelled":
+      case "canceled":
+        return "bg-red-100 text-red-800 hover:bg-red-100";
+      default:
+        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+    }
+  };
+
   return (
     <>
-      <RetailManagerNavbar />
+      <CfoNavbar />
       <div className="container mx-auto py-8">
         <div className="flex flex-col gap-6 mt-20">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold tracking-tight">
-              Store Transactions
+              Ride Transactions
             </h1>
             <p className="text-muted-foreground">
-              View and manage all souvenir store transactions
+              View and manage all ride transactions
             </p>
           </div>
 
@@ -184,15 +189,15 @@ export default function StoreTransactionsPage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Average Order Value
+                  Average Ride Value
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatCurrency(averageOrderValue)}
+                  {formatCurrency(averageRideValue)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {filteredTransactions.length} transactions
+                  {filteredTransactions?.length || 0} transactions
                 </p>
               </CardContent>
             </Card>
@@ -205,28 +210,12 @@ export default function StoreTransactionsPage() {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
-                  placeholder="Search by ID, souvenir, or customer..."
+                  placeholder="Search by ID, ride, or customer..."
                   className="pl-8"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-            </div>
-
-            <div className="w-full md:w-[200px] space-y-2">
-              <Label htmlFor="souvenir">Souvenir</Label>
-              <Select value={souvenirFilter} onValueChange={setSouvenirFilter}>
-                <SelectTrigger id="souvenir">
-                  <SelectValue placeholder="Select souvenir" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Souvenirs</SelectItem>
-                  {/* You would need to fetch souvenirs to populate this dropdown */}
-                  <SelectItem value="souvenir-1">Souvenir 1</SelectItem>
-                  <SelectItem value="souvenir-2">Souvenir 2</SelectItem>
-                  <SelectItem value="souvenir-3">Souvenir 3</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="w-full md:w-[200px] space-y-2">
@@ -272,25 +261,24 @@ export default function StoreTransactionsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
+                  <TableHead>Customer ID</TableHead>
+                  <TableHead>Ride ID</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Souvenir ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Quantity</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Total</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="h-24 text-center">
+                    <TableCell colSpan={6} className="h-24 text-center">
                       Loading transactions...
                     </TableCell>
                   </TableRow>
-                ) : filteredTransactions.length === 0 ? (
+                ) : !filteredTransactions ||
+                  filteredTransactions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="h-24 text-center">
+                    <TableCell colSpan={6} className="h-24 text-center">
                       No transactions found
                     </TableCell>
                   </TableRow>
@@ -301,26 +289,18 @@ export default function StoreTransactionsPage() {
                         {truncateId(transaction.id)}
                       </TableCell>
                       <TableCell>
+                        {truncateId(transaction.customerId)}
+                      </TableCell>
+                      <TableCell>{truncateId(transaction.rideId)}</TableCell>
+                      <TableCell>
                         {formatDate(transaction.transactionDate)}
                       </TableCell>
-                      <TableCell>{transaction.souvenirId}</TableCell>
-                      <TableCell>{transaction.customerId}</TableCell>
-                      <TableCell>{transaction.quantity}</TableCell>
-                      <TableCell>{formatCurrency(transaction.price)}</TableCell>
                       <TableCell>
-                        {formatCurrency(
-                          transaction.price * transaction.quantity,
-                        )}
+                        {formatCurrency(transaction.ridePrice)}
                       </TableCell>
                       <TableCell>
                         <Badge
-                          className={
-                            transaction.status.toLowerCase() === "completed"
-                              ? "bg-green-100 text-green-800 hover:bg-green-100"
-                              : transaction.status.toLowerCase() === "pending"
-                                ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-                                : "bg-red-100 text-red-800 hover:bg-red-100"
-                          }
+                          className={getStatusBadgeClass(transaction.status)}
                         >
                           {transaction.status}
                         </Badge>

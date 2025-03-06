@@ -4,6 +4,9 @@ import CeoViewRestaurantProposals from "@/pages/staff/ceo/ceo-view-restaurant-pr
 import CeoViewStoreProposals from "@/pages/staff/ceo/ceo-view-store-proposals";
 import CfoDashboard from "@/pages/staff/cfo/cfo-dashboard";
 import CfoViewRestaurantProposals from "@/pages/staff/cfo/cfo-view-restaurant-proposals";
+import CfoRestaurantTransactionsPage from "@/pages/staff/cfo/cfo-view-restaurant-transactions";
+import CfoRideTransactionsPage from "@/pages/staff/cfo/cfo-view-ride-transactions";
+import CfoStoreTransactionsPage from "@/pages/staff/cfo/cfo-view-store-transactions";
 import ChefDashboard from "@/pages/staff/chef/chef-dashboard";
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
 import CooDashboard from "@/pages/staff/coo/coo-dashboard";
@@ -29,6 +32,7 @@ import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashbo
 import RideManagerViewSchedules from "@/pages/staff/ride-manager/ride-manager-view-schedules";
 import RideStaffDashboard from "@/pages/staff/ride-staff/ride-staff-dashboard";
 import SalesAssociateDashboard from "@/pages/staff/sales-associate/sales-associate-dashboard";
+import SalesAssociateTransactionPage from "@/pages/staff/sales-associate/sales-associate-view-transaction";
 import StaffLogin from "@/pages/staff/staff-login";
 import WaiterDashboard from "@/pages/staff/waiter/waiter-dashboard";
 import { Route, Routes } from "react-router";
@@ -99,6 +103,18 @@ export default function StaffUI() {
         path="cfo/view-restaurant-proposals"
         element={<CfoViewRestaurantProposals />}
       />
+      <Route
+        path="cfo/view-restaurant-transactions"
+        element={<CfoRestaurantTransactionsPage />}
+      />
+      <Route
+        path="cfo/view-store-transactions"
+        element={<CfoStoreTransactionsPage />}
+      />
+      <Route
+        path="cfo/view-ride-transactions"
+        element={<CfoRideTransactionsPage />}
+      />
 
       {/* Maintenance Manager */}
       <Route
@@ -155,7 +171,7 @@ export default function StaffUI() {
       />
       <Route
         path="sales-associate/store-transactions"
-        element={<SalesAssociateDashboard />}
+        element={<SalesAssociateTransactionPage />}
       />
     </Routes>
   );

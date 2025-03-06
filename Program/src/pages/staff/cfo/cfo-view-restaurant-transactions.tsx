@@ -23,23 +23,25 @@ import { Button } from "@/components/ui/button";
 import { Download, Filter, Search } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
-import { useGetAllStoreTransactions } from "@/hooks/data/use-get-all-store-transactions";
-import StoreTransaction from "@/lib/interfaces/entities/store-transaction";
-import RetailManagerNavbar from "@/components/navbars/retail-manager-navbar";
+import { useGetRestaurantTransactions } from "@/hooks/data/use-get-restaurant-transactions";
+import RestaurantTransaction from "@/lib/interfaces/entities/restaurant-transaction";
+import { useGetRestaurants } from "@/hooks/data/use-get-restaurants";
+import CfoNavbar from "@/components/navbars/cfo-navbar";
 
-export default function StoreTransactionsPage() {
-  const { storeTransactions, isLoading } = useGetAllStoreTransactions();
+export default function CfoRestaurantTransactionsPage() {
+  const { restaurantTransactions, isLoading } = useGetRestaurantTransactions();
+  const { restaurants, isLoading: isLoadingRestaurants } = useGetRestaurants();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [souvenirFilter, setSouvenirFilter] = useState("all");
+  const [restaurantFilter, setRestaurantFilter] = useState("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: addDays(new Date(), -30),
     to: new Date(),
   });
 
   const [filteredTransactions, setFilteredTransactions] = useState<
-    StoreTransaction[]
+    RestaurantTransaction[]
   >([]);
 
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -47,16 +49,16 @@ export default function StoreTransactionsPage() {
   const [averageOrderValue, setAverageOrderValue] = useState(0);
 
   useEffect(() => {
-    if (!storeTransactions) return;
+    if (!restaurantTransactions) return;
 
-    let filtered = [...storeTransactions];
+    let filtered = [...restaurantTransactions];
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (transaction) =>
           transaction.id.toLowerCase().includes(query) ||
-          transaction.souvenirId.toLowerCase().includes(query) ||
+          transaction.menuId.toLowerCase().includes(query) ||
           transaction.customerId.toLowerCase().includes(query),
       );
     }
@@ -68,9 +70,10 @@ export default function StoreTransactionsPage() {
       );
     }
 
-    if (souvenirFilter !== "all") {
+    // Add restaurant filter logic
+    if (restaurantFilter !== "all") {
       filtered = filtered.filter(
-        (transaction) => transaction.souvenirId === souvenirFilter,
+        (transaction) => transaction.restaurantId === restaurantFilter,
       );
     }
 
@@ -85,7 +88,7 @@ export default function StoreTransactionsPage() {
 
     setFilteredTransactions(filtered);
 
-    if (storeTransactions.length > 0) {
+    if (restaurantTransactions.length > 0) {
       const total = filtered.reduce(
         (sum, transaction) => sum + transaction.price * transaction.quantity,
         0,
@@ -107,7 +110,13 @@ export default function StoreTransactionsPage() {
 
       setAverageOrderValue(total / filtered.length || 0);
     }
-  }, [storeTransactions, searchQuery, statusFilter, dateRange, souvenirFilter]);
+  }, [
+    restaurantTransactions,
+    searchQuery,
+    statusFilter,
+    dateRange,
+    restaurantFilter,
+  ]); // Add restaurantFilter to dependencies
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -124,10 +133,11 @@ export default function StoreTransactionsPage() {
     return id.length > 8 ? `${id.substring(0, 8)}...` : id;
   };
 
+  // Add function to reset all filters
   const resetFilters = () => {
     setSearchQuery("");
     setStatusFilter("all");
-    setSouvenirFilter("all");
+    setRestaurantFilter("all");
     setDateRange({
       from: addDays(new Date(), -30),
       to: new Date(),
@@ -136,15 +146,15 @@ export default function StoreTransactionsPage() {
 
   return (
     <>
-      <RetailManagerNavbar />
+      <CfoNavbar />
       <div className="container mx-auto py-8">
         <div className="flex flex-col gap-6 mt-20">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold tracking-tight">
-              Store Transactions
+              Restaurant Transactions
             </h1>
             <p className="text-muted-foreground">
-              View and manage all souvenir store transactions
+              View and manage all transactions for your restaurant
             </p>
           </div>
 
@@ -205,7 +215,7 @@ export default function StoreTransactionsPage() {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
-                  placeholder="Search by ID, souvenir, or customer..."
+                  placeholder="Search by ID, menu item, or customer..."
                   className="pl-8"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -213,18 +223,24 @@ export default function StoreTransactionsPage() {
               </div>
             </div>
 
+            {/* Add Restaurant Filter */}
             <div className="w-full md:w-[200px] space-y-2">
-              <Label htmlFor="souvenir">Souvenir</Label>
-              <Select value={souvenirFilter} onValueChange={setSouvenirFilter}>
-                <SelectTrigger id="souvenir">
-                  <SelectValue placeholder="Select souvenir" />
+              <Label htmlFor="restaurant">Restaurant</Label>
+              <Select
+                value={restaurantFilter}
+                onValueChange={setRestaurantFilter}
+              >
+                <SelectTrigger id="restaurant">
+                  <SelectValue placeholder="Select restaurant" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Souvenirs</SelectItem>
-                  {/* You would need to fetch souvenirs to populate this dropdown */}
-                  <SelectItem value="souvenir-1">Souvenir 1</SelectItem>
-                  <SelectItem value="souvenir-2">Souvenir 2</SelectItem>
-                  <SelectItem value="souvenir-3">Souvenir 3</SelectItem>
+                  <SelectItem value="all">All Restaurants</SelectItem>
+                  {!isLoadingRestaurants &&
+                    restaurants?.map((restaurant) => (
+                      <SelectItem key={restaurant.id} value={restaurant.id}>
+                        {restaurant.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -272,8 +288,9 @@ export default function StoreTransactionsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
+                  <TableHead>Restaurant ID</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Souvenir ID</TableHead>
+                  <TableHead>Menu Item</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Price</TableHead>
@@ -284,13 +301,13 @@ export default function StoreTransactionsPage() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="h-24 text-center">
+                    <TableCell colSpan={9} className="h-24 text-center">
                       Loading transactions...
                     </TableCell>
                   </TableRow>
                 ) : filteredTransactions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="h-24 text-center">
+                    <TableCell colSpan={9} className="h-24 text-center">
                       No transactions found
                     </TableCell>
                   </TableRow>
@@ -300,10 +317,11 @@ export default function StoreTransactionsPage() {
                       <TableCell className="font-medium">
                         {truncateId(transaction.id)}
                       </TableCell>
+                      <TableCell>{transaction.restaurantId}</TableCell>
                       <TableCell>
                         {formatDate(transaction.transactionDate)}
                       </TableCell>
-                      <TableCell>{transaction.souvenirId}</TableCell>
+                      <TableCell>{transaction.menuId}</TableCell>
                       <TableCell>{transaction.customerId}</TableCell>
                       <TableCell>{transaction.quantity}</TableCell>
                       <TableCell>{formatCurrency(transaction.price)}</TableCell>

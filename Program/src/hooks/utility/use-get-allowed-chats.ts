@@ -17,31 +17,32 @@ export function useGetAllowedChats() {
       }
 
       let category = "";
+      const role = staff.role.toLowerCase(); // Convert role to lowercase
 
-      switch (staff.role) {
-        case "CEO":
-        case "CFO":
-        case "COO":
+      switch (role) {
+        case "ceo":
+        case "cfo":
+        case "coo":
           category = "executive";
           break;
-        case "Maintenance Manager":
-        case "Maintenance Staff":
+        case "maintenance manager":
+        case "maintenance staff":
           category = "care_and_maintenance";
           break;
-        case "Fnb Supervisor":
-        case "Chef":
-        case "Waiter":
+        case "fnb supervisor":
+        case "chef":
+        case "waiter":
           category = "consumption";
           break;
-        case "Retail Manager":
-        case "Sales Associate":
+        case "retail manager":
+        case "sales associate":
           category = "marketing";
           break;
-        case "Ride Staff":
-        case "Ride Manager":
+        case "ride staff":
+        case "ride manager":
           category = "operation";
           break;
-        case "Lost and Found Staff":
+        case "lost and found staff":
           category = "lost_and_found";
           break;
         default:

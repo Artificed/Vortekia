@@ -25,9 +25,9 @@ import type { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
 import { useGetAllStoreTransactions } from "@/hooks/data/use-get-all-store-transactions";
 import StoreTransaction from "@/lib/interfaces/entities/store-transaction";
-import RetailManagerNavbar from "@/components/navbars/retail-manager-navbar";
+import CfoNavbar from "@/components/navbars/cfo-navbar";
 
-export default function StoreTransactionsPage() {
+export default function CfoStoreTransactionsPage() {
   const { storeTransactions, isLoading } = useGetAllStoreTransactions();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -136,7 +136,7 @@ export default function StoreTransactionsPage() {
 
   return (
     <>
-      <RetailManagerNavbar />
+      <CfoNavbar />
       <div className="container mx-auto py-8">
         <div className="flex flex-col gap-6 mt-20">
           <div className="flex flex-col gap-2">
