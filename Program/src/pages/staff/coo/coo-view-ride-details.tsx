@@ -11,16 +11,11 @@ import {
 import { useGetRidesWithQueues } from "@/hooks/data/use-get-rides-with-queues";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams } from "react-router";
-import RideNavbar from "@/components/navbars/ride-navbar";
-import { Button } from "@/components/ui/button";
-import useAuth from "@/hooks/auth/use-auth";
-import { ToastUtils } from "@/components/utils/toast-helper";
-import { invoke } from "@tauri-apps/api/core";
+import CooNavbar from "@/components/navbars/coo-navbar";
 
-export default function RideDetails() {
+export default function CooViewRideDetails() {
   const { ridesWithQueues, isLoading, isError } = useGetRidesWithQueues();
   const params = useParams();
-  const auth = useAuth();
 
   if (isLoading) {
     return (
@@ -40,28 +35,13 @@ export default function RideDetails() {
     );
   }
 
-  const queueForRide = async (rideId: string) => {
-    try {
-      await invoke("insert_new_queue_request", {
-        rideId,
-        customerId: auth?.user?.id,
-      });
-      ToastUtils.success({
-        title: "Successfully queued for a ride!",
-        description: "Please wait for the staff to send your schedule!",
-      });
-    } catch (error) {
-      ToastUtils.error({ description: String(error) });
-    }
-  };
-
   const selectedRide = ridesWithQueues?.find(
     (rideWithQueue) => rideWithQueue.ride.id === params.rideId,
   );
 
   return (
     <>
-      <RideNavbar />
+      <CooNavbar />
       <div className="p-4 md:p-8 flex justify-center items-center min-h-screen">
         <Card className="w-full max-w-4xl">
           <CardHeader>
@@ -108,9 +88,6 @@ export default function RideDetails() {
                             {selectedRide.ride.assignedStaff}
                           </p>
                         </div>
-                      </div>
-                      <div onClick={() => queueForRide(selectedRide.ride.id)}>
-                        {auth?.user && <Button>Queue For Ride</Button>}
                       </div>
                     </div>
 

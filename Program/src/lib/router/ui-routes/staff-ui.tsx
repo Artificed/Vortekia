@@ -11,6 +11,8 @@ import ChefDashboard from "@/pages/staff/chef/chef-dashboard";
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
 import CooDashboard from "@/pages/staff/coo/coo-dashboard";
 import CooViewProposal from "@/pages/staff/coo/coo-view-proposals";
+import CooViewRideDetails from "@/pages/staff/coo/coo-view-ride-details";
+import CooViewRides from "@/pages/staff/coo/coo-view-rides";
 import CsCreateCustomer from "@/pages/staff/customer-service/cs-create-customer";
 import CsDashboard from "@/pages/staff/customer-service/cs-dashboard";
 import CsViewResturants from "@/pages/staff/customer-service/cs-view-restaurant";
@@ -59,6 +61,11 @@ export default function StaffUI() {
       <Route path="coo/dashboard" element={<CooDashboard />} />
       <Route path="coo/create-staff-account" element={<CooCreateStaff />} />
       <Route path="coo/view-ride-proposals" element={<CooViewProposal />} />
+      <Route path="coo/view-rides" element={<CooViewRides />} />
+      <Route
+        path="coo/view-ride-detail/:rideId"
+        element={<CooViewRideDetails />}
+      />
 
       {/* Lost And Found Staff Routes */}
       <Route
