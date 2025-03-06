@@ -28,6 +28,7 @@ import StoreTransactionsPage from "@/pages/staff/retail-manager/store-transactio
 import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashboard";
 import RideManagerViewSchedules from "@/pages/staff/ride-manager/ride-manager-view-schedules";
 import RideStaffDashboard from "@/pages/staff/ride-staff/ride-staff-dashboard";
+import SalesAssociateDashboard from "@/pages/staff/sales-associate/sales-associate-dashboard";
 import StaffLogin from "@/pages/staff/staff-login";
 import WaiterDashboard from "@/pages/staff/waiter/waiter-dashboard";
 import { Route, Routes } from "react-router";
@@ -146,6 +147,15 @@ export default function StaffUI() {
       <Route
         path="retail-manager/store-transactions"
         element={<StoreTransactionsPage />}
+      />
+
+      <Route
+        path="sales-associate/dashboard"
+        element={<SalesAssociateDashboard />}
+      />
+      <Route
+        path="sales-associate/store-transactions"
+        element={<SalesAssociateDashboard />}
       />
     </Routes>
   );

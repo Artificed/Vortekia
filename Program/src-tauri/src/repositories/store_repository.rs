@@ -57,6 +57,26 @@ pub async fn get_store_by_id(state: &State<'_, AppState>, id: &str) -> Result<St
     }
 }
 
+pub async fn get_staff_assigned_store(
+    state: &State<'_, AppState>,
+    staff_id: &str,
+) -> Result<StoreModel, String> {
+    let result = Stores::find()
+        .filter(StoreColumn::SalesAssociate.eq(staff_id.to_owned()))
+        .filter(StoreColumn::IsActive.eq(1))
+        .one(&state.conn)
+        .await;
+
+    match result {
+        Ok(Some(store)) => Ok(store),
+        Ok(None) => Err(format!("Store with Staff ID {} not found", staff_id)),
+        Err(err) => {
+            eprintln!("Failed to get store: {:?}", err);
+            Err(format!("Failed to get store: {:?}", err))
+        }
+    }
+}
+
 pub async fn update_store(
     state: &State<'_, AppState>,
     mut store: StoreActiveModel,

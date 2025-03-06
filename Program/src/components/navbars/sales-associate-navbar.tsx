@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useNavigate } from "react-router";
 
-export default function RetailManagerNavbar() {
+export default function SalesAssociateNavbar() {
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -26,24 +26,16 @@ export default function RetailManagerNavbar() {
       <div className="flex items-center w-screen gap-14">
         <div className="text-3xl font-bold">
           VorteKia
-          <span className="text-xs font-normal">Retail Manager</span>
+          <span className="text-xs font-normal">Sales Associate</span>
         </div>{" "}
         <NavigationMenu>
           <NavigationMenuList className="flex space-x-4">
             <NavigationMenuItem>
               <a
-                href="/retail-manager/dashboard"
+                href="/sales-associate/dashboard"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 Dashboard
-              </a>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <a
-                href="/retail-manager/view-schedules"
-                className="px-4 py-2 hover:bg-gray-200 rounded-md"
-              >
-                View Schedules
               </a>
             </NavigationMenuItem>
             <NavigationMenuItem>
@@ -56,7 +48,7 @@ export default function RetailManagerNavbar() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <a
-                href="/retail-manager/store-transactions"
+                href="/sales-associate/store-transactions"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >
                 Store Transaction

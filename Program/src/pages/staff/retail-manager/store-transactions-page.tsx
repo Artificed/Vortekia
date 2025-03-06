@@ -140,7 +140,7 @@ export default function StoreTransactionsPage() {
     <>
       <RetailManagerNavbar />
       <div className="container mx-auto py-8">
-        <div className="flex flex-col gap-6 mt-20">
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold tracking-tight">
               Store Transactions

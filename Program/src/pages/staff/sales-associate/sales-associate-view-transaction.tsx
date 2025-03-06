@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import StoreTransaction from "@/lib/interfaces/entities/store-transaction";
-import Store from "@/lib/interfaces/entities/store";
 import StoreNavbar from "@/components/navbars/store-navbar";
 import useAuth from "@/hooks/auth/use-auth";
 import { useNavigate, useParams } from "react-router";
@@ -38,23 +37,6 @@ export default function StoreTransactionHistoryPage() {
   const navigate = useNavigate();
   const { storeId } = useParams();
 
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!auth?.user) {
-      navigate("/");
-    }
-  }, [auth, navigate]);
-
-  const {
-    currentUserStoreTransactions,
-    isLoading: isLoadingTransactions,
-    isError,
-    refetch,
-  } = useGetCurrentUserStoreTransactions();
-
-  const { store, isLoading: isLoadingStore } = useGetStoreById(storeId || "");
-  const { souvenirs, isLoading: isLoadingSouvenirs } = useGetSouvenirs();
-
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{
     key: keyof StoreTransaction | null;
@@ -63,6 +45,55 @@ export default function StoreTransactionHistoryPage() {
     key: "transactionDate",
     direction: "descending",
   });
+
+  // Auth check effect - runs on mount and when auth changes
+  useEffect(() => {
+    if (!auth?.user) {
+      navigate("/");
+    }
+  }, [auth, navigate]);
+
+  // Safe refetch function with auth check
+  const safeRefetch = useCallback(async () => {
+    if (!auth?.user) {
+      navigate("/");
+      return false;
+    }
+    return true;
+  }, [auth, navigate]);
+
+  const {
+    currentUserStoreTransactions,
+    isLoading: isLoadingTransactions,
+    isError,
+    refetch: refetchTransactions,
+  } = useGetCurrentUserStoreTransactions();
+
+  const { store, isLoading: isLoadingStore } = useGetStoreById(storeId || "");
+  const { souvenirs, isLoading: isLoadingSouvenirs } = useGetSouvenirs();
+
+  // Combined refetch function with auth check
+  const handleRefetch = useCallback(async () => {
+    const canProceed = await safeRefetch();
+    if (canProceed) {
+      refetchTransactions();
+    }
+  }, [safeRefetch, refetchTransactions]);
+
+  // Initial data load with auth check
+  useEffect(() => {
+    if (auth?.user) {
+      refetchTransactions();
+    }
+  }, [auth, refetchTransactions]);
+
+  // Error handling for auth related issues
+  useEffect(() => {
+    if (isError && auth?.user) {
+      // Check if error is auth related (you might need to adjust this depending on your error structure)
+      handleRefetch();
+    }
+  }, [isError, auth, handleRefetch]);
 
   const isLoading =
     isLoadingTransactions || isLoadingStore || isLoadingSouvenirs;
@@ -78,7 +109,7 @@ export default function StoreTransactionHistoryPage() {
           <p className="text-destructive mb-4">
             Failed to load transaction history
           </p>
-          <Button onClick={() => refetch()}>Try Again</Button>
+          <Button onClick={handleRefetch}>Try Again</Button>
         </CardContent>
       </Card>
     );
@@ -93,9 +124,14 @@ export default function StoreTransactionHistoryPage() {
       .map((souvenir) => souvenir.id);
   }, [souvenirs, storeId]);
 
-  // Filter transactions by store's souvenirs
+  // Filter transactions by store's souvenirs - with null checks
   const storeTransactions = React.useMemo(() => {
-    if (!currentUserStoreTransactions || storeSouvenirIds.length === 0)
+    if (
+      !currentUserStoreTransactions ||
+      !Array.isArray(currentUserStoreTransactions) ||
+      !storeSouvenirIds ||
+      storeSouvenirIds.length === 0
+    )
       return [];
 
     return currentUserStoreTransactions.filter((transaction) =>
@@ -104,16 +140,20 @@ export default function StoreTransactionHistoryPage() {
   }, [currentUserStoreTransactions, storeSouvenirIds]);
 
   const sortedTransactions = React.useMemo(() => {
-    if (!storeTransactions.length) return [];
+    if (!storeTransactions || !storeTransactions.length) return [];
 
     const sortableTransactions = [...storeTransactions];
 
     if (sortConfig.key) {
       sortableTransactions.sort((a, b) => {
-        if (a[sortConfig.key!] < b[sortConfig.key!]) {
+        // Null check for values
+        const aValue = a[sortConfig.key!] || "";
+        const bValue = b[sortConfig.key!] || "";
+
+        if (aValue < bValue) {
           return sortConfig.direction === "ascending" ? -1 : 1;
         }
-        if (a[sortConfig.key!] > b[sortConfig.key!]) {
+        if (aValue > bValue) {
           return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
@@ -124,18 +164,21 @@ export default function StoreTransactionHistoryPage() {
   }, [storeTransactions, sortConfig]);
 
   const filteredTransactions = React.useMemo(() => {
-    if (!sortedTransactions.length) return [];
+    if (!sortedTransactions || !sortedTransactions.length) return [];
 
+    if (!searchTerm) return sortedTransactions;
+
+    const searchTermLower = searchTerm.toLowerCase();
     return sortedTransactions.filter(
       (transaction) =>
-        transaction.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        transaction.souvenirId
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        transaction.customerId
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        transaction.status.toLowerCase().includes(searchTerm.toLowerCase()),
+        (transaction.id &&
+          transaction.id.toLowerCase().includes(searchTermLower)) ||
+        (transaction.souvenirId &&
+          transaction.souvenirId.toLowerCase().includes(searchTermLower)) ||
+        (transaction.customerId &&
+          transaction.customerId.toLowerCase().includes(searchTermLower)) ||
+        (transaction.status &&
+          transaction.status.toLowerCase().includes(searchTermLower)),
     );
   }, [sortedTransactions, searchTerm]);
 
@@ -148,33 +191,35 @@ export default function StoreTransactionHistoryPage() {
   };
 
   const totalSpent = React.useMemo(() => {
-    if (!filteredTransactions.length) return 0;
+    if (!filteredTransactions || !filteredTransactions.length) return 0;
 
-    return filteredTransactions.reduce(
-      (sum, transaction) => sum + transaction.price * transaction.quantity,
-      0,
-    );
+    return filteredTransactions.reduce((sum, transaction) => {
+      const price = transaction.price || 0;
+      const quantity = transaction.quantity || 0;
+      return sum + price * quantity;
+    }, 0);
   }, [filteredTransactions]);
 
-  // Get souvenir name by id
+  // Get souvenir name by id - with null checks
   const getSouvenirName = (souvenirId: string) => {
-    if (!souvenirs) return souvenirId;
-    const souvenir = souvenirs.find((s) => s.id === souvenirId);
-    return souvenir ? souvenir.name : souvenirId;
+    if (!souvenirId || !souvenirs) return "Unknown Item";
+    const souvenir = souvenirs.find((s) => s && s.id === souvenirId);
+    return souvenir ? souvenir.name : "Unknown Item";
   };
 
   return (
     <>
       <StoreNavbar />
-      <div className="w-full p-20 flex">
-        <Card className="w-full mt-10">
+      <div className="w-full p-4 md:p-20 flex">
+        <Card className="w-full mt-4 md:mt-10">
           <CardHeader>
             <CardTitle>
-              {isLoadingStore ? "Loading..." : store?.name} Transaction History
+              {isLoadingStore ? "Loading..." : store?.name || "Store"}{" "}
+              Transaction History
             </CardTitle>
             <CardDescription>
               Your purchase history from{" "}
-              {isLoadingStore ? "this store" : store?.name}
+              {isLoadingStore ? "this store" : store?.name || "this store"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -187,7 +232,7 @@ export default function StoreTransactionHistoryPage() {
                   className="w-full"
                 />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-medium">Sort by:</span>
                 <Select
                   onValueChange={(value) =>
@@ -220,7 +265,7 @@ export default function StoreTransactionHistoryPage() {
                 >
                   {sortConfig.direction === "ascending" ? "↑" : "↓"}
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => refetch()}>
+                <Button variant="outline" size="sm" onClick={handleRefetch}>
                   Refresh
                 </Button>
               </div>
@@ -236,7 +281,7 @@ export default function StoreTransactionHistoryPage() {
               </div>
             ) : (
               <>
-                <div className="rounded-md border">
+                <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -285,17 +330,23 @@ export default function StoreTransactionHistoryPage() {
                     </TableHeader>
                     <TableBody>
                       {filteredTransactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
+                        <TableRow
+                          key={transaction.id || Math.random().toString()}
+                        >
                           <TableCell>
-                            {new Date(transaction.transactionDate)
-                              .toLocaleString()
-                              .replace(",", "")}
+                            {transaction.transactionDate
+                              ? new Date(transaction.transactionDate)
+                                  .toLocaleString()
+                                  .replace(",", "")
+                              : "N/A"}
                           </TableCell>
                           <TableCell>
                             {getSouvenirName(transaction.souvenirId)}
                           </TableCell>
-                          <TableCell>{transaction.quantity}</TableCell>
-                          <TableCell>${transaction.price.toFixed(2)}</TableCell>
+                          <TableCell>{transaction.quantity || 0}</TableCell>
+                          <TableCell>
+                            ${(transaction.price || 0).toFixed(2)}
+                          </TableCell>
                           <TableCell>
                             <span
                               className={`px-2 py-1 rounded-full text-xs ${
@@ -306,14 +357,15 @@ export default function StoreTransactionHistoryPage() {
                                     : "bg-gray-100 text-gray-800"
                               }`}
                             >
-                              {transaction.status}
+                              {transaction.status || "Unknown"}
                             </span>
                           </TableCell>
                           <TableCell className="text-right">
                             $
-                            {(transaction.quantity * transaction.price).toFixed(
-                              2,
-                            )}
+                            {(
+                              (transaction.quantity || 0) *
+                              (transaction.price || 0)
+                            ).toFixed(2)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -321,7 +373,7 @@ export default function StoreTransactionHistoryPage() {
                   </Table>
                 </div>
 
-                <div className="flex justify-between items-center mt-6 pt-4 border-t">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 pt-4 border-t gap-2">
                   <div>
                     <p className="text-sm text-muted-foreground">
                       Showing {filteredTransactions.length} of{" "}

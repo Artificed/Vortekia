@@ -64,3 +64,11 @@ pub async fn update_store(
 pub async fn delete_store(state: State<'_, AppState>, store_id: String) -> Result<(), String> {
     store_handler::delete_store(&state, store_id).await
 }
+
+#[tauri::command]
+pub async fn get_staff_assigned_store(
+    state: State<'_, AppState>,
+    staff_id: &str,
+) -> Result<StoreModel, String> {
+    store_handler::get_staff_assigned_store(&state, staff_id).await
+}

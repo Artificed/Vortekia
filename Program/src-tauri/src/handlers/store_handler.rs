@@ -152,3 +152,10 @@ pub async fn update_store(
 pub async fn delete_store(state: &State<'_, AppState>, store_id: String) -> Result<(), String> {
     store_repository::delete_store(state, &store_id).await
 }
+
+pub async fn get_staff_assigned_store(
+    state: &State<'_, AppState>,
+    staff_id: &str,
+) -> Result<StoreModel, String> {
+    store_repository::get_staff_assigned_store(state, staff_id).await
+}
