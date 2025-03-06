@@ -1,5 +1,3 @@
-import Staff from "./staff";
-
 interface MaintenanceTask {
   id: number;
   name: string;

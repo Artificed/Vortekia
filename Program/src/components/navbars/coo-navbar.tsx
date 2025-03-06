@@ -63,6 +63,14 @@ export default function CooNavbar() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <a
+                href="/coo/manage-maintenance-tasks"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Manage Maintenance Tasks
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
                 href="/chat"
                 className="px-4 py-2 hover:bg-gray-200 rounded-md"
               >

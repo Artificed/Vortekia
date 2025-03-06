@@ -10,6 +10,7 @@ import CfoStoreTransactionsPage from "@/pages/staff/cfo/cfo-view-store-transacti
 import ChefDashboard from "@/pages/staff/chef/chef-dashboard";
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
 import CooDashboard from "@/pages/staff/coo/coo-dashboard";
+import CooManageMaintenanceTasks from "@/pages/staff/coo/coo-manage-maintenance-tasks";
 import CooViewProposal from "@/pages/staff/coo/coo-view-proposals";
 import CooViewRideDetails from "@/pages/staff/coo/coo-view-ride-details";
 import CooViewRides from "@/pages/staff/coo/coo-view-rides";
@@ -65,6 +66,10 @@ export default function StaffUI() {
       <Route
         path="coo/view-ride-detail/:rideId"
         element={<CooViewRideDetails />}
+      />
+      <Route
+        path="coo/manage-maintenance-tasks"
+        element={<CooManageMaintenanceTasks />}
       />
 
       {/* Lost And Found Staff Routes */}
