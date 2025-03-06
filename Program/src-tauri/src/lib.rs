@@ -4,6 +4,7 @@ use modules::{
     app_config::AppConfig,
     app_state::AppState,
     firebase_utils::{self, init_firebase},
+    user_chats,
 };
 use sea_orm::{Database, DatabaseConnection};
 use std::{env, fs};
@@ -180,6 +181,7 @@ pub async fn run() {
             firebase_utils::get_messages,
             firebase_utils::create_chat_room,
             firebase_utils::list_chat_rooms,
+            user_chats::get_chats_by_category,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -31,6 +31,9 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setMessages([]);
+    setLoading(true);
+
     const fetchMessages = async () => {
       try {
         const fetchedMessages = await invoke<Message[]>("get_messages", {
@@ -41,12 +44,13 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
+        setLoading(false);
       }
     };
 
     fetchMessages();
 
-    const interval = setInterval(fetchMessages, 3000);
+    const interval = setInterval(fetchMessages, 1000);
 
     return () => clearInterval(interval);
   }, [roomId]);
@@ -67,7 +71,6 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
       });
 
       setNewMessage("");
-      // Immediately fetch updated messages
       const updatedMessages = await invoke<Message[]>("get_messages", {
         roomId,
         limit: 50,

@@ -1,5 +1,4 @@
-import ChatPage from "@/components/chat/chat";
-import { ChatRoomList } from "@/components/chat/chat-room-list";
+import ChatPage from "@/components/chat/chat-page";
 import CeoDashboard from "@/pages/staff/ceo/ceo-dashboard";
 import CeoViewRestaurantProposals from "@/pages/staff/ceo/ceo-view-restaurant-proposals";
 import CeoViewStoreProposals from "@/pages/staff/ceo/ceo-view-store-proposals";
@@ -9,7 +8,6 @@ import ChefDashboard from "@/pages/staff/chef/chef-dashboard";
 import CooCreateStaff from "@/pages/staff/coo/coo-create-staff";
 import CooDashboard from "@/pages/staff/coo/coo-dashboard";
 import CooViewProposal from "@/pages/staff/coo/coo-view-proposals";
-import CsChat from "@/pages/staff/customer-service/cs-chat";
 import CsCreateCustomer from "@/pages/staff/customer-service/cs-create-customer";
 import CsDashboard from "@/pages/staff/customer-service/cs-dashboard";
 import CsViewResturants from "@/pages/staff/customer-service/cs-view-restaurant";
@@ -36,9 +34,8 @@ import { Route, Routes } from "react-router";
 export default function StaffUI() {
   return (
     <Routes>
-      <Route path="/chat" element={<ChatPage />} />
-
       <Route path="/" element={<StaffLogin />} />
+      <Route path="/chat" element={<ChatPage />} />
 
       {/* CS Routes */}
       <Route path="customer-service/dashboard" element={<CsDashboard />} />
@@ -46,7 +43,6 @@ export default function StaffUI() {
         path="customer-service/create-customer-account"
         element={<CsCreateCustomer />}
       />
-      <Route path="customer-service/chat" element={<CsChat />} />
       <Route path="customer-service/view-rides" element={<CsViewRides />} />
       <Route
         path="customer-service/view-restaurants"
