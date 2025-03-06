@@ -26,15 +26,15 @@ import { addDays, format } from "date-fns";
 import FnbSupervisorNavbar from "@/components/navbars/fnb-supervisor-navbar";
 import { useGetRestaurantTransactions } from "@/hooks/data/use-get-restaurant-transactions";
 import RestaurantTransaction from "@/lib/interfaces/entities/restaurant-transaction";
-import { useGetRestaurants } from "@/hooks/data/use-get-restaurants"; // Add this import
+import { useGetRestaurants } from "@/hooks/data/use-get-restaurants";
 
 export default function RestaurantTransactionsPage() {
   const { restaurantTransactions, isLoading } = useGetRestaurantTransactions();
-  const { restaurants, isLoading: isLoadingRestaurants } = useGetRestaurants(); // Add this hook
+  const { restaurants, isLoading: isLoadingRestaurants } = useGetRestaurants();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [restaurantFilter, setRestaurantFilter] = useState("all"); // Add restaurant filter state
+  const [restaurantFilter, setRestaurantFilter] = useState("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: addDays(new Date(), -30),
     to: new Date(),

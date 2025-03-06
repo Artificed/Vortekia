@@ -1,6 +1,10 @@
 use dotenv::dotenv;
 use futures::lock::Mutex;
-use modules::{app_config::AppConfig, app_state::AppState};
+use modules::{
+    app_config::AppConfig,
+    app_state::AppState,
+    firebase_utils::{self, init_firebase},
+};
 use sea_orm::{Database, DatabaseConnection};
 use std::{env, fs};
 
@@ -63,6 +67,7 @@ pub async fn run() {
 
     tauri::Builder::default()
         .manage(state)
+        .manage(init_firebase())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             context_service::get_current_ui,
@@ -169,7 +174,12 @@ pub async fn run() {
             maintenance_log_service::update_maintenance_log,
             maintenance_request_service::insert_new_maintenance_request,
             maintenance_request_service::get_all_maintenance_requests,
-            maintenance_request_service::update_maintenance_request
+            maintenance_request_service::update_maintenance_request,
+            firebase_utils::create_user_profile,
+            firebase_utils::send_message,
+            firebase_utils::get_messages,
+            firebase_utils::create_chat_room,
+            firebase_utils::list_chat_rooms,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
