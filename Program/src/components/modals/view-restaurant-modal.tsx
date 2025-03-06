@@ -61,7 +61,7 @@ export const ViewRestaurantModal = ({
           </div>
           <div className="grid gap-2">
             <h3 className="font-semibold">Status</h3>
-            <Badge className={getStatusBadgeColor(restaurant.isOpen)}>
+            <Badge className={getStatusBadgeColor(restaurant.isOpen == 1)}>
               {restaurant.isOpen ? "Open" : "Closed"}
             </Badge>
           </div>

@@ -14,6 +14,7 @@ import CsViewResturants from "@/pages/staff/customer-service/cs-view-restaurant"
 import CsViewRides from "@/pages/staff/customer-service/cs-view-rides";
 import FnbSupervisorDashboard from "@/pages/staff/fnb-supervisor/fnb-supervisor-dashboard";
 import FnbSupervisorStaffManagement from "@/pages/staff/fnb-supervisor/fnb-supervisor-staff-management";
+import RestaurantTransactionsPage from "@/pages/staff/fnb-supervisor/restaurant-transactions";
 import LnfCreatelog from "@/pages/staff/lost-and-found-staff/lnf-create-log";
 import LnfStaffDashboard from "@/pages/staff/lost-and-found-staff/lnf-staff-dashboard";
 import MaintenanceManagerDashboard from "@/pages/staff/maintenance-manager/maintenance-manager-dashboard";
@@ -78,6 +79,10 @@ export default function StaffUI() {
       <Route
         path="fnb-supervisor/staff-management"
         element={<FnbSupervisorStaffManagement />}
+      />
+      <Route
+        path="fnb-supervisor/restaurant-transactions"
+        element={<RestaurantTransactionsPage />}
       />
 
       {/* Waiter */}

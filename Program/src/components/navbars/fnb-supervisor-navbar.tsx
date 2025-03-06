@@ -45,6 +45,14 @@ export default function FnbSupervisorNavbar() {
                 Staff Management
               </a>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/fnb-supervisor/restaurant-transactions"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Restaurant Transactions
+              </a>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
