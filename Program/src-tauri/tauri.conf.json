@@ -15,11 +15,6 @@
         "title": "tpa-desktop",
         "maximized": true,
         "label": "main"
-      },
-      {
-        "title": "tpa-desktop",
-        "maximized": true,
-        "label": "main-2"
       }
     ],
     "security": {

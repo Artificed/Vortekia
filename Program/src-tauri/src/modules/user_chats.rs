@@ -15,7 +15,7 @@ pub fn get_chats_by_category(category: &str) -> Vec<String> {
             String::from("global_staff"),
             String::from("operation_division_chat"),
         ],
-        "lost_and_found" => vec![String::from("lnf_staff")],
+        "lost_and_found" => vec![String::from("lnf_staff_chat")],
         _ => vec![String::from("global_staff")],
     }
 }

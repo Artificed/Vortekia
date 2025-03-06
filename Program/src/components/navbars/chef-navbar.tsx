@@ -45,6 +45,14 @@ export default function ChefNavbar() {
                 Staff Management
               </a>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/chat"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                Chat
+              </a>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
