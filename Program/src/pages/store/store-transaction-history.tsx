@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import StoreTransaction from "@/lib/interfaces/entities/store-transaction";
-import Store from "@/lib/interfaces/entities/store";
 import StoreNavbar from "@/components/navbars/store-navbar";
 import useAuth from "@/hooks/auth/use-auth";
 import { useNavigate, useParams } from "react-router";

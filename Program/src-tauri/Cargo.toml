@@ -49,3 +49,5 @@ chrono = "0.4.40"
 firebase-rs = "2.2.0"
 
 uuid = { version = "1.7", features = ["v4"] }
+
+redis = "0.29.1"

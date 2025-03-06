@@ -6,6 +6,7 @@ use modules::{
     firebase_utils::{self, init_firebase},
     user_chats,
 };
+use redis::Client as RedisClient;
 use sea_orm::{Database, DatabaseConnection};
 use std::{env, fs};
 
@@ -23,7 +24,10 @@ pub use services::*;
 pub async fn run() {
     dotenv().ok();
     let app_id = env::var("APP_ID").expect("App Id must be set!");
+
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let redis_url =
+        std::env::var("REDIS_URL").unwrap_or_else(|_| "redis://127.0.0.1:6379".to_string());
 
     let config_path = String::from("config.json");
     let config_content = fs::read_to_string(&config_path)
@@ -32,6 +36,8 @@ pub async fn run() {
     let conn: DatabaseConnection = Database::connect(&database_url)
         .await
         .expect("Failed to connect to database!");
+
+    let redis_client = RedisClient::open(redis_url).expect("Failed to connect to Redis");
 
     let configs: Vec<AppConfig> = match config_content {
         Ok(content) => match serde_json::from_str(&content) {
@@ -63,6 +69,7 @@ pub async fn run() {
     let state = AppState {
         conn,
         current_user: Mutex::new(None),
+        redis: redis_client,
         config,
     };
 
