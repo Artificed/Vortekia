@@ -14,7 +14,7 @@ use crate::modules::state_helper;
 
 use super::customer_repository::AppState;
 
-const CACHE_TTL: u64 = 300;
+const CACHE_TTL: u64 = 600;
 
 pub async fn insert_lnf_log(
     state: State<'_, AppState>,

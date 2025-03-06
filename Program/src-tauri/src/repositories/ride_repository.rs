@@ -1,3 +1,7 @@
+use chrono::DateTime;
+use chrono::Local;
+use chrono::NaiveTime;
+use chrono::Timelike;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
@@ -30,7 +34,33 @@ pub async fn get_all_rides(state: &State<'_, AppState>) -> Result<Vec<RideModel>
         .await;
 
     match result {
-        Ok(rides) => Ok(rides),
+        Ok(rides) => {
+            let local_time: DateTime<Local> = Local::now();
+            let current_time = NaiveTime::from_hms_opt(
+                local_time.hour(),
+                local_time.minute(),
+                local_time.second(),
+            )
+            .unwrap();
+
+            let modified_rides = rides
+                .into_iter()
+                .map(|mut ride| {
+                    let is_within_hours = if ride.opening_time <= ride.closing_time {
+                        current_time >= ride.opening_time && current_time <= ride.closing_time
+                    } else {
+                        current_time >= ride.opening_time || current_time <= ride.closing_time
+                    };
+
+                    if !is_within_hours {
+                        ride.status = "closed".to_string();
+                    }
+                    ride
+                })
+                .collect();
+
+            Ok(modified_rides)
+        }
         Err(err) => {
             eprintln!("Error getting rides: {:?}", err);
             Err("Failed to get rides!".to_string())
@@ -49,14 +79,34 @@ pub async fn get_ride_by_id(
         .await;
 
     match result {
-        Ok(ride) => Ok(ride),
+        Ok(Some(mut ride)) => {
+            let local_time: DateTime<Local> = Local::now();
+            let current_time = NaiveTime::from_hms_opt(
+                local_time.hour(),
+                local_time.minute(),
+                local_time.second(),
+            )
+            .unwrap();
+
+            let is_within_hours = if ride.opening_time <= ride.closing_time {
+                current_time >= ride.opening_time && current_time <= ride.closing_time
+            } else {
+                current_time >= ride.opening_time || current_time <= ride.closing_time
+            };
+
+            if !is_within_hours {
+                ride.status = "closed".to_string();
+            }
+
+            Ok(Some(ride))
+        }
+        Ok(None) => Err(format!("Ride with ID {} not found", id)),
         Err(err) => {
             eprintln!("Error fetching ride by ID: {:?}", err);
             Err("Failed to get ride!".to_string())
         }
     }
 }
-
 pub async fn delete_ride(state: &State<'_, AppState>, id: &str) -> Result<(), String> {
     let existing_ride = Rides::find_by_id(id).one(&state.conn).await;
 
@@ -130,9 +180,24 @@ pub async fn get_rides_with_staff(
         .await
         .map_err(|err| err.to_string())?;
 
+    let local_time: DateTime<Local> = Local::now();
+    let current_time =
+        NaiveTime::from_hms_opt(local_time.hour(), local_time.minute(), local_time.second())
+            .unwrap();
+
     let rides_with_staff = results
         .into_iter()
-        .filter_map(|(ride, staff)| staff.map(|s| RideWithStaff { ride, staff: s }))
+        .filter_map(|(mut ride, staff)| {
+            let is_within_hours = if ride.opening_time <= ride.closing_time {
+                current_time >= ride.opening_time && current_time <= ride.closing_time
+            } else {
+                current_time >= ride.opening_time || current_time <= ride.closing_time
+            };
+            if !is_within_hours {
+                ride.status = "closed".to_string();
+            }
+            staff.map(|s| RideWithStaff { ride, staff: s })
+        })
         .collect();
 
     Ok(rides_with_staff)

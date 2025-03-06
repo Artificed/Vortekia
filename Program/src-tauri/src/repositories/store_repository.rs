@@ -1,4 +1,6 @@
+use chrono::Local;
 use chrono::NaiveTime;
+use chrono::Timelike;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ActiveValue;
 use tauri::State;
@@ -32,7 +34,33 @@ pub async fn get_all_stores(state: &State<'_, AppState>) -> Result<Vec<StoreMode
         .await;
 
     match result {
-        Ok(store_list) => Ok(store_list),
+        Ok(store_list) => {
+            let local_time = Local::now();
+            let current_time = NaiveTime::from_hms_opt(
+                local_time.hour(),
+                local_time.minute(),
+                local_time.second(),
+            )
+            .unwrap();
+
+            let modified_list = store_list
+                .into_iter()
+                .map(|mut store| {
+                    let is_within_hours = if store.opening_time <= store.closing_time {
+                        current_time >= store.opening_time && current_time <= store.closing_time
+                    } else {
+                        current_time >= store.opening_time || current_time <= store.closing_time
+                    };
+
+                    if !is_within_hours {
+                        store.status = String::from("closed");
+                    }
+                    store
+                })
+                .collect();
+
+            Ok(modified_list)
+        }
         Err(err) => {
             eprintln!("Failed to get store list: {:?}", err);
             Err(format!("Failed to get store list: {:?}", err))
@@ -48,7 +76,27 @@ pub async fn get_store_by_id(state: &State<'_, AppState>, id: &str) -> Result<St
         .await;
 
     match result {
-        Ok(Some(store)) => Ok(store),
+        Ok(Some(mut store)) => {
+            let local_time = Local::now();
+            let current_time = NaiveTime::from_hms_opt(
+                local_time.hour(),
+                local_time.minute(),
+                local_time.second(),
+            )
+            .unwrap();
+
+            let is_within_hours = if store.opening_time <= store.closing_time {
+                current_time >= store.opening_time && current_time <= store.closing_time
+            } else {
+                current_time >= store.opening_time || current_time <= store.closing_time
+            };
+
+            if !is_within_hours {
+                store.status = String::from("closed");
+            }
+
+            Ok(store)
+        }
         Ok(None) => Err(format!("Store with ID {} not found", id)),
         Err(err) => {
             eprintln!("Failed to get store: {:?}", err);
@@ -68,7 +116,27 @@ pub async fn get_staff_assigned_store(
         .await;
 
     match result {
-        Ok(Some(store)) => Ok(store),
+        Ok(Some(mut store)) => {
+            let local_time = Local::now();
+            let current_time = NaiveTime::from_hms_opt(
+                local_time.hour(),
+                local_time.minute(),
+                local_time.second(),
+            )
+            .unwrap();
+
+            let is_within_hours = if store.opening_time <= store.closing_time {
+                current_time >= store.opening_time && current_time <= store.closing_time
+            } else {
+                current_time >= store.opening_time || current_time <= store.closing_time
+            };
+
+            if !is_within_hours {
+                store.status = String::from("closed");
+            }
+
+            Ok(store)
+        }
         Ok(None) => Err(format!("Store with Staff ID {} not found", staff_id)),
         Err(err) => {
             eprintln!("Failed to get store: {:?}", err);

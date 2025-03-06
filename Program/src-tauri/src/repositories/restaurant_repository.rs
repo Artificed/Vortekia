@@ -1,4 +1,7 @@
+use chrono::DateTime;
+use chrono::Local;
 use chrono::NaiveTime;
+use chrono::Timelike;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ActiveValue;
 use tauri::State;
@@ -34,7 +37,36 @@ pub async fn get_all_restaurants(
         .await;
 
     match result {
-        Ok(restaurant_list) => Ok(restaurant_list),
+        Ok(restaurant_list) => {
+            let local_time: DateTime<Local> = Local::now();
+            let current_time = NaiveTime::from_hms_opt(
+                local_time.hour(),
+                local_time.minute(),
+                local_time.second(),
+            )
+            .unwrap();
+
+            let modified_list = restaurant_list
+                .into_iter()
+                .map(|mut restaurant| {
+                    let is_within_hours = if restaurant.opening_time <= restaurant.closing_time {
+                        current_time >= restaurant.opening_time
+                            && current_time <= restaurant.closing_time
+                    } else {
+                        current_time >= restaurant.opening_time
+                            || current_time <= restaurant.closing_time
+                    };
+
+                    if !is_within_hours {
+                        restaurant.is_open = 0;
+                    }
+
+                    restaurant
+                })
+                .collect();
+
+            Ok(modified_list)
+        }
         Err(err) => {
             eprintln!("Failed to get all restaurant list: {:?}", err);
             Err(format!("Failed to get all restaurant list: {:?}", err))
@@ -53,7 +85,27 @@ pub async fn get_restaurant_by_id(
         .await;
 
     match result {
-        Ok(Some(restaurant)) => Ok(restaurant),
+        Ok(Some(mut restaurant)) => {
+            let local_time: DateTime<Local> = Local::now();
+            let current_time = NaiveTime::from_hms_opt(
+                local_time.hour(),
+                local_time.minute(),
+                local_time.second(),
+            )
+            .unwrap();
+
+            let is_within_hours = if restaurant.opening_time <= restaurant.closing_time {
+                current_time >= restaurant.opening_time && current_time <= restaurant.closing_time
+            } else {
+                current_time >= restaurant.opening_time || current_time <= restaurant.closing_time
+            };
+
+            if !is_within_hours {
+                restaurant.is_open = 0;
+            }
+
+            Ok(restaurant)
+        }
         Ok(None) => Err(format!("Restaurant with ID {} not found", id)),
         Err(err) => {
             eprintln!("Failed to get restaurant: {:?}", err);
