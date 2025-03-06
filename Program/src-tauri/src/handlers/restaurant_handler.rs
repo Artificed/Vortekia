@@ -51,6 +51,7 @@ pub async fn update_restaurant(
     cuisine_type: String,
     image_name: Option<String>,
     image_bytes: Option<Vec<u8>>,
+    is_open: i8,
 ) -> Result<(), String> {
     let existing = match restaurant_repository::get_restaurant_by_id(state, &restaurant_id).await {
         Ok(r) => r,
@@ -79,6 +80,31 @@ pub async fn update_restaurant(
     let closing = NaiveTime::parse_from_str(&closing_time, "%H:%M:%S")
         .map_err(|_| "Invalid closing time format!".to_string())?;
 
+    if is_open == 1 {
+        let mut has_waiter = false;
+        let mut has_chef = false;
+
+        let staffs =
+            restaurant_staff_handler::get_staff_by_restaurant(state, &restaurant_id).await?;
+
+        for staff in staffs {
+            let staff_opt = staff_repository::get_staff_from_id(state, &staff.staff_id).await?;
+
+            if let Some(staff_data) = staff_opt {
+                if staff_data.role == "Waiter" {
+                    has_waiter = true;
+                }
+                if staff_data.role == "Chef" {
+                    has_chef = true;
+                }
+            }
+        }
+
+        if !has_waiter || !has_chef {
+            return Err("Insufficient staff to open restaurant!".to_string());
+        }
+    }
+
     restaurant_repository::update_restaurant(
         state,
         restaurant_active_model,
@@ -87,6 +113,7 @@ pub async fn update_restaurant(
         closing,
         cuisine_type,
         url,
+        is_open,
     )
     .await
 }

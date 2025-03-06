@@ -56,6 +56,8 @@ export const useEditRestaurant = (
     e.preventDefault();
     setLoading(true);
 
+    const isOpen = formData.isOpen ? 1 : 0;
+
     try {
       if (imageFile) {
         const arrayBuffer = await imageFile.arrayBuffer();
@@ -69,6 +71,7 @@ export const useEditRestaurant = (
           cuisineType: formData.cuisineType,
           imageName: imageFile?.name,
           imageBytes: bytes,
+          isOpen: isOpen,
         });
       } else {
         await invoke("update_restaurant", {
@@ -79,6 +82,7 @@ export const useEditRestaurant = (
           cuisineType: formData.cuisineType,
           imageName: null,
           imageBytes: null,
+          isOpen: isOpen,
         });
       }
       ToastUtils.success({ description: "Successfully edited restaurant!" });

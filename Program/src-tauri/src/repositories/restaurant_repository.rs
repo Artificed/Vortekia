@@ -70,12 +70,14 @@ pub async fn update_restaurant(
     closing_time: NaiveTime,
     cuisine_type: String,
     url: String,
+    is_open: i8,
 ) -> Result<(), String> {
     restaurant.name = ActiveValue::Set(name);
     restaurant.opening_time = ActiveValue::Set(opening_time);
     restaurant.closing_time = ActiveValue::Set(closing_time);
     restaurant.cuisine_type = ActiveValue::Set(cuisine_type);
     restaurant.image = ActiveValue::Set(url);
+    restaurant.is_open = ActiveValue::Set(is_open);
 
     let result = restaurant.update(&state.conn).await;
     match result {

@@ -30,6 +30,7 @@ pub async fn update_restaurant(
     cuisine_type: String,
     image_name: Option<String>,
     image_bytes: Option<Vec<u8>>,
+    is_open: i8,
 ) -> Result<(), String> {
     restaurant_handler::update_restaurant(
         &state,
@@ -40,6 +41,7 @@ pub async fn update_restaurant(
         cuisine_type,
         image_name,
         image_bytes,
+        is_open,
     )
     .await
 }
