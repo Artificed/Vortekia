@@ -54,6 +54,14 @@ export default function RetailManagerNavbar() {
                 Chat
               </a>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                href="/retail-manager/store-transactions"
+                className="px-4 py-2 hover:bg-gray-200 rounded-md"
+              >
+                View Schedules
+              </a>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

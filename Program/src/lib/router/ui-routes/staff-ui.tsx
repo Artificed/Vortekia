@@ -24,6 +24,7 @@ import MaintenanceStaffDashboard from "@/pages/staff/maintenance-staff/maintenan
 import RetailManagerDashboard from "@/pages/staff/retail-manager/retail-manager-dashboard";
 import RetailManagerStoreDetail from "@/pages/staff/retail-manager/retail-manager-store-detail";
 import RetailManagerViewSchedules from "@/pages/staff/retail-manager/retail-manager-view-schedules";
+import StoreTransactionsPage from "@/pages/staff/retail-manager/store-transactions-page";
 import RideManagerDashboard from "@/pages/staff/ride-manager/ride-manager-dashboard";
 import RideManagerViewSchedules from "@/pages/staff/ride-manager/ride-manager-view-schedules";
 import RideStaffDashboard from "@/pages/staff/ride-staff/ride-staff-dashboard";
@@ -141,6 +142,10 @@ export default function StaffUI() {
       <Route
         path="retail-manager/store/:storeId"
         element={<RetailManagerStoreDetail />}
+      />
+      <Route
+        path="retail-manager/store-transactions"
+        element={<StoreTransactionsPage />}
       />
     </Routes>
   );
