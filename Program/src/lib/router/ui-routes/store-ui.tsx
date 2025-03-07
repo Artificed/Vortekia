@@ -1,6 +1,6 @@
+import AllStoreTransactionHistoryPage from "@/pages/store/all-store-transaction-history-page";
 import StoreDashboard from "@/pages/store/store-dashboard";
 import StoreDetailPage from "@/pages/store/store-detail";
-import StoreTransactionHistoryPage from "@/pages/store/store-transaction-history";
 import { Route, Routes } from "react-router";
 
 export default function StoreUI() {
@@ -10,7 +10,7 @@ export default function StoreUI() {
       <Route path="/store/:id" element={<StoreDetailPage />} />
       <Route
         path="/transaction-history"
-        element={<StoreTransactionHistoryPage />}
+        element={<AllStoreTransactionHistoryPage />}
       />
     </Routes>
   );

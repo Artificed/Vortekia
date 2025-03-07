@@ -87,7 +87,6 @@ const LnfLogEditModal: React.FC<LnfLogEditModalProps> = ({
             name="name"
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
-            required
           />
         </div>
 
@@ -99,7 +98,6 @@ const LnfLogEditModal: React.FC<LnfLogEditModalProps> = ({
               name="type"
               value={formData.type}
               onChange={(e) => handleChange("type", e.target.value)}
-              required
             />
           </div>
 
@@ -110,7 +108,6 @@ const LnfLogEditModal: React.FC<LnfLogEditModalProps> = ({
               name="color"
               value={formData.color}
               onChange={(e) => handleChange("color", e.target.value)}
-              required
             />
           </div>
         </div>
@@ -122,7 +119,6 @@ const LnfLogEditModal: React.FC<LnfLogEditModalProps> = ({
             name="lastSeenLocation"
             value={formData.lastSeenLocation}
             onChange={(e) => handleChange("lastSeenLocation", e.target.value)}
-            required
           />
         </div>
 

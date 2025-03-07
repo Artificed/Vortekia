@@ -125,6 +125,30 @@ pub async fn update_lnf_log(
         }
     };
 
+    if status.is_empty() {
+        return Err("Status must be specified!".to_string());
+    }
+
+    if name.is_empty() {
+        return Err("Item name must be specified!".to_string());
+    }
+
+    if r#type.is_empty() {
+        return Err("Item type must be specified!".to_string());
+    }
+
+    if color.is_empty() {
+        return Err("Item color must be specified!".to_string());
+    }
+
+    if last_seen_location.is_empty() {
+        return Err("Last seen location must be specified!".to_string());
+    }
+
+    if owner.is_empty() {
+        return Err("Owner must be specified!".to_string());
+    }
+
     if status == "Found" || status == "Returned To Owner" {
         if finder.is_none() {
             return Err(

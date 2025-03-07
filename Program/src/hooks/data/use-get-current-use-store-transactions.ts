@@ -14,6 +14,7 @@ export function useGetCurrentUserStoreTransactions() {
     queryFn: async () => {
       try {
         const result = await invoke<[]>("get_current_user_store_transactions");
+        console.log(result);
         return result;
       } catch (error) {
         ToastUtils.error({

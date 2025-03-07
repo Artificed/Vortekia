@@ -16,6 +16,20 @@ pub async fn insert_store_transaction(
     price: i32,
 ) -> Result<(), String> {
     let transaction_date: NaiveDateTime = Utc::now().naive_utc();
+
+    if souvenir_id.is_empty() {
+        return Err("Souvenir ID is empty!".to_string());
+    }
+    if customer_id.is_empty() {
+        return Err("Customer ID is empty!".to_string());
+    }
+    if quantity <= 0 {
+        return Err("Quantity must be more than 0!".to_string());
+    }
+    if price <= 0 {
+        return Err("Price must be more than 0!".to_string());
+    }
+
     let res = customer_handler::add_current_user_balance(state, price * quantity).await;
 
     let status = match res {

@@ -32,12 +32,8 @@ pub async fn insert_new_souvenir(
         return Err("Description must not be empty!".to_string());
     }
 
-    if image_name.is_empty() {
-        return Err("Image name must be set!".to_string());
-    }
-
-    if image_bytes.is_empty() {
-        return Err("Image data must be set!".to_string());
+    if image_name.is_empty() || image_bytes.is_empty() {
+        return Err("Image must be set!".to_string());
     }
 
     let res = file_handler::upload_image_to_firebase(&image_name, &image_bytes).await;

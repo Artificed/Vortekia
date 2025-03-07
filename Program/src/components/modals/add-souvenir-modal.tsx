@@ -64,7 +64,6 @@ export default function AddSouvenirModal() {
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
               placeholder="Enter souvenir name"
-              required
               className="w-full"
             />
           </div>
@@ -78,7 +77,6 @@ export default function AddSouvenirModal() {
               value={formData.price === 0 ? "" : formData.price}
               onChange={handlePriceChange}
               placeholder="Enter price"
-              required
               className="w-full"
             />
           </div>
@@ -91,7 +89,6 @@ export default function AddSouvenirModal() {
               value={formData.description}
               onChange={(e) => handleChange("description", e.target.value)}
               placeholder="Enter a description of the souvenir"
-              required
               className="w-full min-h-24"
             />
           </div>
@@ -101,7 +98,6 @@ export default function AddSouvenirModal() {
             <Select
               value={formData.storeId}
               onValueChange={(value) => handleChange("storeId", value)}
-              required
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a store" />

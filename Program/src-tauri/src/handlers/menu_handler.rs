@@ -19,16 +19,16 @@ pub async fn insert_new_menu(
         return Err("Name must not be empty!".to_string());
     }
 
+    if restaurant_id.is_empty() {
+        return Err("Restaurant must be selected!".to_string());
+    }
+
     if price <= 0 {
         return Err("Price must be more than 0!".to_string());
     }
 
-    if image_name.is_empty() {
-        return Err("Image name must be set!".to_string());
-    }
-
-    if image_bytes.is_empty() {
-        return Err("Image data must be set!".to_string());
+    if image_name.is_empty() || image_bytes.is_empty() {
+        return Err("Image must be set!".to_string());
     }
 
     let res = file_handler::upload_image_to_firebase(&image_name, &image_bytes).await;
