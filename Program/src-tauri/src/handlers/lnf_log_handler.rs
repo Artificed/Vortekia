@@ -5,7 +5,7 @@ use crate::{
     factories::lnf_log_factory, modules::app_state::AppState, repositories::lnf_log_repository,
 };
 
-use super::file_handler;
+use super::{file_handler, notification_handler};
 
 pub async fn insert_lnf_log(
     state: State<'_, AppState>,
@@ -56,6 +56,13 @@ pub async fn insert_lnf_log(
                     .to_string(),
             );
         }
+
+        notification_handler::insert_new_notification(
+            &state,
+            owner.to_string(),
+            format!("Your lost item {} has been found!", name),
+        )
+        .await?;
     }
 
     let image_url: Option<String>;
@@ -150,6 +157,13 @@ pub async fn update_lnf_log(
     }
 
     if status == "Found" || status == "Returned To Owner" {
+        notification_handler::insert_new_notification(
+            &state,
+            owner.to_string(),
+            format!("Your lost item {} has been found!", name),
+        )
+        .await?;
+
         if finder.is_none() {
             return Err(
                 "Finder must be specified for Found or Returned To Owner status.".to_string(),

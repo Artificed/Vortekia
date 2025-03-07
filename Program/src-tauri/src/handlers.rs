@@ -9,6 +9,7 @@ pub mod maintenance_task_handler;
 pub mod menu_handler;
 pub mod new_ride_proposal_handler;
 pub mod new_store_proposal_handler;
+pub mod notification_handler;
 pub mod queue_request_handler;
 pub mod restaurant_handler;
 pub mod restaurant_proposal_handler;

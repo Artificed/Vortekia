@@ -8,6 +8,7 @@ pub mod maintenance_task_factory;
 pub mod menu_factory;
 pub mod new_ride_proposal_factory;
 pub mod new_store_proposal_factory;
+pub mod notification_factory;
 pub mod queue_request_factory;
 pub mod restaurant_factory;
 pub mod restaurant_staff_factory;

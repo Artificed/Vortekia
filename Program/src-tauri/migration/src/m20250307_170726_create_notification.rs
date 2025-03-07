@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_notification_receiver_id")
-                            .from(Notification::Table, Notification::Id)
+                            .from(Notification::Table, Notification::ReceiverId)
                             .to(Customer::Table, Customer::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
