@@ -59,6 +59,18 @@ export function useAddMenu() {
       return;
     }
 
+    if (!formData.name) {
+      ToastUtils.error({ description: "Name must be filled!" });
+      setLoading(false);
+      return;
+    }
+
+    if (formData.price <= 0) {
+      ToastUtils.error({ description: "Image must be greater than 0!" });
+      setLoading(false);
+      return;
+    }
+
     try {
       const arrayBuffer = await imageFile.arrayBuffer();
       const bytes = Array.from(new Uint8Array(arrayBuffer));

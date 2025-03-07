@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useAddMenu } from "@/hooks/forms/use-add-new-menu";
 import Restaurant from "@/lib/interfaces/entities/restaurant";
 import { useGetRestaurants } from "@/hooks/data/use-get-restaurants";
+import { ToastUtils } from "../utils/toast-helper";
 
 export function AddMenuModal() {
   const {
@@ -42,10 +43,18 @@ export function AddMenuModal() {
     setIsOpen(false);
   };
 
+  const handleOpen = () => {
+    if (restaurants?.length === 0) {
+      ToastUtils.error({ description: "There are no restaurants yet!" });
+      return;
+    }
+    setIsOpen(true);
+  };
+
   return (
     <>
       <Button
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         variant="default"
         className="flex items-center gap-2"
       >
@@ -72,7 +81,6 @@ export function AddMenuModal() {
                   className="col-span-3"
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
-                  required
                 />
               </div>
 
@@ -118,7 +126,6 @@ export function AddMenuModal() {
                   className="col-span-3"
                   value={formData.price}
                   onChange={(e) => handleChange("price", e.target.value)}
-                  required
                 />
               </div>
 

@@ -20,7 +20,31 @@ pub async fn insert_lnf_log(
     status: &str,
     image_bytes: Option<Vec<u8>>,
 ) -> Result<(), String> {
-    if status == "Found" || status == "Returned To Owner" {
+    if status.is_empty() {
+        return Err("Status must be specified!".to_string());
+    }
+
+    if name.is_empty() {
+        return Err("Item name must be specified!".to_string());
+    }
+
+    if r#type.is_empty() {
+        return Err("Item type must be specified!".to_string());
+    }
+
+    if color.is_empty() {
+        return Err("Item color must be specified!".to_string());
+    }
+
+    if last_seen_location.is_empty() {
+        return Err("Last seen location must be specified!".to_string());
+    }
+
+    if owner.is_empty() {
+        return Err("Owner must be specified!".to_string());
+    }
+
+    if status == "Found" {
         if finder.is_none() {
             return Err(
                 "Finder must be specified for Found or Returned To Owner status.".to_string(),

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -13,10 +14,15 @@ import useCreateLnfLog from "@/hooks/forms/use-create-lnf-log";
 import LnfStaffNavbar from "@/components/navbars/lnf-staff-navbar";
 import { useGetCustomers } from "@/hooks/data/use-get-customers";
 import { useGetLnfStaffs } from "@/hooks/data/use-get-lnf-staffs";
+import { useNavigate } from "react-router";
+import { ToastUtils } from "@/components/utils/toast-helper";
+import { useEffect } from "react";
+import { AlertCircle } from "lucide-react";
 
 export default function LnfCreatelog() {
-  const { customers } = useGetCustomers();
+  const { customers, isLoading: customersLoading } = useGetCustomers();
   const { lnfStaffs } = useGetLnfStaffs();
+  const navigate = useNavigate();
 
   const {
     formData,
@@ -29,6 +35,66 @@ export default function LnfCreatelog() {
     handleFinderChange,
     handleSubmit,
   } = useCreateLnfLog();
+
+  useEffect(() => {
+    if (!customersLoading && customers?.length === 0) {
+      ToastUtils.error({ description: "There are no customers yet!" });
+    }
+  }, [customers, customersLoading]);
+
+  if (!customersLoading && customers?.length === 0) {
+    return (
+      <>
+        <LnfStaffNavbar />
+        <div className="flex flex-col justify-center min-h-screen bg-gray-100 py-24">
+          <Card className="w-full max-w-3xl mx-auto">
+            <CardHeader>
+              <CardTitle>Lost and Found Item Log</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Alert variant="destructive" className="mb-4 text-black">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>No Customers Available</AlertTitle>
+                <AlertDescription>
+                  <p className="text-black">
+                    You cannot create a lost and found log without customers in
+                    the system. Please add customers first before creating a
+                    log.
+                  </p>
+                </AlertDescription>
+              </Alert>
+              <Button
+                onClick={() => navigate("/customer-management")}
+                className="w-full"
+              >
+                Back To Dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
+  if (customersLoading) {
+    return (
+      <>
+        <LnfStaffNavbar />
+        <div className="flex flex-col justify-center min-h-screen bg-gray-100 py-24">
+          <Card className="w-full max-w-3xl mx-auto">
+            <CardHeader>
+              <CardTitle>Lost and Found Item Log</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-center items-center py-8">
+                <p className="text-gray-500">Loading customer data...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -70,7 +136,6 @@ export default function LnfCreatelog() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -80,7 +145,6 @@ export default function LnfCreatelog() {
                     name="type"
                     value={formData.type}
                     onChange={handleInputChange}
-                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -103,7 +167,6 @@ export default function LnfCreatelog() {
                     name="lastSeenLocation"
                     value={formData.lastSeenLocation}
                     onChange={handleInputChange}
-                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -140,7 +203,6 @@ export default function LnfCreatelog() {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      required
                     />
                   </div>
                   {imagePreview && (
@@ -165,21 +227,34 @@ export default function LnfCreatelog() {
                   <div className="gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="finder">Finder *</Label>
-                      <Select
-                        value={formData.finder}
-                        onValueChange={handleFinderChange}
-                      >
-                        <SelectTrigger id="finder">
-                          <SelectValue placeholder="Select Finder" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {lnfStaffs?.map((staff) => (
-                            <SelectItem key={staff.id} value={String(staff.id)}>
-                              {staff.username}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {lnfStaffs?.length === 0 ? (
+                        <Alert variant="destructive" className="mt-2">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertDescription>
+                            No staff members available. You need to add staff
+                            members before selecting a finder.
+                          </AlertDescription>
+                        </Alert>
+                      ) : (
+                        <Select
+                          value={formData.finder}
+                          onValueChange={handleFinderChange}
+                        >
+                          <SelectTrigger id="finder">
+                            <SelectValue placeholder="Select Finder" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {lnfStaffs?.map((staff) => (
+                              <SelectItem
+                                key={staff.id}
+                                value={String(staff.id)}
+                              >
+                                {staff.username}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
                   </div>
                   <div className="gap-4">
@@ -199,7 +274,11 @@ export default function LnfCreatelog() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={!formData.status || loading}
+                disabled={
+                  !formData.status ||
+                  loading ||
+                  (formData.status === "Found" && lnfStaffs?.length === 0)
+                }
               >
                 {loading ? "Saving..." : "Save Item Log"}
               </Button>
