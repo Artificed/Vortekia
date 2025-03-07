@@ -6,7 +6,7 @@ use crate::{modules::app_state::AppState, repositories::restaurant_transaction_r
 
 use crate::models::restaurant_transaction::Model as RestaurantTransactionModel;
 
-use super::customer_handler;
+use super::{customer_handler, notification_handler};
 
 pub async fn insert_restaurant_transaction(
     state: &State<'_, AppState>,
