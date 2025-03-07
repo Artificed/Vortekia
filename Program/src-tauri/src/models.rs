@@ -8,6 +8,7 @@ pub mod menu;
 pub mod new_restaurant_proposal;
 pub mod new_ride_proposal;
 pub mod new_store_proposal;
+pub mod notification;
 pub mod queue_request;
 pub mod restaurant;
 pub mod restaurant_staff;

@@ -11,7 +11,7 @@ pub struct Model {
     pub id: String,
     pub name: String,
     pub description: String,
-    pub assigned_staff: String,
+    pub assigned_staff: Option<String>,
     pub start_time: DateTime,
     pub end_time: DateTime,
     pub status: String,

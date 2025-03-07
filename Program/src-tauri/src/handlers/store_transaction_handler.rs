@@ -37,16 +37,18 @@ pub async fn insert_store_transaction(
         Err(_) => String::from("Failed"),
     };
 
-    let transaction = store_transaction_factory::create_store_transaction(
-        souvenir_id,
-        customer_id,
-        quantity,
-        price.abs(),
-        transaction_date,
-        status,
-    );
+    if status == "Completed" {
+        let transaction = store_transaction_factory::create_store_transaction(
+            souvenir_id,
+            customer_id,
+            quantity,
+            price.abs(),
+            transaction_date,
+            status,
+        );
 
-    _ = store_transaction_repository::insert_store_transaction(state, transaction).await;
+        _ = store_transaction_repository::insert_store_transaction(state, transaction).await;
+    }
 
     if res.is_err() {
         Err("Insufficient balance to make transaction!".to_string())

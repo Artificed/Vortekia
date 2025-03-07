@@ -27,6 +27,7 @@ mod m20250305_051953_create_maintenance_task;
 mod m20250305_052031_create_maintenance_report;
 mod m20250305_065615_create_maintenance_request;
 mod m20250305_065625_create_maintenance_log;
+mod m20250307_170726_create_notification;
 
 #[async_trait::async_trait]
 impl MigratorTrait for Migrator {
@@ -58,6 +59,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20250305_052031_create_maintenance_report::Migration),
             Box::new(m20250305_065615_create_maintenance_request::Migration),
             Box::new(m20250305_065625_create_maintenance_log::Migration),
+            Box::new(m20250307_170726_create_notification::Migration),
         ]
     }
 }
