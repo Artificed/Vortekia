@@ -1,38 +1,17 @@
-import { useEffect, useState } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useParams, useNavigate } from "react-router";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, ArrowLeft } from "lucide-react";
 import { useGetRestaurantById } from "@/hooks/data/use-get-restaurant-by-id";
 import Menu from "@/lib/interfaces/entities/menu";
 import { useGetMenus } from "@/hooks/data/use-get-menus";
-import PurchaseModal from "@/components/modals/restaurant-purchase-modal";
-import RestaurantNavbar from "@/components/navbars/restaurant-navbar";
-import useAuth from "@/hooks/auth/use-auth";
-import { ToastUtils } from "@/components/utils/toast-helper";
-import { invoke } from "@tauri-apps/api/core";
+import CustomerNavbar from "@/components/navbars/customer-navbar";
 
-export default function RestaurantDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
+export default function CustomerRestaurantDetailPage() {
+  const param = useParams();
   const navigate = useNavigate();
 
-  const restaurantId = id || "";
-  const menuIdParam = searchParams.get("menuId");
-
-  const auth = useAuth();
-
-  const [selectedMenuId, setSelectedMenuId] = useState<string | null>(
-    menuIdParam,
-  );
-  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
+  const restaurantId = param.menuId || "";
 
   const { restaurant, isLoading: isLoadingRestaurant } =
     useGetRestaurantById(restaurantId);
@@ -40,48 +19,6 @@ export default function RestaurantDetailPage() {
 
   const restaurantMenus =
     menus?.filter((menu: Menu) => menu.restaurantId === restaurantId) || [];
-
-  useEffect(() => {
-    if (menuIdParam) {
-      setSelectedMenuId(menuIdParam);
-      setIsPurchaseModalOpen(true);
-    }
-  }, [menuIdParam]);
-
-  const handleMenuSelect = (menuId: string) => {
-    setSelectedMenuId(menuId);
-    setIsPurchaseModalOpen(true);
-    setSearchParams({ menuId });
-  };
-
-  const handlePurchase = async (quantity: number) => {
-    const selectedMenu = restaurantMenus.find(
-      (menu) => menu.id === selectedMenuId,
-    );
-
-    if (!selectedMenu) {
-      ToastUtils.error({ description: "Menu must be selected!" });
-      return;
-    }
-
-    console.log(selectedMenu);
-
-    try {
-      await invoke("insert_restaurant_transaction", {
-        menuId: selectedMenu.id,
-        restaurantId: selectedMenu.restaurantId,
-        customerId: auth?.user?.id,
-        quantity: quantity,
-        price: -selectedMenu.price,
-      });
-      ToastUtils.success({ description: "Successfully bought item!" });
-    } catch (error) {
-      ToastUtils.error({ description: String(error) });
-    }
-
-    setIsPurchaseModalOpen(false);
-    setSearchParams({});
-  };
 
   const handleBackClick = () => {
     navigate("/");
@@ -103,7 +40,7 @@ export default function RestaurantDetailPage() {
 
   return (
     <>
-      <RestaurantNavbar />
+      <CustomerNavbar />
       <div className="container mx-auto py-6 pt-24">
         <button
           onClick={handleBackClick}
@@ -190,19 +127,6 @@ export default function RestaurantDetailPage() {
                     ${menu.price.toFixed(2)}
                   </p>
                 </CardContent>
-                {auth?.user && restaurant.isOpen === 1 && (
-                  <CardFooter>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMenuSelect(menu.id);
-                      }}
-                      className="cursor-pointer"
-                    >
-                      Order Now
-                    </Button>
-                  </CardFooter>
-                )}
               </Card>
             ))}
           </div>
@@ -212,18 +136,6 @@ export default function RestaurantDetailPage() {
               No menu items available for this restaurant
             </p>
           </div>
-        )}
-
-        {selectedMenuId && (
-          <PurchaseModal
-            menuId={selectedMenuId}
-            isOpen={isPurchaseModalOpen}
-            onClose={() => {
-              setIsPurchaseModalOpen(false);
-              setSearchParams({});
-            }}
-            onPurchase={handlePurchase}
-          />
         )}
       </div>
     </>

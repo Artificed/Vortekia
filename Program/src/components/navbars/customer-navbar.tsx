@@ -24,6 +24,26 @@ export default function CustomerNavbar() {
         <div className="text-3xl font-bold">
           VorteKia <span className="text-xs font-normal">Customer</span>
         </div>{" "}
+        <NavigationMenu>
+          <NavigationMenuList className="flex space-x-4">
+            <NavigationMenuItem>
+              <a
+                className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer"
+                href="/rides"
+              >
+                View Rides
+              </a>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <a
+                className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer"
+                href="/restaurants"
+              >
+                View Restaurants
+              </a>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
         {auth?.user && (
           <NavigationMenu>
             <NavigationMenuList className="flex space-x-4">
@@ -33,16 +53,6 @@ export default function CustomerNavbar() {
                   className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer"
                 >
                   Top Up Balance
-                </a>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <a className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer">
-                  View Stores
-                </a>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <a className="px-4 py-2 hover:bg-gray-200 rounded-md cursor-pointer">
-                  View Restaurants
                 </a>
               </NavigationMenuItem>
               <NavigationMenuItem>
