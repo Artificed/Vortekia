@@ -1,6 +1,7 @@
 use rand::Rng;
 use tauri::State;
 
+use crate::repositories::ride_repository;
 use crate::{
     factories::new_ride_proposal_factory, modules::app_state::AppState,
     repositories::new_ride_proposal_repository,
@@ -11,12 +12,30 @@ use crate::models::new_ride_proposal::Model as NewRideProposalModel;
 use super::{file_handler, ride_handler};
 
 pub async fn insert_new_ride_proposal(
-    state: State<'_, AppState>,
+    state: &State<'_, AppState>,
     ride_name: String,
     cost_review: String,
     image: String,
     image_bytes: Vec<u8>,
 ) -> Result<(), String> {
+    if ride_name.is_empty() {
+        return Err("Ride name is required!".to_string());
+    }
+    if cost_review.is_empty() {
+        return Err("Cost review is required!".to_string());
+    }
+    if image.is_empty() || image_bytes.is_empty() {
+        return Err("Ride Image is required!".to_string());
+    }
+
+    let rides = ride_repository::get_all_rides(&state).await?;
+
+    for ride in rides {
+        if ride.name == ride_name {
+            return Err("Ride name is taken!".to_string());
+        }
+    }
+
     let img_url_result = file_handler::upload_image_to_firebase(&image, &image_bytes).await;
 
     match img_url_result {

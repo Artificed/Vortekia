@@ -77,7 +77,6 @@ export default function DeleteRideModal({
                 name="reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                required
                 placeholder="Enter the reason for deleting the ride..."
               />
             </div>

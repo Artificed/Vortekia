@@ -53,7 +53,6 @@ export default function ProposeNewStoreModal() {
               value={formData.storeName}
               onChange={(e) => handleChange("storeName", e.target.value)}
               placeholder="Enter store name"
-              required
               className="w-full"
             />
           </div>
@@ -66,7 +65,6 @@ export default function ProposeNewStoreModal() {
               value={formData.description}
               onChange={(e) => handleChange("description", e.target.value)}
               placeholder="Enter a brief description regarding the new store"
-              required
               className="w-full min-h-24"
             />
           </div>
@@ -79,7 +77,6 @@ export default function ProposeNewStoreModal() {
               value={formData.reason}
               onChange={(e) => handleChange("reason", e.target.value)}
               placeholder="Explain why the new store has potential"
-              required
               className="w-full min-h-24"
             />
           </div>

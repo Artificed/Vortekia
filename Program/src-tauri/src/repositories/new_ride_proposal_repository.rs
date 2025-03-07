@@ -10,7 +10,7 @@ use sea_orm::ActiveValue::Set;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 
 pub async fn insert_new_ride_proposal(
-    state: State<'_, AppState>,
+    state: &State<'_, AppState>,
     new_ride_proposal: NewRideProposalActiveModel,
 ) -> Result<(), String> {
     let result = NewRideProposals::insert(new_ride_proposal)

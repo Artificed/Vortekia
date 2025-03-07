@@ -53,7 +53,6 @@ export default function ProposeRideModal() {
               value={formData.rideName}
               onChange={(e) => handleChange("rideName", e.target.value)}
               placeholder="Enter ride name"
-              required
               className="w-full"
             />
           </div>
@@ -66,7 +65,6 @@ export default function ProposeRideModal() {
               value={formData.costReview}
               onChange={(e) => handleChange("costReview", e.target.value)}
               placeholder="Share your experience with this ride"
-              required
               className="w-full min-h-24"
             />
           </div>

@@ -12,7 +12,7 @@ pub async fn insert_new_ride_proposal(
     image_bytes: Vec<u8>,
 ) -> Result<(), String> {
     new_ride_proposal_handler::insert_new_ride_proposal(
-        state,
+        &state,
         ride_name,
         cost_review,
         image,

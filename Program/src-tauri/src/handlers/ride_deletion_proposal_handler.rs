@@ -13,6 +13,13 @@ pub async fn insert_new_ride_deletion_proposal(
     ride_id: String,
     reason: String,
 ) -> Result<(), String> {
+    if ride_id.is_empty() {
+        return Err("Ride ID is required!".to_string());
+    }
+    if reason.is_empty() {
+        return Err("Reason for deletion is required!".to_string());
+    }
+
     let proposal = ride_deletion_proposal_factory::create_ride_proposal(ride_id, reason);
     ride_deletion_proposal_repository::insert_ride_deletion_proposal(state, proposal).await
 }

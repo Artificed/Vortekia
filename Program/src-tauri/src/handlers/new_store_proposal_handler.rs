@@ -2,6 +2,7 @@ use tauri::State;
 
 use super::{file_handler, store_handler};
 use crate::models::new_store_proposal::Model as NewStoreProposalModel;
+use crate::repositories::store_repository;
 use crate::{
     factories::new_store_proposal_factory, modules::app_state::AppState,
     repositories::new_store_proposal_repository,
@@ -15,6 +16,24 @@ pub async fn insert_new_store_proposal(
     image: String,
     image_bytes: Vec<u8>,
 ) -> Result<(), String> {
+    if store_name.is_empty() {
+        return Err("Store name must not be empty!".to_string());
+    }
+    if store_description.is_empty() {
+        return Err("Store description must not be empty!".to_string());
+    }
+    if reason.is_empty() {
+        return Err("Reason must not be empty!".to_string());
+    }
+    if image.is_empty() || image_bytes.is_empty() {
+        return Err("Image must not be empty!".to_string());
+    }
+
+    let stores = store_repository::get_all_stores(state).await?;
+    if stores.iter().any(|store| store.name == store_name) {
+        return Err("Store name is taken!".to_string());
+    }
+
     let img_url_result = file_handler::upload_image_to_firebase(&image, &image_bytes).await;
 
     match img_url_result {
