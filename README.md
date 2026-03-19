@@ -1,9 +1,5 @@
 # Vortekia — Theme Park Operations Management System
 
-A comprehensive desktop application for managing all aspects of theme park operations, built with Tauri, React, and Rust.
-
----
-
 ## Overview
 
 Vortekia is an all-in-one operational platform designed for theme park environments. It serves two primary audiences:
